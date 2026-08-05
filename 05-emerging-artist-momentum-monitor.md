@@ -29,7 +29,7 @@ list instead of raw counts.
 
 - **Data source and URL:** MusicBrainz Web Service (https://musicbrainz.org/doc/MusicBrainz_API) for artist metadata; synthetic engagement events generated locally.
 - **Data owner:** MetaBrainz Foundation (metadata); us (synthetic events).
-- **Classification:** Hybrid (deterministic batch replay into Kafka; cached API metadata).
+- **Classification:** Hybrid — stream processing (event-at-a-time Kafka replay, keyed, ordered, idempotent) over a batch-generated event set, plus cached batch API metadata.
 - **Why:** Engagement is generated and replayed event-by-event into Kafka across two batches; metadata is a slow cached lookup.
 - **Access and limitations:** MusicBrainz requires a descriptive User-Agent and ~1 request/sec — cache metadata, don't stream it.
 - **Review path:** Locally runnable minimum demo — reviewer runs producer + consumer against seeded JSONL for both batches; metadata from a cached fixture.

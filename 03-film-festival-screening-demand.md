@@ -28,7 +28,7 @@ occupancy metrics + a status label.
 
 - **Data source and URL:** TMDB API (https://developer.themoviedb.org/docs) for film titles/genre/release metadata; synthetic screening events generated locally.
 - **Data owner:** The Movie Database (TMDB) (metadata); us (synthetic events).
-- **Classification:** Hybrid (deterministic batch replay into Kafka; cached API metadata).
+- **Classification:** Hybrid — stream processing (event-at-a-time Kafka replay, keyed, ordered, idempotent) over a batch-generated event set, plus cached batch API metadata.
 - **Why:** Reservations are generated and replayed event-by-event into Kafka; film metadata is a slow cached lookup.
 - **Access and limitations:** TMDB requires an API key — pull once and save as a cached fixture so the demo runs with no live key.
 - **Review path:** Locally runnable minimum demo — reviewer runs producer + consumer against seeded JSONL; metadata from a cached fixture.

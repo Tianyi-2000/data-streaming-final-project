@@ -28,7 +28,7 @@ curator gets a short, actionable review list instead of raw logs.
 
 - **Data source and URL:** MusicBrainz Web Service (https://musicbrainz.org/doc/MusicBrainz_API) for track/artist metadata; synthetic play events generated locally.
 - **Data owner:** MetaBrainz Foundation (metadata); us (synthetic events).
-- **Classification:** Hybrid (deterministic batch replay of seeded events into Kafka; cached API metadata).
+- **Classification:** Hybrid — stream processing (event-at-a-time Kafka replay, keyed, ordered, idempotent) over a batch-generated event set, plus cached batch API metadata.
 - **Why:** Play behavior is generated and replayed one event at a time into Kafka; metadata is a slow, cached lookup.
 - **Access and limitations:** MusicBrainz requires a descriptive User-Agent and ~1 request/sec — fine for small cached pulls, not a high-rate source.
 - **Review path:** Locally runnable minimum demo — reviewer runs the replay producer + consumer against seeded JSONL; metadata comes from a cached fixture.
