@@ -170,7 +170,9 @@ the proposal should not claim them:
 
 ## Implications for Option 4
 
-The redesign the research supports is a **two-stage pipeline with a repartition**:
+The redesign below is now implemented in the proposal, and explained in plain terms in
+[DESIGN-two-key-pipeline.md](DESIGN-two-key-pipeline.md). It is a **two-stage pipeline
+with a repartition**:
 
 ```text
 seeded_play_events.jsonl
