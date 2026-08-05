@@ -1,0 +1,19 @@
+playlist-health-monitor/
+├── README.md
+├── requirements.txt
+├── .env.example          # never commit .env
+├── .gitignore            # includes .env
+├── data/
+│   └── seeded_play_events.jsonl
+├── src/
+│   ├── schema.py         # A  (shared contract — agree early, then freeze)
+│   ├── generate_seed.py  # A
+│   ├── producer.py       # A
+│   ├── consumer.py       # B
+│   ├── metrics.py        # B
+│   ├── report_terminal.py# A
+│   ├── dashboard.py      # B (Streamlit)
+│   └── llm_summary.py    # B
+└── tests/
+    ├── test_producer.py  # A
+    └── test_consumer.py  # B
