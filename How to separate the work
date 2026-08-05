@@ -17,3 +17,15 @@ playlist-health-monitor/
 └── tests/
     ├── test_producer.py  # A
     └── test_consumer.py  # B
+
+Partner A:
+schema、seeded generator、replay producer、
+topic/key/partition evidence、MusicBrainz cache
+
+Partner B:
+Python consumer、event-time state、primary anomaly rule、
+review queue artifact、dedup tests
+
+Shared:
+architecture、integration、offset/replay tests、
+AI summary、README、proposal、presentation
