@@ -1,0 +1,71 @@
+ARTIFICIAL STREAMING ANOMALY MONITOR
+
+Student names: P.J. Losiewicz and Tianyi [surname]
+Project format: Two-person team
+
+Contribution plan: Tianyi owns the producer side (schema, seeded generator,
+replay producer, dedup, dashboard, README). P.J. owns the consumer side (both
+stages, the re-key, detection rules, ArangoDB sink, AQL query). We split at the
+topic contract; both can explain all of it.
+
+1. PROBLEM SUMMARY
+
+Streaming platforms pay royalties per stream, so inflating play counts pays. The
+first US criminal case involved 1,040 bot accounts making 661,440 streams a day
+for seven years. We flag tracks with implausible listening patterns and route
+them to a human review queue for a royalty-integrity team. A person makes every
+judgment; the system only decides what gets reviewed first.
+
+2. PLANNED DATA SOURCE AND CLASSIFICATION
+
+Synthetic play telemetry generated locally, plus MusicBrainz
+(https://musicbrainz.org/doc/MusicBrainz_API) for track and artist metadata.
+Owners: us for events, MetaBrainz Foundation for metadata. Classification is
+hybrid: stream processing (event-at-a-time Kafka replay, keyed, ordered,
+idempotent) over a batch-generated event set, plus cached batch API metadata.
+MusicBrainz allows about one request per second, so metadata is cached, not
+streamed.
+
+3. ARCHITECTURE SKETCH
+
+  seeded_events.jsonl -> replay producer -> Pydantic validation
+    -> Stage 1: play-events (key = listener_id), per-listener state
+    -> re-key -> Stage 2: track-activity (key = track_id), rules
+    -> track_review_queue.json + terminal report
+    -> graph topics -> ArangoDB Kafka Connect sink -> listener/track graph
+    -> AQL co-listening query -> Streamlit dashboard + LLM summary
+
+Two keys, because two kinds of fraud exist. Keyed by listener, a farm of 53,000
+accounts each playing one track once looks innocent: every partition holds one
+play. Re-keyed by track, the same events show 53,000 first-time listeners and
+almost no saves. The re-key is the central design decision, and the demo shows
+partitions and offsets under both keys.
+
+Event fields: event_id, event_type, listener_id, track_id, artist_id,
+played_seconds, track_duration_seconds, event_time. Primary rule: streams per
+unique listener above a threshold flags a track.
+
+4. PLANNED TOOLS AND PACKAGES
+
+Python 3.11, confluent-kafka, Pydantic, requests, Streamlit, an OpenAI SDK,
+pytest. Docker Compose runs Kafka, ArangoDB, and a Kafka Connect worker with the
+ArangoDB sink.
+
+5. FEASIBILITY RISKS AND PLAN
+
+Minimum result: seeded replay through both stages to track_review_queue.json and
+a terminal report, with no API and no database. Risks: re-key correctness,
+duplicate events on replay, Connect as extra infrastructure. Fallbacks: one
+well-tested rule instead of several; event_id dedup; a cached metadata fixture;
+python-arango writes if Connect fails; graph layer degrades to an overlap count.
+Seeded data contains both fraud patterns, so our tests prove neither key catches
+both alone.
+
+6. AI ELEMENT AND DISCLOSURE
+
+One LLM call over track_review_queue.json produces up to three reviewer notes.
+Input is that JSON only. It may not change flags, invent numbers, or assert
+fraud; only describe why a track is queued. Every number in the output must
+exist in the input; tests cover empty input and API failure. Fallback is a
+deterministic template sentence. A false positive withholds money from an
+innocent artist, so every flag goes to a human reviewer.
