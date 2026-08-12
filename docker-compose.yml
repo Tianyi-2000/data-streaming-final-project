@@ -4,15 +4,22 @@
 # like Apache Kafka (bootstrap server localhost:9092). The console is a web UI
 # for inspecting topics/keys/partitions (good for report screenshots).
 #
+# ArangoDB is the graph layer (Phase 8). The two keyed consumers each answer a
+# counting question; neither can see coordination *structure*, because structure
+# is a property of the relationships rather than of any one key. The graph holds
+# listeners and tracks as vertices and plays as edges, so a co-listening query
+# can find a set of accounts that touched a near-identical set of tracks.
+#
 # Usage:
-#   docker compose up -d       # start broker + console in the background
+#   docker compose up -d       # start broker + console + graph db in the background
 #   docker compose ps          # check status
 #   docker compose down        # stop and remove containers
-#   docker compose down -v      # also wipe stored messages (fresh start)
+#   docker compose down -v      # also wipe stored messages AND the graph (fresh start)
 #
 # After it's up:
 #   Broker (for code):   localhost:9092
 #   Web console:         http://localhost:8080
+#   ArangoDB web UI:     http://localhost:8531   (user root, see ARANGO_ROOT_PASSWORD below)
 
 name: streaming-fraud-kafka
 
@@ -47,3 +54,55 @@ services:
       - "8080:8080"     # open http://localhost:8080 in your browser
     environment:
       KAFKA_BROKERS: redpanda:29092
+
+  arangodb:
+    image: arangodb/arangodb:3.12
+    # A container name specific to THIS project. The Docker daemon on this
+    # machine is shared: naming a container `arangodb` would collide with an
+    # unrelated one that already exists here.
+    container_name: streaming-fraud-arangodb
+    ports:
+      # HOST PORT 8531, NOT THE DEFAULT 8529, AND THIS IS DELIBERATE.
+      # Two ArangoDB instances belonging to *other, unrelated projects* already
+      # hold this machine's 8529 and 8530. Binding either would take down live
+      # work that this repository has no business touching and cannot restore.
+      # The container still listens on its own default 8529 inside the network;
+      # only the host side moves. Python clients use http://localhost:8531.
+      - "8531:8529"
+    environment:
+      # A LOCAL-DEVELOPMENT CREDENTIAL, and nothing more: a throwaway container
+      # on a non-default port holding entirely synthetic data. Override it by
+      # exporting ARANGO_ROOT_PASSWORD (or putting it in .env, already
+      # gitignored) if you want something else. There is no real listening
+      # history in this project -- per-account history is private and is listed
+      # as out of scope -- so this database holds generated labels only.
+      ARANGO_ROOT_PASSWORD: ${ARANGO_ROOT_PASSWORD:-streamingfraud}
+    volumes:
+      # A named volume, so `docker compose down` keeps the graph and `docker
+      # compose down -v` wipes it -- the same lifecycle the broker's storage
+      # already has (Redpanda gets an anonymous volume from its own image, which
+      # `down -v` removes too). That keeps the "wipe and start fresh"
+      # instruction in README.md and DEMO.md true for the graph as well.
+      - arangodb-data:/var/lib/arangodb3
+    healthcheck:
+      # A real readiness probe, not a sleep: authenticate and ask the server for
+      # its version. `docker compose ps` reports healthy only once the HTTP API
+      # is actually answering queries, which is what the loader needs.
+      test:
+        - "CMD-SHELL"
+        - >-
+          arangosh --server.endpoint tcp://127.0.0.1:8529
+          --server.username root
+          --server.password "$$ARANGO_ROOT_PASSWORD"
+          --javascript.execute-string "db._version()"
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 20s
+
+volumes:
+  # Named so `docker compose down -v` from THIS directory removes it and nothing
+  # else. The compose project is `streaming-fraud-kafka`, so the real volume is
+  # `streaming-fraud-kafka_arangodb-data` and cannot collide with another
+  # project's.
+  arangodb-data:
