@@ -4,17 +4,33 @@
 # like Apache Kafka (bootstrap server localhost:9092). The console is a web UI
 # for inspecting topics/keys/partitions (good for report screenshots).
 #
-# ArangoDB is the graph layer (Phase 8). The two keyed consumers each answer a
-# counting question; neither can see coordination *structure*, because structure
-# is a property of the relationships rather than of any one key. The graph holds
-# listeners and tracks as vertices and plays as edges, so a co-listening query
-# can find a set of accounts that touched a near-identical set of tracks.
+# ArangoDB is the graph layer (Phase 8), and it is OPT-IN behind the `graph`
+# profile. The two keyed consumers each answer a counting question; neither can
+# see coordination *structure*, because structure is a property of the
+# relationships rather than of any one key. The graph holds listeners and tracks
+# as vertices and plays as edges, so a co-listening query can find a set of
+# accounts that touched a near-identical set of tracks.
+#
+# WHY THE PROFILE. HRNS-01 guarantees that nothing beyond the broker is REQUIRED
+# to run the pipeline, and `tests/test_harness_roundtrip.py` asserts it by
+# checking that this file declares no service beyond the broker and the console.
+# The graph is a v2 addition and must not weaken a v1 guarantee to fit, so it is
+# opt-in rather than the assertion being widened to admit it: a plain
+# `docker compose up -d` still yields exactly the v1 services. The optionality is
+# structural, not documented -- profiled services are invisible to a plain
+# `docker compose config --services`, so the v1 test needed no edit at all.
 #
 # Usage:
-#   docker compose up -d       # start broker + console + graph db in the background
-#   docker compose ps          # check status
-#   docker compose down        # stop and remove containers
-#   docker compose down -v      # also wipe stored messages AND the graph (fresh start)
+#   docker compose up -d                    # v1 stack: broker + console
+#   docker compose --profile graph up -d    # ALSO start ArangoDB (Phase 8)
+#   docker compose ps                       # check status
+#   docker compose down                     # stop and remove containers
+#   docker compose down -v                  # also wipe stored messages AND the graph
+#
+# EVERY graph command needs `--profile graph`. Without it compose starts the v1
+# services and exits 0 having done nothing about ArangoDB -- no error, no
+# container, and then an empty graph. That silent-success shape is this project's
+# recurring failure mode, so the flag is in every command in GRAPH.md too.
 #
 # After it's up:
 #   Broker (for code):   localhost:9092
@@ -56,6 +72,13 @@ services:
       KAFKA_BROKERS: redpanda:29092
 
   arangodb:
+    # OPT-IN, AND THE PROFILE IS THE POINT -- see the header note above.
+    # `docker compose up -d` starts the v1 pipeline and nothing else;
+    # `docker compose --profile graph up -d` adds this. That keeps HRNS-01's
+    # guarantee -- nothing beyond the broker is REQUIRED to run the pipeline --
+    # structurally true rather than true-by-reinterpretation, which is why the
+    # v1 harness test that asserts it needed no edit to accommodate the graph.
+    profiles: ["graph"]
     image: arangodb/arangodb:3.12
     # A container name specific to THIS project. The Docker daemon on this
     # machine is shared: naming a container `arangodb` would collide with an
