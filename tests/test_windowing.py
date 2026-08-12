@@ -501,14 +501,20 @@ def test_the_topology_b_buckets_reproduce_the_oracles_numbers(recorded_path):
     for step in recorded_path:
         recorded = recorded[step]
 
+    # The boundary record states plays-per-listener rather than a play total, so
+    # the total is DERIVED from the oracle's own numbers. Still nothing typed.
+    expected_plays = recorded.get(
+        "total_plays", round(recorded["unique_listeners"] * recorded["plays_per_listener"])
+    )
+
     accumulator = stream_by_track()
     track = recorded["track_id"]
     start = recorded["window_start"]
 
     items = accumulator.bucket_items(track, start)
-    assert len(items) == recorded["total_plays"]
+    assert len(items) == expected_plays
     assert len({e.listener_id for e in items}) == recorded["unique_listeners"]
-    assert accumulator.rolling_count(track, as_of=start) == recorded["total_plays"]
+    assert accumulator.rolling_count(track, as_of=start) == expected_plays
 
     # The burst really is confined to that hour: its neighbours are empty.
     assert accumulator.bucket_items(track, hour_bucket(start) - HOUR) == ()

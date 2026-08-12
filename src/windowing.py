@@ -9,11 +9,13 @@ Four things a later reader needs, in the order they matter.
 1. EVERY WINDOW IS MEASURED ON `event_time`, AND NOTHING HERE READS THE SYSTEM
    CLOCK (WNDW-01, CD-7). Replay compresses three simulated days into a few
    seconds, so a wall-clock read does not raise -- it returns a confidently
-   wrong number. There is no call anywhere in this file to the current time in
-   any of its spellings, and `tests/test_windowing.py` proves it by parsing this
-   source and walking the tree, rather than by inspection. Timestamps arrive as
-   contract strings or as aware datetimes and are parsed only by
-   `contracts.play_event_v1.parse_event_time`.
+   wrong number. There is no `datetime.now()`, no `datetime.utcnow()`, no
+   `time.time()` and no `datetime.fromtimestamp()` anywhere in this file, and
+   `test_the_windowing_module_never_reads_the_system_clock` proves it by parsing
+   this source and walking the tree rather than by inspection -- naming those
+   spellings here is exactly why the check parses instead of grepping.
+   Timestamps arrive as contract strings or as aware datetimes and are parsed
+   only by `contracts.play_event_v1.parse_event_time`.
 
 2. BUCKETS ARE `event_time` TRUNCATED TO THE HOUR, AND A ROLLING N-HOUR COUNT IS
    THE SUM OF THE LAST N HOURLY BUCKETS ending at and including the as-of hour
@@ -25,14 +27,32 @@ Four things a later reader needs, in the order they matter.
    is the N buckets spanning `[end - (N-1)h, end + 1h)`. An event landing exactly
    on a far edge belongs to the next bucket, never to both. The choice matters
    because Phase 3's comparison is a strict `>` sitting exactly where a
-   one-bucket difference changes who gets accused.
+   one-bucket difference changes who gets accused. Pinned by
+   `test_the_hour_edge_is_half_open` and `test_the_window_edge_is_half_open`,
+   whose docstrings record the counts the closed convention would produce -- the
+   checked-in fixture has about twelve hours of margin and cannot discriminate.
 
 4. THIS IS NOT THE SLIDING MAXIMUM `tests/test_fixture_trips_rules.py::rule_a_score`
    COMPUTES. That helper anchors a window at each event's own timestamp and takes
-   the maximum; this module aligns windows to hour boundaries. The two agree on
-   every listener in the checked-in fixture and do NOT agree in general. WNDW-02
-   is the requirement -- the bucket sum is what makes the number inspectable --
-   so Phase 3 must use THIS one and must not assume the other.
+   the maximum; this module aligns windows to hour boundaries. WNDW-02 is the
+   requirement -- the bucket sum is what makes the number inspectable -- so
+   Phase 3 must use THIS one and must not assume the other. Evidence, one step
+   away in `tests/test_windowing.py`:
+   `test_bucket_sum_and_sliding_max_are_not_the_same_function` exhibits an input
+   where this module says 1 and the sliding maximum says 2, and
+   `test_bucket_sum_and_sliding_max_agree_on_every_fixture_listener` guards the
+   fact that they nonetheless agree across the whole checked-in fixture, so a
+   future fixture edit that breaks the agreement reports it there rather than as
+   a changed detection number in Phase 3.
+
+   THE DIVERGENCE IS ONE-DIRECTIONAL: bucket-sum <= sliding-max, always. Any run
+   of N buckets IS an N-hour span, and the sliding maximum maximises over ALL
+   N-hour spans, so this module can under-count relative to a true sliding window
+   and can never over-count. Phase 3 is therefore applying a strict `>` to a
+   conservative number: at the margin this module can withhold a flag, but it
+   cannot manufacture one. That is the right way round for a project whose stated
+   ethical failure is accusing an innocent artist, and it is worth saying out loud
+   rather than leaving as an accident.
 """
 
 from __future__ import annotations
@@ -41,7 +61,7 @@ import logging
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any, Iterator, Optional, Union
 
 # Same import bootstrap `src/config.py` uses, so this module resolves however it
 # is invoked and never depends on a conftest.py being present.
@@ -261,6 +281,35 @@ class RollingHourlyWindows:
         caller is shown can never drift apart (WNDW-02).
         """
         return sum(count for _, count in self.bucket_counts(key, as_of))
+
+    def bucket_items(self, key: str, hour_start: EventTime) -> tuple[Any, ...]:
+        """The items stored in one exact bucket, or an empty tuple.
+
+        `hour_start` is truncated through `hour_bucket`, so a caller passing a
+        real event time gets the bucket containing it rather than nothing.
+
+        This is what Phase 4 consumes: unique listeners, plays per listener and
+        band share are all computed from a bucket's MEMBERS, not from its count.
+        """
+        start = hour_bucket(hour_start)
+        return tuple(self._buckets.get(key, {}).get(start, ()))
+
+    def iter_buckets(self) -> Iterator[tuple[str, datetime, tuple[Any, ...]]]:
+        """Every non-empty bucket as (key, hour_start, items), by key then hour.
+
+        The ordering is required, not incidental: Phase 4 iterates buckets to
+        produce `track_review_queue.json` and PROF-02 asserts that two replays of
+        the same input produce an identical file.
+
+        Iterating is also the safe way for Consumer 2 to read a stream it has
+        already consumed in full -- see the class docstring on why the default
+        `as_of` is a trap for that access pattern.
+        """
+        for key in sorted(self._buckets):
+            for start in sorted(self._buckets[key]):
+                items = self._buckets[key][start]
+                if items:
+                    yield key, start, tuple(items)
 
 
 def topology_a_windows(thresholds: Thresholds) -> RollingHourlyWindows:
