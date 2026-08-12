@@ -1,0 +1,9 @@
+{
+  "comment": "Fixture-scale thresholds for the small checked-in fixture in tests/fixtures/. This is NOT the production configuration; see config/thresholds.json for that. Only the two volume thresholds shrink, because the mini cohorts are shrunk for readability while the shape of fraud is not: the window lengths, the plays-per-listener ratio and the band share stay at their CD-4/CD-5 values.",
+  "topology_a_window_hours": 24,
+  "topology_a_plays_over": 10,
+  "topology_b_window_hours": 1,
+  "topology_b_min_unique_listeners": 5,
+  "topology_b_max_plays_per_listener": 1.1,
+  "topology_b_min_band_share": 0.6
+}

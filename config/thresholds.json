@@ -1,0 +1,9 @@
+{
+  "comment": "Production detection thresholds for the full 45,473-event stream. Source: CONTRACT-DECISIONS.md section 4 (CD-4, Topology A) and section 5 (CD-5, Topology B). Retuning these is a config edit, never a code change (CTRT-04). topology_a_plays_over is a strict 'more than' comparison, per CD-4.",
+  "topology_a_window_hours": 24,
+  "topology_a_plays_over": 300,
+  "topology_b_window_hours": 1,
+  "topology_b_min_unique_listeners": 200,
+  "topology_b_max_plays_per_listener": 1.1,
+  "topology_b_min_band_share": 0.6
+}
