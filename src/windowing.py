@@ -37,6 +37,7 @@ Four things a later reader needs, in the order they matter.
 
 from __future__ import annotations
 
+import logging
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -52,6 +53,8 @@ from contracts.play_event_v1 import parse_event_time  # noqa: E402
 from src.config import Thresholds  # noqa: E402
 
 HOUR = timedelta(hours=1)
+
+_LOG = logging.getLogger(__name__)
 
 # What a caller may hand any function here: the contract's wire string, or an
 # aware datetime. Never a naive datetime -- see `_as_utc_instant`.
@@ -113,6 +116,34 @@ class RollingHourlyWindows:
 
     Construct one through `topology_a_windows` or `topology_b_windows` so the
     window size comes from configuration rather than from a literal.
+
+    THE WATERMARK IS ACCUMULATOR-WIDE, NOT PER KEY, and two consequences follow
+    that a caller would otherwise discover the hard way.
+
+    (1) `as_of` DEFAULTS TO THAT WATERMARK, SO A KEY THE STREAM HAS ALREADY MOVED
+        PAST READS 0. That is correct under rolling semantics, and it is right
+        for Consumer 1, which calls `add` per event and reads the return value at
+        the moment the event arrives. It is a trap for Consumer 2, which streams
+        everything and then asks about an hour in the past: after the fixture's
+        last event on 08-10, `rolling_count` for the Topology B track under the
+        default `as_of` returns 0 rather than 8. Not an exception -- a plausible
+        number, which is the failure mode this whole phase exists to eliminate.
+        **Phase 4 must pass an explicit `as_of`, or iterate with
+        `iter_buckets()`.**
+
+    (2) LATENESS IS JUDGED AGAINST THAT SAME SHARED WATERMARK, so an event on one
+        key can close another key's bucket. Under GATE-ORDERING's nondecreasing
+        global order that is correct -- a later timestamp on any key really does
+        mean the earlier hour is over -- but it is surprising if undocumented,
+        and it is why `late_dropped` is a property of the accumulator rather than
+        of a key.
+
+    RETENTION IS UNBOUNDED BY DECISION (threat T-02-06, accepted). Buckets are
+    kept for the life of the accumulator, so memory grows with the number of
+    distinct `(key, hour)` pairs. Across 45,473 events over three days that is a
+    small map and it is correct; an implementation that evicts closed buckets is
+    deliberately out of scope for this deadline. Recorded here so Phases 3 and 4
+    inherit the property as a stated decision rather than an unexamined default.
     """
 
     def __init__(self, window_hours: int) -> None:
@@ -124,28 +155,76 @@ class RollingHourlyWindows:
         # never create an empty entry that later has to be filtered back out.
         self._buckets: dict[str, dict[datetime, list[Any]]] = {}
         self._watermark: Optional[datetime] = None
+        self._late_dropped = 0
 
     @property
     def window_hours(self) -> int:
         """How many hourly buckets a rolling count sums over."""
         return self._window_hours
 
+    @property
+    def watermark(self) -> Optional[datetime]:
+        """The greatest event instant added so far, or None before the first add.
+
+        Accumulator-wide, not per key -- see the class docstring.
+        """
+        return self._watermark
+
+    @property
+    def late_dropped(self) -> int:
+        """How many events were refused for belonging to an already-closed hour.
+
+        Non-zero on a real run means the producer's nondecreasing-`event_time`
+        guarantee (GATE-ORDERING) has broken and the counts are not trustworthy.
+        Worth surfacing in a consumer's own logging rather than leaving in here.
+        """
+        return self._late_dropped
+
     def add(self, key: str, event_time: EventTime, item: Any = None) -> int:
         """Record one event under `key` and return that key's rolling count.
 
         INVARIANT: `add` returns the key's rolling count as of the watermark
-        hour, after the add. Always an int, never None.
+        hour, after the add. Always an int, never None -- on the late path too.
 
         `item` is how Phase 4 keeps the events themselves: Consumer 2 recomputes
         unique listeners, plays per listener and band share from a bucket's
         members, so it passes the event. Consumer 1 needs only a count and passes
         nothing. Counts are the bucket's length either way, so a caller that
         passes no item still gets correct numbers.
+
+        An event belonging to an hour the watermark has already passed is
+        dropped, counted in `late_dropped` and logged once. It is never buffered
+        and never re-sorted: WNDW-03 rests on the producer's nondecreasing-
+        `event_time` guarantee, so this path should never fire on real data. It
+        exists so that if the guarantee ever breaks, the project finds out from a
+        counter and a log line rather than from a quietly wrong count.
         """
         moment = _as_utc_instant(event_time)
         bucket = moment.replace(minute=0, second=0, microsecond=0)
+
+        # Lateness is judged at BUCKET granularity, not instant granularity: a
+        # bucket stays open until the watermark moves past it. Two events inside
+        # the same hour arriving in either order are therefore both legitimate,
+        # while an event belonging to an hour already passed is the late arrival
+        # WNDW-03 refuses to buffer.
+        if self._watermark is not None and bucket < hour_bucket(self._watermark):
+            self._late_dropped += 1
+            _LOG.warning(
+                "late event dropped (not counted, not buffered): key=%s "
+                "event_time=%s watermark=%s",
+                key,
+                moment.isoformat(),
+                self._watermark.isoformat(),
+            )
+            return self.rolling_count(key)
+
         self._buckets.setdefault(key, {}).setdefault(bucket, []).append(item)
-        self._watermark = moment
+        # `max` rather than assignment: an earlier event inside the still-open
+        # hour must not walk the watermark backwards and retroactively make the
+        # next arrival look late.
+        self._watermark = (
+            moment if self._watermark is None else max(self._watermark, moment)
+        )
         return self.rolling_count(key)
 
     def bucket_counts(
