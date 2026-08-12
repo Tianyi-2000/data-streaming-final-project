@@ -1,0 +1,3507 @@
+{
+  "source": "musicbrainz",
+  "artist_count": 57,
+  "track_count": 500,
+  "tracks": [
+    {
+      "track_id": "348c6808-3b8b-48f2-a660-36d0a03ec27c",
+      "title": "(Banter)",
+      "track_duration_seconds": 50,
+      "artist_id": "a74b1b7f-71a5-4011-9441-d0b5e4122711",
+      "artist_name": "Radiohead"
+    },
+    {
+      "track_id": "eb794da1-0fae-42dd-85f5-0fb991cab6cc",
+      "title": "(Credits)",
+      "track_duration_seconds": 84,
+      "artist_id": "a74b1b7f-71a5-4011-9441-d0b5e4122711",
+      "artist_name": "Radiohead"
+    },
+    {
+      "track_id": "378ca741-bb01-4468-be61-a392a9cbbbe5",
+      "title": "(Encore #2)",
+      "track_duration_seconds": 134,
+      "artist_id": "a74b1b7f-71a5-4011-9441-d0b5e4122711",
+      "artist_name": "Radiohead"
+    },
+    {
+      "track_id": "073f79ac-c114-46a2-8188-5d75728434f3",
+      "title": "(Encore)",
+      "track_duration_seconds": 221,
+      "artist_id": "a74b1b7f-71a5-4011-9441-d0b5e4122711",
+      "artist_name": "Radiohead"
+    },
+    {
+      "track_id": "ed3e42fa-68d8-44cf-8edd-02612f866996",
+      "title": "(Interview #1)",
+      "track_duration_seconds": 267,
+      "artist_id": "a74b1b7f-71a5-4011-9441-d0b5e4122711",
+      "artist_name": "Radiohead"
+    },
+    {
+      "track_id": "4e2ac8db-8744-4863-a1cd-1d6e9ecac7d7",
+      "title": "(Interview #2)",
+      "track_duration_seconds": 141,
+      "artist_id": "a74b1b7f-71a5-4011-9441-d0b5e4122711",
+      "artist_name": "Radiohead"
+    },
+    {
+      "track_id": "4222ec8b-16b1-4afd-ad81-3efaf25c74b5",
+      "title": "(Interview #3)",
+      "track_duration_seconds": 253,
+      "artist_id": "a74b1b7f-71a5-4011-9441-d0b5e4122711",
+      "artist_name": "Radiohead"
+    },
+    {
+      "track_id": "135fc38b-4410-4a75-a82b-a3331536b4e4",
+      "title": "(Intro)",
+      "track_duration_seconds": 205,
+      "artist_id": "a74b1b7f-71a5-4011-9441-d0b5e4122711",
+      "artist_name": "Radiohead"
+    },
+    {
+      "track_id": "d23f8d4e-8df1-4569-99a7-c5efabdca3e0",
+      "title": "(Jonny teases w‐a few bars of Let Down)",
+      "track_duration_seconds": 16,
+      "artist_id": "a74b1b7f-71a5-4011-9441-d0b5e4122711",
+      "artist_name": "Radiohead"
+    },
+    {
+      "track_id": "caafd9c1-c862-4829-873a-eb10d9f7b97f",
+      "title": "1989 Era (intro) (live From the Eras Tour the Final Show)",
+      "track_duration_seconds": 75,
+      "artist_id": "20244d07-534f-4eff-b4d4-930878889970",
+      "artist_name": "Taylor Swift"
+    },
+    {
+      "track_id": "a6ba19c2-bf21-4389-8ced-bf90ec397c4e",
+      "title": "2009 Affiliate",
+      "track_duration_seconds": 180,
+      "artist_id": "20244d07-534f-4eff-b4d4-930878889970",
+      "artist_name": "Taylor Swift"
+    },
+    {
+      "track_id": "0e66bddf-29f2-4e0e-a974-deb19eb37d27",
+      "title": "22",
+      "track_duration_seconds": 260,
+      "artist_id": "20244d07-534f-4eff-b4d4-930878889970",
+      "artist_name": "Taylor Swift"
+    },
+    {
+      "track_id": "b3cf9022-0bc7-4ca3-8c11-4ebb8e4e2088",
+      "title": "22 (DJ Mike D remix)",
+      "track_duration_seconds": 204,
+      "artist_id": "20244d07-534f-4eff-b4d4-930878889970",
+      "artist_name": "Taylor Swift"
+    },
+    {
+      "track_id": "ea33489d-3534-404b-a9c9-78fd2adf2684",
+      "title": "22 (Meth Dad Stay Magical remix)",
+      "track_duration_seconds": 204,
+      "artist_id": "20244d07-534f-4eff-b4d4-930878889970",
+      "artist_name": "Taylor Swift"
+    },
+    {
+      "track_id": "1dec8a7e-3904-45fe-855c-6d7d8aefa29a",
+      "title": "22 (Taylor’s version)",
+      "track_duration_seconds": 231,
+      "artist_id": "20244d07-534f-4eff-b4d4-930878889970",
+      "artist_name": "Taylor Swift"
+    },
+    {
+      "track_id": "44153110-c1dc-4fd1-bd4c-6feca0321143",
+      "title": "22 (Taylor’s version) (lyric video)",
+      "track_duration_seconds": 231,
+      "artist_id": "20244d07-534f-4eff-b4d4-930878889970",
+      "artist_name": "Taylor Swift"
+    },
+    {
+      "track_id": "19d11377-fb88-4490-bef2-45a57e605fa7",
+      "title": "22 (commentary)",
+      "track_duration_seconds": 63,
+      "artist_id": "20244d07-534f-4eff-b4d4-930878889970",
+      "artist_name": "Taylor Swift"
+    },
+    {
+      "track_id": "267b2b2e-a9ce-42e4-ad8a-1033f6f5bd66",
+      "title": "22 (live From the Eras Tour the Final Show)",
+      "track_duration_seconds": 226,
+      "artist_id": "20244d07-534f-4eff-b4d4-930878889970",
+      "artist_name": "Taylor Swift"
+    },
+    {
+      "track_id": "217025c9-1eaa-4831-b29e-9e113067cc7b",
+      "title": "'03 Bonnie & Clyde",
+      "track_duration_seconds": 132,
+      "artist_id": "859d0860-d480-4efd-970c-c05d5f1776b8",
+      "artist_name": "Beyoncé"
+    },
+    {
+      "track_id": "0e935159-eac0-4f53-9951-7f9223397636",
+      "title": "'03 Bonnie & Clyde (instrumental)",
+      "track_duration_seconds": 207,
+      "artist_id": "859d0860-d480-4efd-970c-c05d5f1776b8",
+      "artist_name": "Beyoncé"
+    },
+    {
+      "track_id": "3799616a-7011-46e9-816e-fc7969456f67",
+      "title": "'03 Bonnie & Clyde (radio edit)",
+      "track_duration_seconds": 207,
+      "artist_id": "859d0860-d480-4efd-970c-c05d5f1776b8",
+      "artist_name": "Beyoncé"
+    },
+    {
+      "track_id": "ff935ab0-1915-4491-85c7-e43af268dfbd",
+      "title": "'03 Bonnie & Clyde / Daddy",
+      "track_duration_seconds": 517,
+      "artist_id": "859d0860-d480-4efd-970c-c05d5f1776b8",
+      "artist_name": "Beyoncé"
+    },
+    {
+      "track_id": "2541dab1-8e47-4bdc-9aec-560ef2a1c472",
+      "title": "(Got Me Lookin' So) Crazy in Love",
+      "track_duration_seconds": 237,
+      "artist_id": "859d0860-d480-4efd-970c-c05d5f1776b8",
+      "artist_name": "Beyoncé"
+    },
+    {
+      "track_id": "10a6da62-e17c-4993-acfa-6276577c5a31",
+      "title": "***Flawless",
+      "track_duration_seconds": 251,
+      "artist_id": "859d0860-d480-4efd-970c-c05d5f1776b8",
+      "artist_name": "Beyoncé"
+    },
+    {
+      "track_id": "35d9e8cf-c1fc-4f88-837e-83ece837f33f",
+      "title": ". Beyoncé - Countdown",
+      "track_duration_seconds": 212,
+      "artist_id": "859d0860-d480-4efd-970c-c05d5f1776b8",
+      "artist_name": "Beyoncé"
+    },
+    {
+      "track_id": "037441d3-f1dc-496e-aff9-a7b402fb2df4",
+      "title": "03 Bonnie & Clyde",
+      "track_duration_seconds": 179,
+      "artist_id": "859d0860-d480-4efd-970c-c05d5f1776b8",
+      "artist_name": "Beyoncé"
+    },
+    {
+      "track_id": "498e4a87-c135-4f53-9167-e58d9c9fb436",
+      "title": "1+1",
+      "track_duration_seconds": 269,
+      "artist_id": "859d0860-d480-4efd-970c-c05d5f1776b8",
+      "artist_name": "Beyoncé"
+    },
+    {
+      "track_id": "152bb63f-a5ce-4c40-a5f5-28f9cd0d52e3",
+      "title": "0 to 100",
+      "track_duration_seconds": 166,
+      "artist_id": "9fff2f8a-21e6-47de-a2b8-7f449929d43f",
+      "artist_name": "Drake"
+    },
+    {
+      "track_id": "75420660-e026-4d34-9506-d62b559b0969",
+      "title": "0 to 100 (Grandtheft Bootleg)",
+      "track_duration_seconds": 216,
+      "artist_id": "9fff2f8a-21e6-47de-a2b8-7f449929d43f",
+      "artist_name": "Drake"
+    },
+    {
+      "track_id": "e6c2677a-5f9d-4693-b8a1-0a9274252d89",
+      "title": "0 to 100 (The Catch Up remix)",
+      "track_duration_seconds": 252,
+      "artist_id": "9fff2f8a-21e6-47de-a2b8-7f449929d43f",
+      "artist_name": "Drake"
+    },
+    {
+      "track_id": "985940bd-d59a-4b69-9d25-f8f0a6e69ddc",
+      "title": "0 to 100 / Catch Up",
+      "track_duration_seconds": 369,
+      "artist_id": "9fff2f8a-21e6-47de-a2b8-7f449929d43f",
+      "artist_name": "Drake"
+    },
+    {
+      "track_id": "de6318d5-263e-4627-804b-648ac61a5566",
+      "title": "0 to 100 / The Catch Up",
+      "track_duration_seconds": 275,
+      "artist_id": "9fff2f8a-21e6-47de-a2b8-7f449929d43f",
+      "artist_name": "Drake"
+    },
+    {
+      "track_id": "4d83f91a-11a9-48c6-8a6c-efe8048b1611",
+      "title": "0 to 100 / The Catch Up (Clean)",
+      "track_duration_seconds": 275,
+      "artist_id": "9fff2f8a-21e6-47de-a2b8-7f449929d43f",
+      "artist_name": "Drake"
+    },
+    {
+      "track_id": "d8d7a5e5-4a62-4fea-96f0-78d5f57ca302",
+      "title": "0to100",
+      "track_duration_seconds": 162,
+      "artist_id": "9fff2f8a-21e6-47de-a2b8-7f449929d43f",
+      "artist_name": "Drake"
+    },
+    {
+      "track_id": "b61b1445-20c5-4df4-916d-dcc052166f7b",
+      "title": "1 AM IN ALBANY",
+      "track_duration_seconds": 260,
+      "artist_id": "9fff2f8a-21e6-47de-a2b8-7f449929d43f",
+      "artist_name": "Drake"
+    },
+    {
+      "track_id": "562e58b4-fd25-4568-8a43-48c902d3fe6c",
+      "title": "10 Bands",
+      "track_duration_seconds": 178,
+      "artist_id": "9fff2f8a-21e6-47de-a2b8-7f449929d43f",
+      "artist_name": "Drake"
+    },
+    {
+      "track_id": "b2c23109-b45e-4c67-a908-7337559ae9e5",
+      "title": "1 Train",
+      "track_duration_seconds": 357,
+      "artist_id": "381086ea-f511-4aba-bdf9-71c753dc5077",
+      "artist_name": "Kendrick Lamar"
+    },
+    {
+      "track_id": "d395064c-3f50-4d8a-9472-85fd0cbd72da",
+      "title": "100",
+      "track_duration_seconds": 104,
+      "artist_id": "381086ea-f511-4aba-bdf9-71c753dc5077",
+      "artist_name": "Kendrick Lamar"
+    },
+    {
+      "track_id": "3b6c8a5e-3a2a-45a8-87a2-999977c84766",
+      "title": "100 Favors",
+      "track_duration_seconds": 248,
+      "artist_id": "381086ea-f511-4aba-bdf9-71c753dc5077",
+      "artist_name": "Kendrick Lamar"
+    },
+    {
+      "track_id": "f754471e-20fa-4e7e-a786-5d7a434e5cf7",
+      "title": "100 Flavors",
+      "track_duration_seconds": 248,
+      "artist_id": "381086ea-f511-4aba-bdf9-71c753dc5077",
+      "artist_name": "Kendrick Lamar"
+    },
+    {
+      "track_id": "904f8904-40ae-4d68-a2de-6ff77299aea7",
+      "title": "21",
+      "track_duration_seconds": 187,
+      "artist_id": "381086ea-f511-4aba-bdf9-71c753dc5077",
+      "artist_name": "Kendrick Lamar"
+    },
+    {
+      "track_id": "11738cf0-9e17-4f8d-a5f8-21e724f0a771",
+      "title": "2Nite",
+      "track_duration_seconds": 249,
+      "artist_id": "381086ea-f511-4aba-bdf9-71c753dc5077",
+      "artist_name": "Kendrick Lamar"
+    },
+    {
+      "track_id": "3e0f492e-9c92-4440-a089-7e13a1fe4040",
+      "title": "3 Minutes of Watts",
+      "track_duration_seconds": 180,
+      "artist_id": "381086ea-f511-4aba-bdf9-71c753dc5077",
+      "artist_name": "Kendrick Lamar"
+    },
+    {
+      "track_id": "6bba7497-d321-414c-b7d1-5c7f49dbeac1",
+      "title": "30 For 30",
+      "track_duration_seconds": 220,
+      "artist_id": "381086ea-f511-4aba-bdf9-71c753dc5077",
+      "artist_name": "Kendrick Lamar"
+    },
+    {
+      "track_id": "9e7d6889-5641-4b82-9ddb-e07e68da89bd",
+      "title": "67 Freestyle",
+      "track_duration_seconds": 251,
+      "artist_id": "381086ea-f511-4aba-bdf9-71c753dc5077",
+      "artist_name": "Kendrick Lamar"
+    },
+    {
+      "track_id": "079e6137-8638-4098-b754-756a805b02dc",
+      "title": "<Chat On The Stage>",
+      "track_duration_seconds": 289,
+      "artist_id": "cc2c9c3c-b7bc-4b8b-84d8-4fbd8779e493",
+      "artist_name": "Adele"
+    },
+    {
+      "track_id": "4d7d68cb-1ce7-40f8-be0c-6771a93b7ec1",
+      "title": "A Track by Track Interview",
+      "track_duration_seconds": 875,
+      "artist_id": "cc2c9c3c-b7bc-4b8b-84d8-4fbd8779e493",
+      "artist_name": "Adele"
+    },
+    {
+      "track_id": "1286d300-2f52-4643-becc-af09993611bc",
+      "title": "All I Ask",
+      "track_duration_seconds": 279,
+      "artist_id": "cc2c9c3c-b7bc-4b8b-84d8-4fbd8779e493",
+      "artist_name": "Adele"
+    },
+    {
+      "track_id": "d8b4372a-6726-4922-b314-3f85ec0c1908",
+      "title": "All Night Parking (interlude)",
+      "track_duration_seconds": 161,
+      "artist_id": "cc2c9c3c-b7bc-4b8b-84d8-4fbd8779e493",
+      "artist_name": "Adele"
+    },
+    {
+      "track_id": "41db2e27-484c-409e-be4d-98f751df47a2",
+      "title": "Avicii vs. Adele - Nothing Without Adele (Avicii Rolling Bootleg) (UMF 2011)",
+      "track_duration_seconds": 198,
+      "artist_id": "cc2c9c3c-b7bc-4b8b-84d8-4fbd8779e493",
+      "artist_name": "Adele"
+    },
+    {
+      "track_id": "7502dd98-a7e6-41d0-90d1-16aa885f8fdb",
+      "title": "Best for Last",
+      "track_duration_seconds": 259,
+      "artist_id": "cc2c9c3c-b7bc-4b8b-84d8-4fbd8779e493",
+      "artist_name": "Adele"
+    },
+    {
+      "track_id": "d668dd40-adb6-4c10-9edf-1f5a4dcef1ce",
+      "title": "Black & Gold",
+      "track_duration_seconds": 187,
+      "artist_id": "cc2c9c3c-b7bc-4b8b-84d8-4fbd8779e493",
+      "artist_name": "Adele"
+    },
+    {
+      "track_id": "e827159e-a8f9-4642-b9f3-dc1664d1275b",
+      "title": "Can I Get It",
+      "track_duration_seconds": 210,
+      "artist_id": "cc2c9c3c-b7bc-4b8b-84d8-4fbd8779e493",
+      "artist_name": "Adele"
+    },
+    {
+      "track_id": "e9e39be7-e52b-4967-b32b-b6e1b27557fa",
+      "title": "Can’t Be Together",
+      "track_duration_seconds": 258,
+      "artist_id": "cc2c9c3c-b7bc-4b8b-84d8-4fbd8779e493",
+      "artist_name": "Adele"
+    },
+    {
+      "track_id": "f7b56849-2118-41af-8f6b-8e364f21f0c3",
+      "title": "'Til Kingdom Come / Ring of Fire",
+      "track_duration_seconds": 373,
+      "artist_id": "cc197bad-dc9c-440d-a5b5-d52ba2e14234",
+      "artist_name": "Coldplay"
+    },
+    {
+      "track_id": "3b8dd486-cb51-4c9b-9c83-9d6e4f25144a",
+      "title": "'til Kingdom Come",
+      "track_duration_seconds": 264,
+      "artist_id": "cc197bad-dc9c-440d-a5b5-d52ba2e14234",
+      "artist_name": "Coldplay"
+    },
+    {
+      "track_id": "1ffa8be4-2ae7-4aaa-89be-ef091a449335",
+      "title": "'til Kingdom Come (acoustic)",
+      "track_duration_seconds": 341,
+      "artist_id": "cc197bad-dc9c-440d-a5b5-d52ba2e14234",
+      "artist_name": "Coldplay"
+    },
+    {
+      "track_id": "4385f49f-46b4-42c3-a0a0-054f2b426880",
+      "title": "(Chris chat #2)",
+      "track_duration_seconds": 123,
+      "artist_id": "cc197bad-dc9c-440d-a5b5-d52ba2e14234",
+      "artist_name": "Coldplay"
+    },
+    {
+      "track_id": "a9767df3-2380-47f8-9f39-57f680332e4f",
+      "title": "(encore break)",
+      "track_duration_seconds": 66,
+      "artist_id": "cc197bad-dc9c-440d-a5b5-d52ba2e14234",
+      "artist_name": "Coldplay"
+    },
+    {
+      "track_id": "3a4babe0-ef77-4c91-b95b-202dae0efa83",
+      "title": "(intro)",
+      "track_duration_seconds": 103,
+      "artist_id": "cc197bad-dc9c-440d-a5b5-d52ba2e14234",
+      "artist_name": "Coldplay"
+    },
+    {
+      "track_id": "2460c916-7f60-4aca-8da5-10bb0fcd1a57",
+      "title": "(outro)",
+      "track_duration_seconds": 60,
+      "artist_id": "cc197bad-dc9c-440d-a5b5-d52ba2e14234",
+      "artist_name": "Coldplay"
+    },
+    {
+      "track_id": "022275be-5273-476e-b556-b3a1de4bded7",
+      "title": "1.36",
+      "track_duration_seconds": 126,
+      "artist_id": "cc197bad-dc9c-440d-a5b5-d52ba2e14234",
+      "artist_name": "Coldplay"
+    },
+    {
+      "track_id": "0bea59a4-1cc5-402b-b098-c7253c3ac44b",
+      "title": "2000 Miles",
+      "track_duration_seconds": 221,
+      "artist_id": "cc197bad-dc9c-440d-a5b5-d52ba2e14234",
+      "artist_name": "Coldplay"
+    },
+    {
+      "track_id": "b45a554b-8a63-43c5-b26e-187aa3e15d50",
+      "title": "\" The Grid\" Tron Remix",
+      "track_duration_seconds": 95,
+      "artist_id": "056e4f3e-d505-4dad-8ec1-d04f521cbb56",
+      "artist_name": "Daft Punk"
+    },
+    {
+      "track_id": "0fd30808-8881-447c-a845-a4c5e81d5d51",
+      "title": "(Jingle)",
+      "track_duration_seconds": 7,
+      "artist_id": "056e4f3e-d505-4dad-8ec1-d04f521cbb56",
+      "artist_name": "Daft Punk"
+    },
+    {
+      "track_id": "21ad70d5-f123-4546-9cf9-0a672500d185",
+      "title": "1 more dime (fvlcrvm rwrk)",
+      "track_duration_seconds": 300,
+      "artist_id": "056e4f3e-d505-4dad-8ec1-d04f521cbb56",
+      "artist_name": "Daft Punk"
+    },
+    {
+      "track_id": "5acdf7ac-2152-47c8-a167-981bf51d1574",
+      "title": "10 Minutes of Funk",
+      "track_duration_seconds": 476,
+      "artist_id": "056e4f3e-d505-4dad-8ec1-d04f521cbb56",
+      "artist_name": "Daft Punk"
+    },
+    {
+      "track_id": "cfea43a0-be5c-4057-93cb-ccf6f4081a56",
+      "title": "10m48 Short End Credits (Finale – RS version)",
+      "track_duration_seconds": 121,
+      "artist_id": "056e4f3e-d505-4dad-8ec1-d04f521cbb56",
+      "artist_name": "Daft Punk"
+    },
+    {
+      "track_id": "370df5fd-1bb3-449c-b82c-ebae9092eefd",
+      "title": "19-2000 Funk",
+      "track_duration_seconds": 210,
+      "artist_id": "056e4f3e-d505-4dad-8ec1-d04f521cbb56",
+      "artist_name": "Daft Punk"
+    },
+    {
+      "track_id": "a732b9ff-b0fb-47fb-abc7-48006d4b89cc",
+      "title": "1995-08-05: Soirée Prophecy, Le Cannet, France part 1",
+      "track_duration_seconds": 1587,
+      "artist_id": "056e4f3e-d505-4dad-8ec1-d04f521cbb56",
+      "artist_name": "Daft Punk"
+    },
+    {
+      "track_id": "3a7af5d3-707b-47c0-842a-e6a69bc6020b",
+      "title": "1995-08-05: Soirée Prophecy, Le Cannet, France part 2",
+      "track_duration_seconds": 508,
+      "artist_id": "056e4f3e-d505-4dad-8ec1-d04f521cbb56",
+      "artist_name": "Daft Punk"
+    },
+    {
+      "track_id": "082eba13-c5bb-4685-992a-e81b9d5a6030",
+      "title": "1995-11-04: Planet Rose, Nijmegen, Netherlands",
+      "track_duration_seconds": 2482,
+      "artist_id": "056e4f3e-d505-4dad-8ec1-d04f521cbb56",
+      "artist_name": "Daft Punk"
+    },
+    {
+      "track_id": "347810c8-7ddc-4beb-952f-9ed93b343515",
+      "title": "! Kcab Teg",
+      "track_duration_seconds": 34,
+      "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+      "artist_name": "The Beatles"
+    },
+    {
+      "track_id": "150674c1-c310-4519-ad3f-d418d1bae43f",
+      "title": "''Another Beatles Christmas Record'' (Beatles 1964-10-26 Abbey Road, Fan Club R",
+      "track_duration_seconds": 241,
+      "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+      "artist_name": "The Beatles"
+    },
+    {
+      "track_id": "1a9a69b3-695d-4c04-a1f9-6333b484a389",
+      "title": "''Audience Interuption 1'' (Beatles 1964-08-22 Empire Stadium, Vancouver, Canad",
+      "track_duration_seconds": 65,
+      "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+      "artist_name": "The Beatles"
+    },
+    {
+      "track_id": "f1f4dd2c-588f-4c0d-a115-348a9610ef7c",
+      "title": "''Audience Interuption 1'' (CKNW Broadcast) (Beatles 1964-08-22 Empire Stadium,",
+      "track_duration_seconds": 61,
+      "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+      "artist_name": "The Beatles"
+    },
+    {
+      "track_id": "815be787-09ea-4619-a4e5-e65821460917",
+      "title": "''Audience Interuption 2'' (Beatles 1964-08-22 Empire Stadium, Vancouver, Canad",
+      "track_duration_seconds": 31,
+      "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+      "artist_name": "The Beatles"
+    },
+    {
+      "track_id": "48018d1c-71e5-4ac4-a53d-fd92409a79c0",
+      "title": "''Christmas Message'' (Beatles 1964-10-26 Abbey Road, Unused)",
+      "track_duration_seconds": 206,
+      "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+      "artist_name": "The Beatles"
+    },
+    {
+      "track_id": "ce7a4af4-9b2f-4eed-a627-015317cf9bc4",
+      "title": "''Fab Four On Film'' (Beatles 1964-07-00 Promo Disc for ''Hard Day's Night'')",
+      "track_duration_seconds": 390,
+      "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+      "artist_name": "The Beatles"
+    },
+    {
+      "track_id": "44cdbae1-d3bb-4a6b-a364-ee6e3f0a12d2",
+      "title": "''Grandstand'' (Beatles 1964-02-22 Heathrow Airport, London, UK TV)",
+      "track_duration_seconds": 146,
+      "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+      "artist_name": "The Beatles"
+    },
+    {
+      "track_id": "af7c3fec-941b-452f-95a1-7c8752c1ba5b",
+      "title": "''Hard Day's Night'' NYC News (Beatles 1964-07-22 New York City)",
+      "track_duration_seconds": 66,
+      "artist_id": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
+      "artist_name": "The Beatles"
+    },
+    {
+      "track_id": "c7dcd46a-d698-40c1-8071-2f2c2cfdea78",
+      "title": "'Applause' (1970-07-16)",
+      "track_duration_seconds": 94,
+      "artist_id": "83d91898-7763-47d7-b03b-b92132375c47",
+      "artist_name": "Pink Floyd"
+    },
+    {
+      "track_id": "5d52ab64-e952-416c-a268-5e74f64b138b",
+      "title": "'Applause' (mono) (1971-09-30)",
+      "track_duration_seconds": 52,
+      "artist_id": "83d91898-7763-47d7-b03b-b92132375c47",
+      "artist_name": "Pink Floyd"
+    },
+    {
+      "track_id": "e2c1ae11-6ab6-484b-ae75-bf3b290c12f3",
+      "title": "'Applause' (stereo) (1971-09-30)",
+      "track_duration_seconds": 11,
+      "artist_id": "83d91898-7763-47d7-b03b-b92132375c47",
+      "artist_name": "Pink Floyd"
+    },
+    {
+      "track_id": "dbca0e4e-3511-4f99-af10-d7b888f69918",
+      "title": "'House Announcement'",
+      "track_duration_seconds": 78,
+      "artist_id": "83d91898-7763-47d7-b03b-b92132375c47",
+      "artist_name": "Pink Floyd"
+    },
+    {
+      "track_id": "675596b0-f835-485f-b7d0-ebb8b8b44748",
+      "title": "(John Peel intro)",
+      "track_duration_seconds": 42,
+      "artist_id": "83d91898-7763-47d7-b03b-b92132375c47",
+      "artist_name": "Pink Floyd"
+    },
+    {
+      "track_id": "31233bab-da58-484c-beff-47fdc081ca87",
+      "title": "(John Peel)",
+      "track_duration_seconds": 38,
+      "artist_id": "83d91898-7763-47d7-b03b-b92132375c47",
+      "artist_name": "Pink Floyd"
+    },
+    {
+      "track_id": "db3a8c0d-ae58-4ea7-92de-75cc64997210",
+      "title": "(John Peel) 1",
+      "track_duration_seconds": 27,
+      "artist_id": "83d91898-7763-47d7-b03b-b92132375c47",
+      "artist_name": "Pink Floyd"
+    },
+    {
+      "track_id": "479d57e7-f5de-4ea3-bce4-e4a4b7c31299",
+      "title": "(John Peel) 2",
+      "track_duration_seconds": 23,
+      "artist_id": "83d91898-7763-47d7-b03b-b92132375c47",
+      "artist_name": "Pink Floyd"
+    },
+    {
+      "track_id": "5bd83562-7ea6-45bc-82b5-ca48057ffc41",
+      "title": "(Tuneup)",
+      "track_duration_seconds": 198,
+      "artist_id": "83d91898-7763-47d7-b03b-b92132375c47",
+      "artist_name": "Pink Floyd"
+    },
+    {
+      "track_id": "631fd33a-c29a-4934-84bb-f12e874b8f17",
+      "title": "(New Wave) Polly",
+      "track_duration_seconds": 108,
+      "artist_id": "5b11f4ce-a62d-471e-81fc-a69a8278c7da",
+      "artist_name": "Nirvana"
+    },
+    {
+      "track_id": "0b3b9366-e4be-45a6-8346-49f17aa79947",
+      "title": "[bass solo]",
+      "track_duration_seconds": 150,
+      "artist_id": "5b11f4ce-a62d-471e-81fc-a69a8278c7da",
+      "artist_name": "Nirvana"
+    },
+    {
+      "track_id": "0f87b8ee-42c9-4d97-a22e-f2d4d18df708",
+      "title": "[demolition]",
+      "track_duration_seconds": 276,
+      "artist_id": "5b11f4ce-a62d-471e-81fc-a69a8278c7da",
+      "artist_name": "Nirvana"
+    },
+    {
+      "track_id": "1b7f77a2-1ccc-40e8-b733-d1bf2e55dfb9",
+      "title": "[encore break]",
+      "track_duration_seconds": 229,
+      "artist_id": "5b11f4ce-a62d-471e-81fc-a69a8278c7da",
+      "artist_name": "Nirvana"
+    },
+    {
+      "track_id": "e74b5b1c-9ec4-424a-b516-3e272c9a1a86",
+      "title": "[encore break] / We Will Rock You",
+      "track_duration_seconds": 88,
+      "artist_id": "5b11f4ce-a62d-471e-81fc-a69a8278c7da",
+      "artist_name": "Nirvana"
+    },
+    {
+      "track_id": "13e9dfa6-8355-4cf8-acd6-7401a8b68609",
+      "title": "[end jam]",
+      "track_duration_seconds": 1038,
+      "artist_id": "5b11f4ce-a62d-471e-81fc-a69a8278c7da",
+      "artist_name": "Nirvana"
+    },
+    {
+      "track_id": "d8c31c3d-2e07-4f43-9b82-d918acca1522",
+      "title": "[end of the show]",
+      "track_duration_seconds": 381,
+      "artist_id": "5b11f4ce-a62d-471e-81fc-a69a8278c7da",
+      "artist_name": "Nirvana"
+    },
+    {
+      "track_id": "d1041502-0ab4-4610-9e1c-f72ffb582785",
+      "title": "[interview, part 1]",
+      "track_duration_seconds": 1062,
+      "artist_id": "5b11f4ce-a62d-471e-81fc-a69a8278c7da",
+      "artist_name": "Nirvana"
+    },
+    {
+      "track_id": "5255525b-57f7-4188-9bc9-e1e46495532b",
+      "title": "[interview, part 2]",
+      "track_duration_seconds": 1094,
+      "artist_id": "5b11f4ce-a62d-471e-81fc-a69a8278c7da",
+      "artist_name": "Nirvana"
+    },
+    {
+      "track_id": "d88a18b4-0e24-4a3c-889d-0d729f231f4a",
+      "title": "(Heart-Ache) Too Much Love Will Kill You",
+      "track_duration_seconds": 279,
+      "artist_id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
+      "artist_name": "Queen"
+    },
+    {
+      "track_id": "953b509d-67fb-49c0-90a2-f0a911854592",
+      "title": "(You're So Square) Baby I Don't Care",
+      "track_duration_seconds": 85,
+      "artist_id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
+      "artist_name": "Queen"
+    },
+    {
+      "track_id": "1db0df16-5a95-4d12-98fd-a8e6393332c0",
+      "title": "(You’re So Square) Baby I Don’t Care",
+      "track_duration_seconds": 85,
+      "artist_id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
+      "artist_name": "Queen"
+    },
+    {
+      "track_id": "23e82ad9-4c24-4c10-ab01-94f67df445c7",
+      "title": "(You’re So Square) Baby I Don’t Care (live in Mannheim, Germany, June 1986)",
+      "track_duration_seconds": 87,
+      "artist_id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
+      "artist_name": "Queen"
+    },
+    {
+      "track_id": "f209f95c-25a6-41ee-86d6-995abf1eb8ee",
+      "title": "(You’re So Square) Baby, I Don’t Care",
+      "track_duration_seconds": 84,
+      "artist_id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
+      "artist_name": "Queen"
+    },
+    {
+      "track_id": "ab0c5d37-ee99-4cc5-a9b6-13556cf08f72",
+      "title": "[A Night at the Opera] / Bohemian Rhapsody (intro)",
+      "track_duration_seconds": 174,
+      "artist_id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
+      "artist_name": "Queen"
+    },
+    {
+      "track_id": "f04c04ed-2bb3-4b99-8fb3-6f9a74c9b664",
+      "title": "[Brian May’s guitar solo]",
+      "track_duration_seconds": 193,
+      "artist_id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
+      "artist_name": "Queen"
+    },
+    {
+      "track_id": "02d8dacd-23a3-44a0-bf6a-55165c3c41bb",
+      "title": "[Freddie and the audience]",
+      "track_duration_seconds": 41,
+      "artist_id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
+      "artist_name": "Queen"
+    },
+    {
+      "track_id": "2ec1e4ef-6879-4daa-9a84-32eb7262ce94",
+      "title": "[Roger Taylor’s tympani solo]",
+      "track_duration_seconds": 124,
+      "artist_id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
+      "artist_name": "Queen"
+    },
+    {
+      "track_id": "ac02cd5d-af11-42d7-b776-d15698c36cad",
+      "title": "(Be Not) Always",
+      "track_duration_seconds": 337,
+      "artist_id": "f27ec8db-af05-4f36-916e-3d57f91ecf5e",
+      "artist_name": "Michael Jackson"
+    },
+    {
+      "track_id": "f4916d64-111a-426a-a6d6-b558f3ea3cd5",
+      "title": "(I Can’t Make It) Another Day",
+      "track_duration_seconds": 235,
+      "artist_id": "f27ec8db-af05-4f36-916e-3d57f91ecf5e",
+      "artist_name": "Michael Jackson"
+    },
+    {
+      "track_id": "63a8fe1a-9031-44f9-a5d3-68bea0156a9f",
+      "title": "(I Like) The Way You Love Me",
+      "track_duration_seconds": 274,
+      "artist_id": "f27ec8db-af05-4f36-916e-3d57f91ecf5e",
+      "artist_name": "Michael Jackson"
+    },
+    {
+      "track_id": "56a7456c-9218-4862-843d-dfc522132cc7",
+      "title": "(Keep It) In the Closet (alternate version)",
+      "track_duration_seconds": 419,
+      "artist_id": "f27ec8db-af05-4f36-916e-3d57f91ecf5e",
+      "artist_name": "Michael Jackson"
+    },
+    {
+      "track_id": "0355faa8-702a-4186-ae9b-e87b9f620fcf",
+      "title": "1995 MTV Video Music Awards Performance",
+      "track_duration_seconds": 924,
+      "artist_id": "f27ec8db-af05-4f36-916e-3d57f91ecf5e",
+      "artist_name": "Michael Jackson"
+    },
+    {
+      "track_id": "287f1a2e-85e7-4356-8c65-3133564c727d",
+      "title": "2 Bad",
+      "track_duration_seconds": 290,
+      "artist_id": "f27ec8db-af05-4f36-916e-3d57f91ecf5e",
+      "artist_name": "Michael Jackson"
+    },
+    {
+      "track_id": "b0e372e5-9626-41fd-8b8b-b8773aaf19f6",
+      "title": "2 Bad ''Finesse'' (Mashup)",
+      "track_duration_seconds": 231,
+      "artist_id": "f27ec8db-af05-4f36-916e-3d57f91ecf5e",
+      "artist_name": "Michael Jackson"
+    },
+    {
+      "track_id": "ff1358d4-f60b-4b8c-955e-47ff12ec7e92",
+      "title": "2 Bad (Arabian Disco Gus-Mix 2006)",
+      "track_duration_seconds": 197,
+      "artist_id": "f27ec8db-af05-4f36-916e-3d57f91ecf5e",
+      "artist_name": "Michael Jackson"
+    },
+    {
+      "track_id": "7de49452-a92c-40b7-8f0f-450bb1eb5948",
+      "title": "2 Bad (B-Boy Bounce remix)",
+      "track_duration_seconds": 219,
+      "artist_id": "f27ec8db-af05-4f36-916e-3d57f91ecf5e",
+      "artist_name": "Michael Jackson"
+    },
+    {
+      "track_id": "bdf3d761-e157-4006-8bd1-9f1f395c9189",
+      "title": "\"Me Against the Music\" The Video",
+      "track_duration_seconds": 243,
+      "artist_id": "79239441-bfd5-4981-a70c-55c3f15c1287",
+      "artist_name": "Madonna"
+    },
+    {
+      "track_id": "f8d1ec43-82e0-4bac-b28f-3f232290b7bd",
+      "title": "24 Hours",
+      "track_duration_seconds": 220,
+      "artist_id": "79239441-bfd5-4981-a70c-55c3f15c1287",
+      "artist_name": "Madonna"
+    },
+    {
+      "track_id": "00215b21-5262-40a3-ac37-10b64e70ba70",
+      "title": "4 Minutes",
+      "track_duration_seconds": 190,
+      "artist_id": "79239441-bfd5-4981-a70c-55c3f15c1287",
+      "artist_name": "Madonna"
+    },
+    {
+      "track_id": "3d0d50fe-8ba4-42a4-87b4-db5f2e59d32a",
+      "title": "4 Minutes (Bob Sinclar Space Funk edit)",
+      "track_duration_seconds": 203,
+      "artist_id": "79239441-bfd5-4981-a70c-55c3f15c1287",
+      "artist_name": "Madonna"
+    },
+    {
+      "track_id": "65f8b77f-01bd-4cad-bef7-8d91327853fd",
+      "title": "4 Minutes (Bob Sinclar Space Funk mix)",
+      "track_duration_seconds": 227,
+      "artist_id": "79239441-bfd5-4981-a70c-55c3f15c1287",
+      "artist_name": "Madonna"
+    },
+    {
+      "track_id": "abc503d2-762c-4752-ab2f-e30c738b9d18",
+      "title": "4 Minutes (Bob Sinclar Space Funk remix)",
+      "track_duration_seconds": 340,
+      "artist_id": "79239441-bfd5-4981-a70c-55c3f15c1287",
+      "artist_name": "Madonna"
+    },
+    {
+      "track_id": "bb21ec35-3a58-4f1e-b5a9-ec2516de11b2",
+      "title": "4 Minutes (Cajjmere Wray radio edit)",
+      "track_duration_seconds": 219,
+      "artist_id": "79239441-bfd5-4981-a70c-55c3f15c1287",
+      "artist_name": "Madonna"
+    },
+    {
+      "track_id": "d502ca8b-ae90-4f5b-aff4-6454f7e957ae",
+      "title": "4 Minutes (Junkie XL Dirty dub edit)",
+      "track_duration_seconds": 245,
+      "artist_id": "79239441-bfd5-4981-a70c-55c3f15c1287",
+      "artist_name": "Madonna"
+    },
+    {
+      "track_id": "72d0cbe0-4aa6-4930-9f42-1c5613cc5309",
+      "title": "4 Minutes (Junkie XL Remix Edit)",
+      "track_duration_seconds": 278,
+      "artist_id": "79239441-bfd5-4981-a70c-55c3f15c1287",
+      "artist_name": "Madonna"
+    },
+    {
+      "track_id": "1b4edbd6-41a3-478a-a5b9-008453f7131f",
+      "title": "’87 & Cry",
+      "track_duration_seconds": 242,
+      "artist_id": "5441c29d-3602-4898-b1a1-b77fa23b8e50",
+      "artist_name": "David Bowie"
+    },
+    {
+      "track_id": "0ee0621f-b343-4f7c-aa4f-b5d203fe4cf6",
+      "title": "’87 and Cry",
+      "track_duration_seconds": 265,
+      "artist_id": "5441c29d-3602-4898-b1a1-b77fa23b8e50",
+      "artist_name": "David Bowie"
+    },
+    {
+      "track_id": "3b95f0bf-ba0e-4d36-b20c-e78aa256fbf6",
+      "title": "’87 and Cry (single version)",
+      "track_duration_seconds": 233,
+      "artist_id": "5441c29d-3602-4898-b1a1-b77fa23b8e50",
+      "artist_name": "David Bowie"
+    },
+    {
+      "track_id": "28245879-46f5-466f-87e2-67ab67dda61b",
+      "title": "’87 and Cry (vinyl album edit)",
+      "track_duration_seconds": 235,
+      "artist_id": "5441c29d-3602-4898-b1a1-b77fa23b8e50",
+      "artist_name": "David Bowie"
+    },
+    {
+      "track_id": "46fcf586-a33c-45ce-aec2-bbad547b4c31",
+      "title": "’87 and Cry / Heroes / Sons of the Silent Age / Time Will Crawl / Young Americans / Beat of Your Drum / Jean Genie / Let’s Dance / Fame / Time / Blue Jean / Modern Love",
+      "track_duration_seconds": 3419,
+      "artist_id": "5441c29d-3602-4898-b1a1-b77fa23b8e50",
+      "artist_name": "David Bowie"
+    },
+    {
+      "track_id": "1c25d7bf-e90b-4691-bc52-40d84a25dd14",
+      "title": "’Tis a Pity She Was a Whore",
+      "track_duration_seconds": 326,
+      "artist_id": "5441c29d-3602-4898-b1a1-b77fa23b8e50",
+      "artist_name": "David Bowie"
+    },
+    {
+      "track_id": "cf96244c-d4bf-4161-b0f4-235df828eee8",
+      "title": "’Tis a Pity She Was a Whore (2014 version)",
+      "track_duration_seconds": 326,
+      "artist_id": "5441c29d-3602-4898-b1a1-b77fa23b8e50",
+      "artist_name": "David Bowie"
+    },
+    {
+      "track_id": "3c6390b4-1236-4ddc-b612-8fdffa3dd0f5",
+      "title": "“Helden” (Filburt 91189 club mix)",
+      "track_duration_seconds": 373,
+      "artist_id": "5441c29d-3602-4898-b1a1-b77fa23b8e50",
+      "artist_name": "David Bowie"
+    },
+    {
+      "track_id": "d6e45d04-8aa6-45a3-8b90-174b04ac326a",
+      "title": "“Helden” (Filburt 91189 instrumental club mix)",
+      "track_duration_seconds": 362,
+      "artist_id": "5441c29d-3602-4898-b1a1-b77fa23b8e50",
+      "artist_name": "David Bowie"
+    },
+    {
+      "track_id": "393e0cc6-6629-4fd3-a412-26c9d23b958f",
+      "title": "(I’m a) Road Runner",
+      "track_duration_seconds": 296,
+      "artist_id": "bd13909f-1c29-4c27-a874-d4aaf27c5b1a",
+      "artist_name": "Fleetwood Mac"
+    },
+    {
+      "track_id": "44ebf750-4b6e-4c8b-838b-cb0a55594ecc",
+      "title": "(That’s What) I Want to Know",
+      "track_duration_seconds": 235,
+      "artist_id": "bd13909f-1c29-4c27-a874-d4aaf27c5b1a",
+      "artist_name": "Fleetwood Mac"
+    },
+    {
+      "track_id": "e037e10a-d9fa-4e47-9d22-105472e780a1",
+      "title": "(Watch Out for Yourself) Mr. Jones",
+      "track_duration_seconds": 215,
+      "artist_id": "bd13909f-1c29-4c27-a874-d4aaf27c5b1a",
+      "artist_name": "Fleetwood Mac"
+    },
+    {
+      "track_id": "af760af0-2bfe-4376-b817-7559252605a7",
+      "title": "(intro)",
+      "track_duration_seconds": 25,
+      "artist_id": "bd13909f-1c29-4c27-a874-d4aaf27c5b1a",
+      "artist_name": "Fleetwood Mac"
+    },
+    {
+      "track_id": "176d40e2-175f-4ea7-bccd-002508d7c9f5",
+      "title": "A Fool No More",
+      "track_duration_seconds": 481,
+      "artist_id": "bd13909f-1c29-4c27-a874-d4aaf27c5b1a",
+      "artist_name": "Fleetwood Mac"
+    },
+    {
+      "track_id": "8489344c-109c-494e-ac86-6ae513e35f30",
+      "title": "A Mind of My Own",
+      "track_duration_seconds": 181,
+      "artist_id": "bd13909f-1c29-4c27-a874-d4aaf27c5b1a",
+      "artist_name": "Fleetwood Mac"
+    },
+    {
+      "track_id": "49d2c540-f964-4303-a222-6b21c8c0a37e",
+      "title": "A Mind of My Own (27.08.68)",
+      "track_duration_seconds": 179,
+      "artist_id": "bd13909f-1c29-4c27-a874-d4aaf27c5b1a",
+      "artist_name": "Fleetwood Mac"
+    },
+    {
+      "track_id": "92f05c63-9268-40c4-bb34-5b54bc161a05",
+      "title": "A2 VS Only over You",
+      "track_duration_seconds": 216,
+      "artist_id": "bd13909f-1c29-4c27-a874-d4aaf27c5b1a",
+      "artist_name": "Fleetwood Mac"
+    },
+    {
+      "track_id": "1b483fa2-c6cf-4c03-adf5-233c8ae8a595",
+      "title": "Affairs of the Heart",
+      "track_duration_seconds": 262,
+      "artist_id": "bd13909f-1c29-4c27-a874-d4aaf27c5b1a",
+      "artist_name": "Fleetwood Mac"
+    },
+    {
+      "track_id": "079bdc17-e199-40f0-b69b-cd5b95598f51",
+      "title": "(You’re So Square) Baby I Don’t Care",
+      "track_duration_seconds": 108,
+      "artist_id": "678d88b2-87b0-403b-b63d-5da7465aecc3",
+      "artist_name": "Led Zeppelin"
+    },
+    {
+      "track_id": "c7c81ed4-e068-492c-810b-f3c4255dba87",
+      "title": "(intro: drums / bass / harmonica improv. jam) Communication Breakdown",
+      "track_duration_seconds": 343,
+      "artist_id": "678d88b2-87b0-403b-b63d-5da7465aecc3",
+      "artist_name": "Led Zeppelin"
+    },
+    {
+      "track_id": "6d726c4c-0f9e-480f-8055-b94de8414b03",
+      "title": "[Alan Black interview]",
+      "track_duration_seconds": 278,
+      "artist_id": "678d88b2-87b0-403b-b63d-5da7465aecc3",
+      "artist_name": "Led Zeppelin"
+    },
+    {
+      "track_id": "0c6af918-3bc6-4ee7-b0ec-465e6a04b390",
+      "title": "[Alan Black introduction]",
+      "track_duration_seconds": 37,
+      "artist_id": "678d88b2-87b0-403b-b63d-5da7465aecc3",
+      "artist_name": "Led Zeppelin"
+    },
+    {
+      "track_id": "24082e35-eb4b-4bf6-b96c-761e5e0be182",
+      "title": "[Alexis Korner introduction]",
+      "track_duration_seconds": 25,
+      "artist_id": "678d88b2-87b0-403b-b63d-5da7465aecc3",
+      "artist_name": "Led Zeppelin"
+    },
+    {
+      "track_id": "3b0874e8-abef-425a-829e-7b016da03b85",
+      "title": "[Alexis Korner]",
+      "track_duration_seconds": 29,
+      "artist_id": "678d88b2-87b0-403b-b63d-5da7465aecc3",
+      "artist_name": "Led Zeppelin"
+    },
+    {
+      "track_id": "9475e5d3-04de-47c1-b01d-89566ca66fe8",
+      "title": "[Earl's Court menu]",
+      "track_duration_seconds": 53,
+      "artist_id": "678d88b2-87b0-403b-b63d-5da7465aecc3",
+      "artist_name": "Led Zeppelin"
+    },
+    {
+      "track_id": "6fc1a2a4-23ae-4a38-a80e-6f21dac33826",
+      "title": "[after the show]",
+      "track_duration_seconds": 132,
+      "artist_id": "678d88b2-87b0-403b-b63d-5da7465aecc3",
+      "artist_name": "Led Zeppelin"
+    },
+    {
+      "track_id": "9f2cc80d-a436-41db-89d9-9517f2bed897",
+      "title": "[announce]",
+      "track_duration_seconds": 43,
+      "artist_id": "678d88b2-87b0-403b-b63d-5da7465aecc3",
+      "artist_name": "Led Zeppelin"
+    },
+    {
+      "track_id": "bf27609c-6c2d-46c5-a906-4f43a5fc2718",
+      "title": "\"Happy\"",
+      "track_duration_seconds": 62,
+      "artist_id": "b071f9fa-14b0-4217-8e97-eb41da73f598",
+      "artist_name": "The Rolling Stones"
+    },
+    {
+      "track_id": "e648d6df-ddfe-4641-8360-e5f83c6fed17",
+      "title": "(Baby) Make It Now",
+      "track_duration_seconds": 268,
+      "artist_id": "b071f9fa-14b0-4217-8e97-eb41da73f598",
+      "artist_name": "The Rolling Stones"
+    },
+    {
+      "track_id": "4d55a501-a7d7-487d-814b-c85fbd2abe4a",
+      "title": "(Doo Doo Doo Doo Doo) Heartbreaker",
+      "track_duration_seconds": 222,
+      "artist_id": "b071f9fa-14b0-4217-8e97-eb41da73f598",
+      "artist_name": "The Rolling Stones"
+    },
+    {
+      "track_id": "67be5db9-e8c3-4148-8423-671a3e9d41d3",
+      "title": "(Get You Kicks on) Route 66",
+      "track_duration_seconds": 150,
+      "artist_id": "b071f9fa-14b0-4217-8e97-eb41da73f598",
+      "artist_name": "The Rolling Stones"
+    },
+    {
+      "track_id": "626ddceb-65f2-45b7-be0a-b871aae107f1",
+      "title": "(Get Your Kick on) Route 66",
+      "track_duration_seconds": 133,
+      "artist_id": "b071f9fa-14b0-4217-8e97-eb41da73f598",
+      "artist_name": "The Rolling Stones"
+    },
+    {
+      "track_id": "56394b38-e78d-490d-a0f5-9f2f708293d3",
+      "title": "(Get Your Kicks On) Route 66",
+      "track_duration_seconds": 138,
+      "artist_id": "b071f9fa-14b0-4217-8e97-eb41da73f598",
+      "artist_name": "The Rolling Stones"
+    },
+    {
+      "track_id": "71a49421-f7ca-4d95-9bc3-f559bee8a115",
+      "title": "(I Can Get No) Satisfaction",
+      "track_duration_seconds": 337,
+      "artist_id": "b071f9fa-14b0-4217-8e97-eb41da73f598",
+      "artist_name": "The Rolling Stones"
+    },
+    {
+      "track_id": "04480dcd-e677-470a-afb4-7fdc6277b6df",
+      "title": "(I Can't Get No) Satisfaction",
+      "track_duration_seconds": 290,
+      "artist_id": "b071f9fa-14b0-4217-8e97-eb41da73f598",
+      "artist_name": "The Rolling Stones"
+    },
+    {
+      "track_id": "a2751d18-262e-4436-9819-f3a35c635aac",
+      "title": "(I Can’t Get No Satisfaction) Satisfaction",
+      "track_duration_seconds": 224,
+      "artist_id": "b071f9fa-14b0-4217-8e97-eb41da73f598",
+      "artist_name": "The Rolling Stones"
+    },
+    {
+      "track_id": "34a78065-fc57-4374-a600-52e0e7097122",
+      "title": "\"40\"",
+      "track_duration_seconds": 413,
+      "artist_id": "a3cb23fc-acd3-4ce0-8f36-1e5aa6a18432",
+      "artist_name": "U2"
+    },
+    {
+      "track_id": "af99c650-0470-4bd4-acb1-f44b4bbb34e5",
+      "title": "- A Celebration",
+      "track_duration_seconds": 175,
+      "artist_id": "a3cb23fc-acd3-4ce0-8f36-1e5aa6a18432",
+      "artist_name": "U2"
+    },
+    {
+      "track_id": "ca5f3ce8-0187-451b-a656-2022e1372ed3",
+      "title": "- Another Time Another Place",
+      "track_duration_seconds": 240,
+      "artist_id": "a3cb23fc-acd3-4ce0-8f36-1e5aa6a18432",
+      "artist_name": "U2"
+    },
+    {
+      "track_id": "54936ff6-5868-4449-ad6c-290b3423f543",
+      "title": "- Fire",
+      "track_duration_seconds": 226,
+      "artist_id": "a3cb23fc-acd3-4ce0-8f36-1e5aa6a18432",
+      "artist_name": "U2"
+    },
+    {
+      "track_id": "ca41c0c2-42f6-4a5e-bd78-e700e9c33573",
+      "title": "- Gloria",
+      "track_duration_seconds": 292,
+      "artist_id": "a3cb23fc-acd3-4ce0-8f36-1e5aa6a18432",
+      "artist_name": "U2"
+    },
+    {
+      "track_id": "a6d5ba24-46d6-4efe-b608-007175ecf4cc",
+      "title": "- I Fall Down",
+      "track_duration_seconds": 178,
+      "artist_id": "a3cb23fc-acd3-4ce0-8f36-1e5aa6a18432",
+      "artist_name": "U2"
+    },
+    {
+      "track_id": "1d0a4dfc-bf58-4f98-a2d8-fb21dba60ac4",
+      "title": "- I WIll Follow",
+      "track_duration_seconds": 225,
+      "artist_id": "a3cb23fc-acd3-4ce0-8f36-1e5aa6a18432",
+      "artist_name": "U2"
+    },
+    {
+      "track_id": "ccc9a185-42e3-4faf-ab10-f61935b90e74",
+      "title": "- Into The Heart",
+      "track_duration_seconds": 164,
+      "artist_id": "a3cb23fc-acd3-4ce0-8f36-1e5aa6a18432",
+      "artist_name": "U2"
+    },
+    {
+      "track_id": "28eea469-b681-4c46-a3a8-e4ad3983efe5",
+      "title": "- New Year's Day",
+      "track_duration_seconds": 311,
+      "artist_id": "a3cb23fc-acd3-4ce0-8f36-1e5aa6a18432",
+      "artist_name": "U2"
+    },
+    {
+      "track_id": "3a7bc7d6-86cf-4abe-ac3d-14bdf8e3829a",
+      "title": "...And Justice For All",
+      "track_duration_seconds": 2537,
+      "artist_id": "65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab",
+      "artist_name": "Metallica"
+    },
+    {
+      "track_id": "5b347f07-f865-4b3d-8f69-197be105bf67",
+      "title": "… And Justice for All",
+      "track_duration_seconds": 549,
+      "artist_id": "65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab",
+      "artist_name": "Metallica"
+    },
+    {
+      "track_id": "01fe4160-6fea-4e65-8507-a5c0345ccb1d",
+      "title": "…And Justice for All",
+      "track_duration_seconds": 494,
+      "artist_id": "65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab",
+      "artist_name": "Metallica"
+    },
+    {
+      "track_id": "f4ada489-6abe-41a4-a487-ec0b76475910",
+      "title": "'Till I Collapse",
+      "track_duration_seconds": 297,
+      "artist_id": "b95ce3ff-3d05-4e87-9e01-c97b66af13d4",
+      "artist_name": "Eminem"
+    },
+    {
+      "track_id": "06562717-5266-464a-b69a-79051af8c2f1",
+      "title": "(God Is) Cleanin' Out My Closet",
+      "track_duration_seconds": 385,
+      "artist_id": "b95ce3ff-3d05-4e87-9e01-c97b66af13d4",
+      "artist_name": "Eminem"
+    },
+    {
+      "track_id": "9132cb11-b296-4b7e-a005-5f2ed5deffef",
+      "title": "(interlude)",
+      "track_duration_seconds": 23,
+      "artist_id": "b95ce3ff-3d05-4e87-9e01-c97b66af13d4",
+      "artist_name": "Eminem"
+    },
+    {
+      "track_id": "88bed1f7-3286-4e32-aab3-c86402685ae2",
+      "title": "*******",
+      "track_duration_seconds": 267,
+      "artist_id": "b95ce3ff-3d05-4e87-9e01-c97b66af13d4",
+      "artist_name": "Eminem"
+    },
+    {
+      "track_id": "2ffe011c-d54e-450f-83d0-052c73a5793b",
+      "title": "10, 9, 8",
+      "track_duration_seconds": 110,
+      "artist_id": "b95ce3ff-3d05-4e87-9e01-c97b66af13d4",
+      "artist_name": "Eminem"
+    },
+    {
+      "track_id": "05dcea03-951d-4fc7-9e7a-904a8e52d16f",
+      "title": "10, 9, 8…",
+      "track_duration_seconds": 113,
+      "artist_id": "b95ce3ff-3d05-4e87-9e01-c97b66af13d4",
+      "artist_name": "Eminem"
+    },
+    {
+      "track_id": "0d30b69a-44d0-414b-b102-23cd5f25f05d",
+      "title": "1999 Radio Freestyle",
+      "track_duration_seconds": 83,
+      "artist_id": "b95ce3ff-3d05-4e87-9e01-c97b66af13d4",
+      "artist_name": "Eminem"
+    },
+    {
+      "track_id": "f3dcc7e7-aff7-4efa-851c-836449827590",
+      "title": "2 Faced A Cappella Freestyle",
+      "track_duration_seconds": 49,
+      "artist_id": "b95ce3ff-3d05-4e87-9e01-c97b66af13d4",
+      "artist_name": "Eminem"
+    },
+    {
+      "track_id": "dd8c2438-4e67-4b64-99b4-58fe9f4ba126",
+      "title": "2.0 Boys",
+      "track_duration_seconds": 312,
+      "artist_id": "b95ce3ff-3d05-4e87-9e01-c97b66af13d4",
+      "artist_name": "Eminem"
+    },
+    {
+      "track_id": "e0db706f-c0f2-425a-a177-98b3dac4c14d",
+      "title": "#1",
+      "track_duration_seconds": 152,
+      "artist_id": "164f0d73-1234-4e2c-8743-d77bf2191051",
+      "artist_name": "Ye"
+    },
+    {
+      "track_id": "24569353-d73c-4b23-ba58-ddbb9b9ca64d",
+      "title": "#MeToo (Interlude)",
+      "track_duration_seconds": 65,
+      "artist_id": "164f0d73-1234-4e2c-8743-d77bf2191051",
+      "artist_name": "Ye"
+    },
+    {
+      "track_id": "81332bfd-0766-4688-9c45-c0f0dde9f1a2",
+      "title": "(interlude)",
+      "track_duration_seconds": 33,
+      "artist_id": "164f0d73-1234-4e2c-8743-d77bf2191051",
+      "artist_name": "Ye"
+    },
+    {
+      "track_id": "953c482d-392e-4b27-8f8e-a8772891e055",
+      "title": "(intro)",
+      "track_duration_seconds": 18,
+      "artist_id": "164f0d73-1234-4e2c-8743-d77bf2191051",
+      "artist_name": "Ye"
+    },
+    {
+      "track_id": "4cad4007-4da5-44ae-8a44-896b3ccc6b5d",
+      "title": "03 'Til Infinity (Freestyle)",
+      "track_duration_seconds": 168,
+      "artist_id": "164f0d73-1234-4e2c-8743-d77bf2191051",
+      "artist_name": "Ye"
+    },
+    {
+      "track_id": "4d58cbcc-12a2-484f-9e73-0da728c1931b",
+      "title": "03’ Electric Relaxation",
+      "track_duration_seconds": 213,
+      "artist_id": "164f0d73-1234-4e2c-8743-d77bf2191051",
+      "artist_name": "Ye"
+    },
+    {
+      "track_id": "9c5e1d7d-e029-489d-8f42-0fd6e510811e",
+      "title": "03’ Til Infinity",
+      "track_duration_seconds": 261,
+      "artist_id": "164f0d73-1234-4e2c-8743-d77bf2191051",
+      "artist_name": "Ye"
+    },
+    {
+      "track_id": "28b66e62-86ff-4b81-a63a-a937674e7a2e",
+      "title": "12,000 Acres",
+      "track_duration_seconds": 349,
+      "artist_id": "164f0d73-1234-4e2c-8743-d77bf2191051",
+      "artist_name": "Ye"
+    },
+    {
+      "track_id": "33725e5e-57de-4541-9acb-51acc4f5d411",
+      "title": "187th (unreleased version)",
+      "track_duration_seconds": 176,
+      "artist_id": "164f0d73-1234-4e2c-8743-d77bf2191051",
+      "artist_name": "Ye"
+    },
+    {
+      "track_id": "a7c877fa-bac0-46a0-8d94-c553b2ff305a",
+      "title": "2012 Loud Tour Live at the O2: First Look",
+      "track_duration_seconds": 1395,
+      "artist_id": "73e5e69d-3554-40d8-8516-00cb38737a1c",
+      "artist_name": "Rihanna"
+    },
+    {
+      "track_id": "f4148e18-6a24-459c-ac01-2ba5163994d0",
+      "title": "A Child Is Born",
+      "track_duration_seconds": 234,
+      "artist_id": "73e5e69d-3554-40d8-8516-00cb38737a1c",
+      "artist_name": "Rihanna"
+    },
+    {
+      "track_id": "47c711ce-76d3-4f37-be08-926bafb36553",
+      "title": "A Girl Like Me",
+      "track_duration_seconds": 258,
+      "artist_id": "73e5e69d-3554-40d8-8516-00cb38737a1c",
+      "artist_name": "Rihanna"
+    },
+    {
+      "track_id": "3142956c-fae9-4083-84f1-3e8f12b5c2a6",
+      "title": "A Million Miles Away",
+      "track_duration_seconds": 250,
+      "artist_id": "73e5e69d-3554-40d8-8516-00cb38737a1c",
+      "artist_name": "Rihanna"
+    },
+    {
+      "track_id": "fc7546f5-34f3-44e3-9b80-f1e8fd253cda",
+      "title": "Aerodynamic Stairways to Diamonds (DJs From Mars vs Loo & Placido Bootleg mix)",
+      "track_duration_seconds": 307,
+      "artist_id": "73e5e69d-3554-40d8-8516-00cb38737a1c",
+      "artist_name": "Rihanna"
+    },
+    {
+      "track_id": "bd304f2c-f421-42d0-bff6-80baf167e198",
+      "title": "All of the Light (Pretty Lights remix)",
+      "track_duration_seconds": 376,
+      "artist_id": "73e5e69d-3554-40d8-8516-00cb38737a1c",
+      "artist_name": "Rihanna"
+    },
+    {
+      "track_id": "27c5f645-676d-47cb-aa09-35ae5c1d2ab1",
+      "title": "All of the Lights",
+      "track_duration_seconds": 67,
+      "artist_id": "73e5e69d-3554-40d8-8516-00cb38737a1c",
+      "artist_name": "Rihanna"
+    },
+    {
+      "track_id": "789d91a2-1a08-4f1f-9bda-7fd0e2e13dc7",
+      "title": "All of the Lights (Pretty Lights remix)",
+      "track_duration_seconds": 365,
+      "artist_id": "73e5e69d-3554-40d8-8516-00cb38737a1c",
+      "artist_name": "Rihanna"
+    },
+    {
+      "track_id": "347b288d-e404-4d58-a5f1-c9e591d9165b",
+      "title": "All of the Lights (unreleased version)",
+      "track_duration_seconds": 299,
+      "artist_id": "73e5e69d-3554-40d8-8516-00cb38737a1c",
+      "artist_name": "Rihanna"
+    },
+    {
+      "track_id": "c3f8cc1e-9d0f-43b6-bfe7-0f1393cb41c6",
+      "title": "(They Long to Be) Close to You",
+      "track_duration_seconds": 169,
+      "artist_id": "650e7db6-b795-4eb5-a702-5ea2fc46c848",
+      "artist_name": "Lady Gaga"
+    },
+    {
+      "track_id": "16865f78-73e1-4f50-92c4-3322838fc187",
+      "title": "1000 Doves",
+      "track_duration_seconds": 215,
+      "artist_id": "650e7db6-b795-4eb5-a702-5ea2fc46c848",
+      "artist_name": "Lady Gaga"
+    },
+    {
+      "track_id": "e988871a-39a3-4533-b774-10bb45f5c9bf",
+      "title": "1000 Doves (Lana Del Rey remix)",
+      "track_duration_seconds": 216,
+      "artist_id": "650e7db6-b795-4eb5-a702-5ea2fc46c848",
+      "artist_name": "Lady Gaga"
+    },
+    {
+      "track_id": "61ef81e1-6c71-496c-9df8-ad6c01ca393e",
+      "title": "1000 Doves (Planningtorock remix)",
+      "track_duration_seconds": 296,
+      "artist_id": "650e7db6-b795-4eb5-a702-5ea2fc46c848",
+      "artist_name": "Lady Gaga"
+    },
+    {
+      "track_id": "d73ca4b1-bb68-4c37-aa39-3b98c2bd61c2",
+      "title": "1000 Doves (piano demo)",
+      "track_duration_seconds": 169,
+      "artist_id": "650e7db6-b795-4eb5-a702-5ea2fc46c848",
+      "artist_name": "Lady Gaga"
+    },
+    {
+      "track_id": "b33cbfca-add6-4bdf-bef1-a12f5dcc9d7f",
+      "title": "100th Digital Short",
+      "track_duration_seconds": 205,
+      "artist_id": "650e7db6-b795-4eb5-a702-5ea2fc46c848",
+      "artist_name": "Lady Gaga"
+    },
+    {
+      "track_id": "28549091-3c1b-4bb4-91b5-a0ba0ae2ff8e",
+      "title": "3-Way (The Golden Rule)",
+      "track_duration_seconds": 184,
+      "artist_id": "650e7db6-b795-4eb5-a702-5ea2fc46c848",
+      "artist_name": "Lady Gaga"
+    },
+    {
+      "track_id": "28f08779-71c9-4ab4-8b4c-b4bbbee54220",
+      "title": "360 / Plastic Doll (mixed)",
+      "track_duration_seconds": 109,
+      "artist_id": "650e7db6-b795-4eb5-a702-5ea2fc46c848",
+      "artist_name": "Lady Gaga"
+    },
+    {
+      "track_id": "84b67a26-6d12-46cb-93f1-11aa9a27aafc",
+      "title": "4Face (Minutes Poker remix)",
+      "track_duration_seconds": 232,
+      "artist_id": "650e7db6-b795-4eb5-a702-5ea2fc46c848",
+      "artist_name": "Lady Gaga"
+    },
+    {
+      "track_id": "90a0ce7e-78d2-4806-b183-73f1cc289d85",
+      "title": "24K (remix)",
+      "track_duration_seconds": 210,
+      "artist_id": "afb680f2-b6eb-4cd7-a70b-a63b25c763d5",
+      "artist_name": "Bruno Mars"
+    },
+    {
+      "track_id": "088a862c-f6ef-4259-8f79-6295d4ed4cb0",
+      "title": "24K Magic",
+      "track_duration_seconds": 200,
+      "artist_id": "afb680f2-b6eb-4cd7-a70b-a63b25c763d5",
+      "artist_name": "Bruno Mars"
+    },
+    {
+      "track_id": "8eadef12-52de-4ad9-b2ae-d51480547895",
+      "title": "24K Magic (1974 Vintage Hype intro / dirty)",
+      "track_duration_seconds": 258,
+      "artist_id": "afb680f2-b6eb-4cd7-a70b-a63b25c763d5",
+      "artist_name": "Bruno Mars"
+    },
+    {
+      "track_id": "2ac249ee-7a0a-4100-b0c4-2d416cb4aab5",
+      "title": "24K Magic (All Gold Everything Hype intro / clean)",
+      "track_duration_seconds": 280,
+      "artist_id": "afb680f2-b6eb-4cd7-a70b-a63b25c763d5",
+      "artist_name": "Bruno Mars"
+    },
+    {
+      "track_id": "9637bc23-64a9-4bac-b611-a1e55ed9c237",
+      "title": "24K Magic (All Gold Everything Hype intro / dirty)",
+      "track_duration_seconds": 280,
+      "artist_id": "afb680f2-b6eb-4cd7-a70b-a63b25c763d5",
+      "artist_name": "Bruno Mars"
+    },
+    {
+      "track_id": "8fc7a7aa-9097-4d48-aa81-b583607e05a1",
+      "title": "24K Magic (CK intro / clean)",
+      "track_duration_seconds": 233,
+      "artist_id": "afb680f2-b6eb-4cd7-a70b-a63b25c763d5",
+      "artist_name": "Bruno Mars"
+    },
+    {
+      "track_id": "577c445d-0467-48d4-b128-0bad216681cc",
+      "title": "24K Magic (CK intro / dirty)",
+      "track_duration_seconds": 233,
+      "artist_id": "afb680f2-b6eb-4cd7-a70b-a63b25c763d5",
+      "artist_name": "Bruno Mars"
+    },
+    {
+      "track_id": "1f2393fc-6850-497c-ab63-7293dbcb2ccf",
+      "title": "24K Magic (G Funk Hype intro / clean)",
+      "track_duration_seconds": 253,
+      "artist_id": "afb680f2-b6eb-4cd7-a70b-a63b25c763d5",
+      "artist_name": "Bruno Mars"
+    },
+    {
+      "track_id": "ff0ef007-8c98-48d0-b89e-650c712e3b4d",
+      "title": "24K Magic (G Funk Hype intro / dirty)",
+      "track_duration_seconds": 253,
+      "artist_id": "afb680f2-b6eb-4cd7-a70b-a63b25c763d5",
+      "artist_name": "Bruno Mars"
+    },
+    {
+      "track_id": "93bb7a84-e81d-4f79-b069-8e51dd446ca8",
+      "title": "(All Along the) Watchtower",
+      "track_duration_seconds": 272,
+      "artist_id": "b8a7c51f-362c-4dcb-a259-bc6e0095f0a6",
+      "artist_name": "Ed Sheeran"
+    },
+    {
+      "track_id": "b8298f59-f919-4aef-a2fc-3b41d719dff6",
+      "title": "10,000 Tears",
+      "track_duration_seconds": 274,
+      "artist_id": "b8a7c51f-362c-4dcb-a259-bc6e0095f0a6",
+      "artist_name": "Ed Sheeran"
+    },
+    {
+      "track_id": "1e5733b0-3379-4fe5-8e7c-becda0ceaf4b",
+      "title": "1000 Nights",
+      "track_duration_seconds": 213,
+      "artist_id": "b8a7c51f-362c-4dcb-a259-bc6e0095f0a6",
+      "artist_name": "Ed Sheeran"
+    },
+    {
+      "track_id": "141bade4-dc9b-422f-9d00-c75e3e481088",
+      "title": "2002",
+      "track_duration_seconds": 205,
+      "artist_id": "b8a7c51f-362c-4dcb-a259-bc6e0095f0a6",
+      "artist_name": "Ed Sheeran"
+    },
+    {
+      "track_id": "4c455b60-f5e5-4e26-bea5-d0fb1ee2ab9b",
+      "title": "25 Tracks",
+      "track_duration_seconds": 206,
+      "artist_id": "b8a7c51f-362c-4dcb-a259-bc6e0095f0a6",
+      "artist_name": "Ed Sheeran"
+    },
+    {
+      "track_id": "11b1376f-deb4-4c2d-84dc-0d067014567f",
+      "title": "2step",
+      "track_duration_seconds": 205,
+      "artist_id": "b8a7c51f-362c-4dcb-a259-bc6e0095f0a6",
+      "artist_name": "Ed Sheeran"
+    },
+    {
+      "track_id": "8b1eb27b-07b5-4dd1-b528-e237074d1426",
+      "title": "2step (Star.One remix radio)",
+      "track_duration_seconds": 166,
+      "artist_id": "b8a7c51f-362c-4dcb-a259-bc6e0095f0a6",
+      "artist_name": "Ed Sheeran"
+    },
+    {
+      "track_id": "00c9534f-61a1-48d2-9a7b-a1987a7c4876",
+      "title": "A Beautiful Game",
+      "track_duration_seconds": 215,
+      "artist_id": "b8a7c51f-362c-4dcb-a259-bc6e0095f0a6",
+      "artist_name": "Ed Sheeran"
+    },
+    {
+      "track_id": "3903b365-db43-4525-ab8c-6b27800d6c96",
+      "title": "A Little More",
+      "track_duration_seconds": 63,
+      "artist_id": "b8a7c51f-362c-4dcb-a259-bc6e0095f0a6",
+      "artist_name": "Ed Sheeran"
+    },
+    {
+      "track_id": "75090060-75fa-4a87-aa63-c0f730d1825d",
+      "title": "!!!!!!!",
+      "track_duration_seconds": 14,
+      "artist_id": "f4abc0b5-3f7a-4eff-8f78-ac078dbce533",
+      "artist_name": "Billie Eilish"
+    },
+    {
+      "track_id": "4148a1fc-aaa3-4414-abf0-7c882933dc10",
+      "title": "&burn",
+      "track_duration_seconds": 179,
+      "artist_id": "f4abc0b5-3f7a-4eff-8f78-ac078dbce533",
+      "artist_name": "Billie Eilish"
+    },
+    {
+      "track_id": "43e18b1a-4b7c-4cf8-8e91-e41844877f31",
+      "title": "6.18.18",
+      "track_duration_seconds": 270,
+      "artist_id": "f4abc0b5-3f7a-4eff-8f78-ac078dbce533",
+      "artist_name": "Billie Eilish"
+    },
+    {
+      "track_id": "23caec99-7f8d-4c26-90d7-04d3750c5970",
+      "title": "8",
+      "track_duration_seconds": 173,
+      "artist_id": "f4abc0b5-3f7a-4eff-8f78-ac078dbce533",
+      "artist_name": "Billie Eilish"
+    },
+    {
+      "track_id": "47b39cc4-3d2e-4ceb-9edc-7a3d828e807f",
+      "title": "8 (acoustic)",
+      "track_duration_seconds": 177,
+      "artist_id": "f4abc0b5-3f7a-4eff-8f78-ac078dbce533",
+      "artist_name": "Billie Eilish"
+    },
+    {
+      "track_id": "5abfb673-d2c0-4472-bae1-6f41c1a0c709",
+      "title": "All the Good Girls Go to Hell",
+      "track_duration_seconds": 221,
+      "artist_id": "f4abc0b5-3f7a-4eff-8f78-ac078dbce533",
+      "artist_name": "Billie Eilish"
+    },
+    {
+      "track_id": "e655d90d-82df-4fa6-96f8-3cc3a57d2209",
+      "title": "All the Good Girls Go to Hell (acoustic)",
+      "track_duration_seconds": 158,
+      "artist_id": "f4abc0b5-3f7a-4eff-8f78-ac078dbce533",
+      "artist_name": "Billie Eilish"
+    },
+    {
+      "track_id": "f06610fd-626a-44fc-8929-bd8f2165ca5c",
+      "title": "Bad",
+      "track_duration_seconds": 238,
+      "artist_id": "f4abc0b5-3f7a-4eff-8f78-ac078dbce533",
+      "artist_name": "Billie Eilish"
+    },
+    {
+      "track_id": "4aacecca-7e5f-4f5e-a653-ea33c21e02dc",
+      "title": "Bad Company",
+      "track_duration_seconds": 196,
+      "artist_id": "f4abc0b5-3f7a-4eff-8f78-ac078dbce533",
+      "artist_name": "Billie Eilish"
+    },
+    {
+      "track_id": "ab8b4eeb-1074-4d35-94c6-65219ee00e33",
+      "title": "3 AM",
+      "track_duration_seconds": 195,
+      "artist_id": "c8b03190-306c-4120-bb0b-6f2ebfc06ea9",
+      "artist_name": "The Weeknd"
+    },
+    {
+      "track_id": "722e255e-3b43-4e1f-9862-7f49cfd28d70",
+      "title": "3 AM (intro)",
+      "track_duration_seconds": 195,
+      "artist_id": "c8b03190-306c-4120-bb0b-6f2ebfc06ea9",
+      "artist_name": "The Weeknd"
+    },
+    {
+      "track_id": "91f1b837-1344-4653-9205-26058dbffdb0",
+      "title": "6 Inch",
+      "track_duration_seconds": 260,
+      "artist_id": "c8b03190-306c-4120-bb0b-6f2ebfc06ea9",
+      "artist_name": "The Weeknd"
+    },
+    {
+      "track_id": "6f5e4b5f-6bd4-437a-bffc-f9880345513c",
+      "title": "A Lesser Man",
+      "track_duration_seconds": 299,
+      "artist_id": "c8b03190-306c-4120-bb0b-6f2ebfc06ea9",
+      "artist_name": "The Weeknd"
+    },
+    {
+      "track_id": "14450bd1-8578-4eb0-a887-fca7a1645ffd",
+      "title": "A Lie",
+      "track_duration_seconds": 227,
+      "artist_id": "c8b03190-306c-4120-bb0b-6f2ebfc06ea9",
+      "artist_name": "The Weeknd"
+    },
+    {
+      "track_id": "34c6b135-f967-4a11-bcbc-68f8125bcda8",
+      "title": "A Lonely Night",
+      "track_duration_seconds": 220,
+      "artist_id": "c8b03190-306c-4120-bb0b-6f2ebfc06ea9",
+      "artist_name": "The Weeknd"
+    },
+    {
+      "track_id": "e3999c6b-965b-401d-8b23-2dbcae47acf8",
+      "title": "A Lonely Night (Chopped Not Slopped)",
+      "track_duration_seconds": 236,
+      "artist_id": "c8b03190-306c-4120-bb0b-6f2ebfc06ea9",
+      "artist_name": "The Weeknd"
+    },
+    {
+      "track_id": "e6df38a9-b15c-4567-b9db-bea691b4c190",
+      "title": "A Tale By Quincy (Chopped Not Slopped)",
+      "track_duration_seconds": 114,
+      "artist_id": "c8b03190-306c-4120-bb0b-6f2ebfc06ea9",
+      "artist_name": "The Weeknd"
+    },
+    {
+      "track_id": "06ba1e04-d986-46ea-92c8-76797fdd821e",
+      "title": "A Tale by Quincy",
+      "track_duration_seconds": 96,
+      "artist_id": "c8b03190-306c-4120-bb0b-6f2ebfc06ea9",
+      "artist_name": "The Weeknd"
+    },
+    {
+      "track_id": "dda395c9-b8b0-4407-a8e9-06879f72c4a4",
+      "title": "1998 (Kay Cee 1999 mix) / She’s on My Mind / Into You",
+      "track_duration_seconds": 205,
+      "artist_id": "f4fdbb4c-e4b7-47a0-b83b-d91bbfcfa387",
+      "artist_name": "Ariana Grande"
+    },
+    {
+      "track_id": "7483ce0d-3e31-47f7-b8a5-69dd93a6e108",
+      "title": "34+35",
+      "track_duration_seconds": 173,
+      "artist_id": "f4fdbb4c-e4b7-47a0-b83b-d91bbfcfa387",
+      "artist_name": "Ariana Grande"
+    },
+    {
+      "track_id": "2df1e22c-2873-488e-bc9b-c27a68c83089",
+      "title": "34+35 (Top40 Redrum) 110 Bpm Clean",
+      "track_duration_seconds": 194,
+      "artist_id": "f4fdbb4c-e4b7-47a0-b83b-d91bbfcfa387",
+      "artist_name": "Ariana Grande"
+    },
+    {
+      "track_id": "dc338057-9850-454e-8324-1b7f8b259f5b",
+      "title": "34+35 (clean edit)",
+      "track_duration_seconds": 171,
+      "artist_id": "f4fdbb4c-e4b7-47a0-b83b-d91bbfcfa387",
+      "artist_name": "Ariana Grande"
+    },
+    {
+      "track_id": "3c67f4a3-8428-4a07-8d7f-9b3ec9f87ba7",
+      "title": "34+35 (remix)",
+      "track_duration_seconds": 243,
+      "artist_id": "f4fdbb4c-e4b7-47a0-b83b-d91bbfcfa387",
+      "artist_name": "Ariana Grande"
+    },
+    {
+      "track_id": "92778a05-261e-4567-a6ca-d5d99634cc4f",
+      "title": "34+45 (remix radio clean)",
+      "track_duration_seconds": 178,
+      "artist_id": "f4fdbb4c-e4b7-47a0-b83b-d91bbfcfa387",
+      "artist_name": "Ariana Grande"
+    },
+    {
+      "track_id": "f26c8bef-37f5-4294-a3fb-6297ad427b40",
+      "title": "7 Rings (KAVARI 4x4 mix)",
+      "track_duration_seconds": 171,
+      "artist_id": "f4fdbb4c-e4b7-47a0-b83b-d91bbfcfa387",
+      "artist_name": "Ariana Grande"
+    },
+    {
+      "track_id": "6fe6c7a3-2f67-4fa5-9ee3-724f5c57e836",
+      "title": "7 Rings (Kore-G Bootleg)",
+      "track_duration_seconds": 290,
+      "artist_id": "f4fdbb4c-e4b7-47a0-b83b-d91bbfcfa387",
+      "artist_name": "Ariana Grande"
+    },
+    {
+      "track_id": "117b1f31-c252-46f8-829c-99ffea92838c",
+      "title": "7 rings",
+      "track_duration_seconds": 178,
+      "artist_id": "f4fdbb4c-e4b7-47a0-b83b-d91bbfcfa387",
+      "artist_name": "Ariana Grande"
+    },
+    {
+      "track_id": "9d23978e-e379-42c2-ab44-bcfedababa19",
+      "title": "#mood",
+      "track_duration_seconds": 163,
+      "artist_id": "b1e26560-60e5-4236-bbdb-9aa5a8d5ee19",
+      "artist_name": "Post Malone"
+    },
+    {
+      "track_id": "fafad082-2ddf-424b-a274-d7974b93c072",
+      "title": "40 Funk",
+      "track_duration_seconds": 264,
+      "artist_id": "b1e26560-60e5-4236-bbdb-9aa5a8d5ee19",
+      "artist_name": "Post Malone"
+    },
+    {
+      "track_id": "4da3b3d0-8913-431d-b4d6-2cb5259e6929",
+      "title": "92 Explorer",
+      "track_duration_seconds": 211,
+      "artist_id": "b1e26560-60e5-4236-bbdb-9aa5a8d5ee19",
+      "artist_name": "Post Malone"
+    },
+    {
+      "track_id": "9407a519-c028-42c0-8a60-453984f579f7",
+      "title": "92 Explorer (gordon snyder remix)",
+      "track_duration_seconds": 157,
+      "artist_id": "b1e26560-60e5-4236-bbdb-9aa5a8d5ee19",
+      "artist_name": "Post Malone"
+    },
+    {
+      "track_id": "518774f4-ac29-4f63-89e8-e0cba72578fa",
+      "title": "A Thousand Bad Times",
+      "track_duration_seconds": 221,
+      "artist_id": "b1e26560-60e5-4236-bbdb-9aa5a8d5ee19",
+      "artist_name": "Post Malone"
+    },
+    {
+      "track_id": "7507a7c7-1f65-4825-84c1-b232af7f4e41",
+      "title": "About a Girl",
+      "track_duration_seconds": 176,
+      "artist_id": "b1e26560-60e5-4236-bbdb-9aa5a8d5ee19",
+      "artist_name": "Post Malone"
+    },
+    {
+      "track_id": "39ed7333-426b-4a8b-b0ac-ac4e59bd3eee",
+      "title": "Ain’t How It Ends",
+      "track_duration_seconds": 202,
+      "artist_id": "b1e26560-60e5-4236-bbdb-9aa5a8d5ee19",
+      "artist_name": "Post Malone"
+    },
+    {
+      "track_id": "13768828-414b-44cf-a52f-0e44327e0373",
+      "title": "Allergic",
+      "track_duration_seconds": 157,
+      "artist_id": "b1e26560-60e5-4236-bbdb-9aa5a8d5ee19",
+      "artist_name": "Post Malone"
+    },
+    {
+      "track_id": "203b79f0-25ed-4cd4-ac50-d9e9adcd7811",
+      "title": "Back to Texas",
+      "track_duration_seconds": 168,
+      "artist_id": "b1e26560-60e5-4236-bbdb-9aa5a8d5ee19",
+      "artist_name": "Post Malone"
+    },
+    {
+      "track_id": "9bf65d11-37cd-496e-b847-0a698a226feb",
+      "title": "\"This Is the Last Song\"",
+      "track_duration_seconds": 205,
+      "artist_id": "67f66c07-6e61-4026-ade5-7e782fad3a5d",
+      "artist_name": "Foo Fighters"
+    },
+    {
+      "track_id": "2330781a-a7c7-4bd2-a4dd-97d1a70fa77c",
+      "title": "(Banter with Jams: I'm the One, Mountain Song, Smoke on the Water and Blackbird)",
+      "track_duration_seconds": 538,
+      "artist_id": "67f66c07-6e61-4026-ade5-7e782fad3a5d",
+      "artist_name": "Foo Fighters"
+    },
+    {
+      "track_id": "00b9e253-7951-420f-96c2-078a487599b0",
+      "title": "(Banter)",
+      "track_duration_seconds": 52,
+      "artist_id": "67f66c07-6e61-4026-ade5-7e782fad3a5d",
+      "artist_name": "Foo Fighters"
+    },
+    {
+      "track_id": "b5d00f27-21a7-40f4-8904-579e4bb5c949",
+      "title": "(Banter1)",
+      "track_duration_seconds": 143,
+      "artist_id": "67f66c07-6e61-4026-ade5-7e782fad3a5d",
+      "artist_name": "Foo Fighters"
+    },
+    {
+      "track_id": "b37f1406-5302-428b-8bdc-f0d8145b9a35",
+      "title": "(Banter2)",
+      "track_duration_seconds": 161,
+      "artist_id": "67f66c07-6e61-4026-ade5-7e782fad3a5d",
+      "artist_name": "Foo Fighters"
+    },
+    {
+      "track_id": "d6105360-76ab-47d1-b82f-64d16d4a7bb8",
+      "title": "(Dave falls off stage)",
+      "track_duration_seconds": 199,
+      "artist_id": "67f66c07-6e61-4026-ade5-7e782fad3a5d",
+      "artist_name": "Foo Fighters"
+    },
+    {
+      "track_id": "fe71d080-60dc-456d-ade9-962277b5c75e",
+      "title": "(Freddy Mercury Tribute - Solos - with Dave Grohl on Drums)",
+      "track_duration_seconds": 239,
+      "artist_id": "67f66c07-6e61-4026-ade5-7e782fad3a5d",
+      "artist_name": "Foo Fighters"
+    },
+    {
+      "track_id": "b698daee-aa1e-4649-acc7-7bb714b44f6b",
+      "title": "(Medley with Solos)",
+      "track_duration_seconds": 532,
+      "artist_id": "67f66c07-6e61-4026-ade5-7e782fad3a5d",
+      "artist_name": "Foo Fighters"
+    },
+    {
+      "track_id": "a164eba2-6e58-436e-8834-aebf72cfac5b",
+      "title": "(band intro's)",
+      "track_duration_seconds": 139,
+      "artist_id": "67f66c07-6e61-4026-ade5-7e782fad3a5d",
+      "artist_name": "Foo Fighters"
+    },
+    {
+      "track_id": "83148cff-4d51-4125-a5a3-8ae818eac8c6",
+      "title": "(Introduction)",
+      "track_duration_seconds": 95,
+      "artist_id": "8bfac288-ccc5-448d-9573-c33ea2aa5c30",
+      "artist_name": "Red Hot Chili Peppers"
+    },
+    {
+      "track_id": "54bdada0-893a-4129-b47e-719c253b821d",
+      "title": "(break)",
+      "track_duration_seconds": 50,
+      "artist_id": "8bfac288-ccc5-448d-9573-c33ea2aa5c30",
+      "artist_name": "Red Hot Chili Peppers"
+    },
+    {
+      "track_id": "d6ce1658-997c-48db-af43-c2ce7e0ba185",
+      "title": "(encore break)",
+      "track_duration_seconds": 231,
+      "artist_id": "8bfac288-ccc5-448d-9573-c33ea2aa5c30",
+      "artist_name": "Red Hot Chili Peppers"
+    },
+    {
+      "track_id": "735f0789-f3d9-4511-aba2-9b5e59a6d5b5",
+      "title": "(interlude)",
+      "track_duration_seconds": 58,
+      "artist_id": "8bfac288-ccc5-448d-9573-c33ea2aa5c30",
+      "artist_name": "Red Hot Chili Peppers"
+    },
+    {
+      "track_id": "a4c422b4-bc2a-4afe-b97a-604e8f62fb9e",
+      "title": "0Organic Anti-Beat Box Band Anarchy In The UK (Live)",
+      "track_duration_seconds": 305,
+      "artist_id": "8bfac288-ccc5-448d-9573-c33ea2aa5c30",
+      "artist_name": "Red Hot Chili Peppers"
+    },
+    {
+      "track_id": "2e1f92e6-b831-41d3-9fd5-e6949ea5d590",
+      "title": "21st Century",
+      "track_duration_seconds": 262,
+      "artist_id": "8bfac288-ccc5-448d-9573-c33ea2aa5c30",
+      "artist_name": "Red Hot Chili Peppers"
+    },
+    {
+      "track_id": "6bd45824-c24e-40f8-a07c-5b80a10c29f1",
+      "title": "21st Centurya",
+      "track_duration_seconds": 384,
+      "artist_id": "8bfac288-ccc5-448d-9573-c33ea2aa5c30",
+      "artist_name": "Red Hot Chili Peppers"
+    },
+    {
+      "track_id": "60cd7d46-1150-47de-97f3-790e6b47c4d1",
+      "title": "A Certain Someone",
+      "track_duration_seconds": 145,
+      "artist_id": "8bfac288-ccc5-448d-9573-c33ea2aa5c30",
+      "artist_name": "Red Hot Chili Peppers"
+    },
+    {
+      "track_id": "ded4adc3-99fd-4d32-828d-b84616e0848b",
+      "title": "A Love Letter to the History of Rock ’n’ Roll",
+      "track_duration_seconds": 76,
+      "artist_id": "8bfac288-ccc5-448d-9573-c33ea2aa5c30",
+      "artist_name": "Red Hot Chili Peppers"
+    },
+    {
+      "track_id": "54b0b6b4-b9df-45fe-87fb-ae6c26f33e5a",
+      "title": "(Intro)",
+      "track_duration_seconds": 126,
+      "artist_id": "ada7a83c-e3e1-40f1-93f9-3e73dbc9298a",
+      "artist_name": "Arctic Monkeys"
+    },
+    {
+      "track_id": "de0a59f1-a937-47da-9109-9392d3b69e17",
+      "title": "-",
+      "track_duration_seconds": 146,
+      "artist_id": "ada7a83c-e3e1-40f1-93f9-3e73dbc9298a",
+      "artist_name": "Arctic Monkeys"
+    },
+    {
+      "track_id": "e5bdbeac-6e52-495c-a51b-6b834aaccfc8",
+      "title": "2013",
+      "track_duration_seconds": 149,
+      "artist_id": "ada7a83c-e3e1-40f1-93f9-3e73dbc9298a",
+      "artist_name": "Arctic Monkeys"
+    },
+    {
+      "track_id": "02d8bf1a-1ad4-4d26-b612-b5d52cc49892",
+      "title": "505",
+      "track_duration_seconds": 304,
+      "artist_id": "ada7a83c-e3e1-40f1-93f9-3e73dbc9298a",
+      "artist_name": "Arctic Monkeys"
+    },
+    {
+      "track_id": "882c59aa-0e77-46d3-879c-cc1ccb2b499a",
+      "title": "505 (extended jam)",
+      "track_duration_seconds": 377,
+      "artist_id": "ada7a83c-e3e1-40f1-93f9-3e73dbc9298a",
+      "artist_name": "Arctic Monkeys"
+    },
+    {
+      "track_id": "e9ad7478-2cdf-47d6-b7c0-bb23cdd66bb4",
+      "title": "7",
+      "track_duration_seconds": 130,
+      "artist_id": "ada7a83c-e3e1-40f1-93f9-3e73dbc9298a",
+      "artist_name": "Arctic Monkeys"
+    },
+    {
+      "track_id": "dd10b013-6dce-432d-afcd-d345119f5c6d",
+      "title": "7 (live at Peter & Debora’s Living Room)",
+      "track_duration_seconds": 150,
+      "artist_id": "ada7a83c-e3e1-40f1-93f9-3e73dbc9298a",
+      "artist_name": "Arctic Monkeys"
+    },
+    {
+      "track_id": "0d4d3f1f-7d6b-4e21-9b41-ec908a61f489",
+      "title": "A Certain Romance",
+      "track_duration_seconds": 374,
+      "artist_id": "ada7a83c-e3e1-40f1-93f9-3e73dbc9298a",
+      "artist_name": "Arctic Monkeys"
+    },
+    {
+      "track_id": "09a522df-610f-4868-a87b-9d80c3453374",
+      "title": "All My Own Stunts",
+      "track_duration_seconds": 232,
+      "artist_id": "ada7a83c-e3e1-40f1-93f9-3e73dbc9298a",
+      "artist_name": "Arctic Monkeys"
+    },
+    {
+      "track_id": "bbaa685b-cbc7-4513-a115-ea9284164ce2",
+      "title": "1685",
+      "track_duration_seconds": 371,
+      "artist_id": "9c9f1380-2516-4fc9-a3e6-f9f61941d090",
+      "artist_name": "Muse"
+    },
+    {
+      "track_id": "66e4da2a-3531-452d-9c43-2b9796b909b2",
+      "title": "1685 (acapella)",
+      "track_duration_seconds": 226,
+      "artist_id": "9c9f1380-2516-4fc9-a3e6-f9f61941d090",
+      "artist_name": "Muse"
+    },
+    {
+      "track_id": "8197b2dd-34bf-4123-94c6-e3b8d6c9ed89",
+      "title": "1685 (instrumental)",
+      "track_duration_seconds": 236,
+      "artist_id": "9c9f1380-2516-4fc9-a3e6-f9f61941d090",
+      "artist_name": "Muse"
+    },
+    {
+      "track_id": "2e9b3175-86c9-45e1-b276-d0567f0aa943",
+      "title": "A Soldier’s Poem",
+      "track_duration_seconds": 145,
+      "artist_id": "9c9f1380-2516-4fc9-a3e6-f9f61941d090",
+      "artist_name": "Muse"
+    },
+    {
+      "track_id": "7c3d60d6-68b6-4ae3-a231-133c040c4df6",
+      "title": "Aftermath",
+      "track_duration_seconds": 348,
+      "artist_id": "9c9f1380-2516-4fc9-a3e6-f9f61941d090",
+      "artist_name": "Muse"
+    },
+    {
+      "track_id": "0ca58383-ea91-4150-8372-d11badd3d9e9",
+      "title": "Aftermath (instrumental)",
+      "track_duration_seconds": 348,
+      "artist_id": "9c9f1380-2516-4fc9-a3e6-f9f61941d090",
+      "artist_name": "Muse"
+    },
+    {
+      "track_id": "46401ba9-76b5-4473-b192-14e114e0017b",
+      "title": "Aftermath (radio edit)",
+      "track_duration_seconds": 232,
+      "artist_id": "9c9f1380-2516-4fc9-a3e6-f9f61941d090",
+      "artist_name": "Muse"
+    },
+    {
+      "track_id": "0f28dfa6-73c0-4758-9fc5-f5582f00f5e0",
+      "title": "Agitated",
+      "track_duration_seconds": 251,
+      "artist_id": "9c9f1380-2516-4fc9-a3e6-f9f61941d090",
+      "artist_name": "Muse"
+    },
+    {
+      "track_id": "fd4f5f7b-ebb5-433f-96d9-9c2846055035",
+      "title": "Agitated (live)",
+      "track_duration_seconds": 194,
+      "artist_id": "9c9f1380-2516-4fc9-a3e6-f9f61941d090",
+      "artist_name": "Muse"
+    },
+    {
+      "track_id": "9a961c4f-97ac-49da-b5de-98610c7b5b8f",
+      "title": "(Banter)",
+      "track_duration_seconds": 64,
+      "artist_id": "95e1ead9-4d31-4808-a7ac-32c3614c116b",
+      "artist_name": "The Killers"
+    },
+    {
+      "track_id": "54d2bdaa-3257-4835-bdd3-f5b66aed263f",
+      "title": "(encore break)",
+      "track_duration_seconds": 195,
+      "artist_id": "95e1ead9-4d31-4808-a7ac-32c3614c116b",
+      "artist_name": "The Killers"
+    },
+    {
+      "track_id": "a90b1ecc-fc97-4e93-be38-c6bd07588e39",
+      "title": "(intro)",
+      "track_duration_seconds": 82,
+      "artist_id": "95e1ead9-4d31-4808-a7ac-32c3614c116b",
+      "artist_name": "The Killers"
+    },
+    {
+      "track_id": "cb4a6124-faa5-48d7-a58f-072de8423997",
+      "title": "(outro)",
+      "track_duration_seconds": 77,
+      "artist_id": "95e1ead9-4d31-4808-a7ac-32c3614c116b",
+      "artist_name": "The Killers"
+    },
+    {
+      "track_id": "16f1c324-fd63-4224-989f-890bea283b0c",
+      "title": "(radio banter)",
+      "track_duration_seconds": 135,
+      "artist_id": "95e1ead9-4d31-4808-a7ac-32c3614c116b",
+      "artist_name": "The Killers"
+    },
+    {
+      "track_id": "3d20cee6-6519-49c2-af62-f3198d1ad4f6",
+      "title": "2022-10-01: Madison Square Garden, New York City, NY, USA",
+      "track_duration_seconds": 888,
+      "artist_id": "95e1ead9-4d31-4808-a7ac-32c3614c116b",
+      "artist_name": "The Killers"
+    },
+    {
+      "track_id": "c0845491-dc79-485a-bbe8-3672723ef8bc",
+      "title": "A Crippling Blow",
+      "track_duration_seconds": 217,
+      "artist_id": "95e1ead9-4d31-4808-a7ac-32c3614c116b",
+      "artist_name": "The Killers"
+    },
+    {
+      "track_id": "18f5331b-bede-44ef-a240-760ef9751017",
+      "title": "A Dustland Fairytale",
+      "track_duration_seconds": 391,
+      "artist_id": "95e1ead9-4d31-4808-a7ac-32c3614c116b",
+      "artist_name": "The Killers"
+    },
+    {
+      "track_id": "e3342ac4-009d-4c34-bb72-2ab194d1196a",
+      "title": "A Dustland Fairytale (Abbey Road)",
+      "track_duration_seconds": 258,
+      "artist_id": "95e1ead9-4d31-4808-a7ac-32c3614c116b",
+      "artist_name": "The Killers"
+    },
+    {
+      "track_id": "1828628c-7956-49f5-81fc-e0d2a3720e45",
+      "title": "(F. O.D.)",
+      "track_duration_seconds": 153,
+      "artist_id": "084308bd-1654-436f-ba03-df6697104e19",
+      "artist_name": "Green Day"
+    },
+    {
+      "track_id": "dc74a738-9819-4717-b64f-7fc4ce88aa5e",
+      "title": "(F. O.D.) (live at Makuhari Messe, Tokyo, Japan, March 18, 2001)",
+      "track_duration_seconds": 195,
+      "artist_id": "084308bd-1654-436f-ba03-df6697104e19",
+      "artist_name": "Green Day"
+    },
+    {
+      "track_id": "0f3254ef-7f45-4b46-83f9-b99a4a91bd4b",
+      "title": "1,000 Hours",
+      "track_duration_seconds": 145,
+      "artist_id": "084308bd-1654-436f-ba03-df6697104e19",
+      "artist_name": "Green Day"
+    },
+    {
+      "track_id": "08110056-2183-43fa-9dea-bd7daafb7813",
+      "title": "16",
+      "track_duration_seconds": 285,
+      "artist_id": "084308bd-1654-436f-ba03-df6697104e19",
+      "artist_name": "Green Day"
+    },
+    {
+      "track_id": "0f7bbce0-093c-48d7-90df-5f268a9c6681",
+      "title": "16 (live)",
+      "track_duration_seconds": 239,
+      "artist_id": "084308bd-1654-436f-ba03-df6697104e19",
+      "artist_name": "Green Day"
+    },
+    {
+      "track_id": "0ad87e82-fe5f-4835-a42c-af3d3e8120e4",
+      "title": "19th Nervous Breakdown",
+      "track_duration_seconds": 240,
+      "artist_id": "084308bd-1654-436f-ba03-df6697104e19",
+      "artist_name": "Green Day"
+    },
+    {
+      "track_id": "0af56ed3-91fe-4e08-a39e-9cf22eb9a47f",
+      "title": "2,000 Light Years Away",
+      "track_duration_seconds": 161,
+      "artist_id": "084308bd-1654-436f-ba03-df6697104e19",
+      "artist_name": "Green Day"
+    },
+    {
+      "track_id": "35925f5c-6afb-469a-8b23-5f41d43a6409",
+      "title": "2,000 Light Years Away (The Jerky Boys mix)",
+      "track_duration_seconds": 145,
+      "artist_id": "084308bd-1654-436f-ba03-df6697104e19",
+      "artist_name": "Green Day"
+    },
+    {
+      "track_id": "00cf4aa8-2a54-48bc-aeec-ea1f703c753e",
+      "title": "21 Guns",
+      "track_duration_seconds": 346,
+      "artist_id": "084308bd-1654-436f-ba03-df6697104e19",
+      "artist_name": "Green Day"
+    },
+    {
+      "track_id": "b895ec63-bc06-4cce-aa0f-5fbf57f8326c",
+      "title": "1STP KLOSR",
+      "track_duration_seconds": 346,
+      "artist_id": "f59c5520-5f46-4d2c-b2c4-822eabf53419",
+      "artist_name": "Linkin Park"
+    },
+    {
+      "track_id": "1fda789d-1b30-4142-b9ac-a929aa66ad7e",
+      "title": "1stp Klosr (Humble Brothers remix)",
+      "track_duration_seconds": 380,
+      "artist_id": "f59c5520-5f46-4d2c-b2c4-822eabf53419",
+      "artist_name": "Linkin Park"
+    },
+    {
+      "track_id": "ca59c859-041a-4be5-8a2e-7bec468be458",
+      "title": "26 Lettaz in da Alphabet",
+      "track_duration_seconds": 214,
+      "artist_id": "f59c5520-5f46-4d2c-b2c4-822eabf53419",
+      "artist_name": "Linkin Park"
+    },
+    {
+      "track_id": "d5706185-6da6-4a03-8f54-a0fa5ff2e0db",
+      "title": "4 GT 10",
+      "track_duration_seconds": 211,
+      "artist_id": "f59c5520-5f46-4d2c-b2c4-822eabf53419",
+      "artist_name": "Linkin Park"
+    },
+    {
+      "track_id": "d6b36e06-1f88-4f38-a8c8-9051a773e9f5",
+      "title": "A 06 (skit)",
+      "track_duration_seconds": 56,
+      "artist_id": "f59c5520-5f46-4d2c-b2c4-822eabf53419",
+      "artist_name": "Linkin Park"
+    },
+    {
+      "track_id": "2dfd0ea7-1447-44b8-aa0e-5f64c110997b",
+      "title": "A Light That Never Comes",
+      "track_duration_seconds": 229,
+      "artist_id": "f59c5520-5f46-4d2c-b2c4-822eabf53419",
+      "artist_name": "Linkin Park"
+    },
+    {
+      "track_id": "0df7b34c-37da-4ba9-8f5d-40d6af7b425f",
+      "title": "A Light That Never Comes (Angger Dimas remix)",
+      "track_duration_seconds": 293,
+      "artist_id": "f59c5520-5f46-4d2c-b2c4-822eabf53419",
+      "artist_name": "Linkin Park"
+    },
+    {
+      "track_id": "fa4191f5-8db3-48e6-9222-edf664628b7c",
+      "title": "A Light That Never Comes (Brian Yates remix)",
+      "track_duration_seconds": 240,
+      "artist_id": "f59c5520-5f46-4d2c-b2c4-822eabf53419",
+      "artist_name": "Linkin Park"
+    },
+    {
+      "track_id": "fe54d54c-003a-4905-9498-26c9a468787e",
+      "title": "A Light That Never Comes (Carnizzy remix)",
+      "track_duration_seconds": 288,
+      "artist_id": "f59c5520-5f46-4d2c-b2c4-822eabf53419",
+      "artist_name": "Linkin Park"
+    },
+    {
+      "track_id": "56899c9f-706f-4ffd-b1ab-62bf31df8389",
+      "title": "(Talking)",
+      "track_duration_seconds": 68,
+      "artist_id": "437a0e49-c6ae-42f6-a6c1-84f25ed366bc",
+      "artist_name": "Bon Iver"
+    },
+    {
+      "track_id": "229045ca-05ae-4262-aa0d-455e13d2866f",
+      "title": "...",
+      "track_duration_seconds": 12,
+      "artist_id": "437a0e49-c6ae-42f6-a6c1-84f25ed366bc",
+      "artist_name": "Bon Iver"
+    },
+    {
+      "track_id": "342d29fa-79ab-4fc2-9e16-21eee30f99af",
+      "title": "00000 Million",
+      "track_duration_seconds": 312,
+      "artist_id": "437a0e49-c6ae-42f6-a6c1-84f25ed366bc",
+      "artist_name": "Bon Iver"
+    },
+    {
+      "track_id": "047f28ca-a1c2-4ba8-9696-7aa2e6808a6d",
+      "title": "10 d E A T h b R E a s T ⚄ ⚄",
+      "track_duration_seconds": 196,
+      "artist_id": "437a0e49-c6ae-42f6-a6c1-84f25ed366bc",
+      "artist_name": "Bon Iver"
+    },
+    {
+      "track_id": "c1714243-1b4d-4763-ba18-eff01254ca09",
+      "title": "10 d E A T h b R E a s T ⚄ ⚄ (extended version)",
+      "track_duration_seconds": 178,
+      "artist_id": "437a0e49-c6ae-42f6-a6c1-84f25ed366bc",
+      "artist_name": "Bon Iver"
+    },
+    {
+      "track_id": "407eec4a-c444-4d2c-adde-611e39d7ab92",
+      "title": "21 M◊◊N WATER",
+      "track_duration_seconds": 188,
+      "artist_id": "437a0e49-c6ae-42f6-a6c1-84f25ed366bc",
+      "artist_name": "Bon Iver"
+    },
+    {
+      "track_id": "17a52e9d-58da-48fc-bdb8-d600cea0bbdd",
+      "title": "22 (OVER S∞∞N)",
+      "track_duration_seconds": 227,
+      "artist_id": "437a0e49-c6ae-42f6-a6c1-84f25ed366bc",
+      "artist_name": "Bon Iver"
+    },
+    {
+      "track_id": "627f0258-cb4c-43bb-8659-3fa56cf8ed12",
+      "title": "22 (OVER S∞∞N) (Bob Moose extended cab version)",
+      "track_duration_seconds": 202,
+      "artist_id": "437a0e49-c6ae-42f6-a6c1-84f25ed366bc",
+      "artist_name": "Bon Iver"
+    },
+    {
+      "track_id": "19325a00-1558-47b7-a0c7-d6d3fd55c43d",
+      "title": "22 (OVER S∞∞N) (Cloudchord remix)",
+      "track_duration_seconds": 300,
+      "artist_id": "437a0e49-c6ae-42f6-a6c1-84f25ed366bc",
+      "artist_name": "Bon Iver"
+    },
+    {
+      "track_id": "77236158-73ac-485d-8ec9-b0787bd9e640",
+      "title": "30 Minutes With Matthew Saville",
+      "track_duration_seconds": 1635,
+      "artist_id": "63aa26c3-d59b-4da4-84ac-716b54f1ef4d",
+      "artist_name": "Tame Impala"
+    },
+    {
+      "track_id": "803dfaa9-c7ef-44c1-b2cd-442a80cfdfe1",
+      "title": "41 Mojitos (Canyons Poolside dub)",
+      "track_duration_seconds": 379,
+      "artist_id": "63aa26c3-d59b-4da4-84ac-716b54f1ef4d",
+      "artist_name": "Tame Impala"
+    },
+    {
+      "track_id": "571cf5ba-695a-4b9d-a22b-b2361603faee",
+      "title": "Afterthought",
+      "track_duration_seconds": 241,
+      "artist_id": "63aa26c3-d59b-4da4-84ac-716b54f1ef4d",
+      "artist_name": "Tame Impala"
+    },
+    {
+      "track_id": "65b408b6-3f86-4680-bf11-a1277e906927",
+      "title": "Alter Ego",
+      "track_duration_seconds": 309,
+      "artist_id": "63aa26c3-d59b-4da4-84ac-716b54f1ef4d",
+      "artist_name": "Tame Impala"
+    },
+    {
+      "track_id": "f3d3aed5-8cbf-4560-a694-db845f8cb9ae",
+      "title": "Alter Ego (2020 mix)",
+      "track_duration_seconds": 290,
+      "artist_id": "63aa26c3-d59b-4da4-84ac-716b54f1ef4d",
+      "artist_name": "Tame Impala"
+    },
+    {
+      "track_id": "3c7e903f-ea93-48fc-b4f8-263e174120d4",
+      "title": "Alter Ego (Marc Riley Acoustic)",
+      "track_duration_seconds": 291,
+      "artist_id": "63aa26c3-d59b-4da4-84ac-716b54f1ef4d",
+      "artist_name": "Tame Impala"
+    },
+    {
+      "track_id": "03535c23-5b24-44cd-a414-f1048fd517b6",
+      "title": "Alter Ego (Viva Radio)",
+      "track_duration_seconds": 297,
+      "artist_id": "63aa26c3-d59b-4da4-84ac-716b54f1ef4d",
+      "artist_name": "Tame Impala"
+    },
+    {
+      "track_id": "7550725c-ce13-483a-a136-f5f4a6b5daf0",
+      "title": "Angel",
+      "track_duration_seconds": 308,
+      "artist_id": "63aa26c3-d59b-4da4-84ac-716b54f1ef4d",
+      "artist_name": "Tame Impala"
+    },
+    {
+      "track_id": "17bea640-cebd-4ab7-aec2-3a4367193771",
+      "title": "Apocalypse Dreams",
+      "track_duration_seconds": 382,
+      "artist_id": "63aa26c3-d59b-4da4-84ac-716b54f1ef4d",
+      "artist_name": "Tame Impala"
+    },
+    {
+      "track_id": "4cf06469-cfa0-4e5d-beb4-24b938a90552",
+      "title": "21 Device Control (Reprise)",
+      "track_duration_seconds": 423,
+      "artist_id": "e520459c-dff4-491d-a6e4-c97be35e0044",
+      "artist_name": "Frank Ocean"
+    },
+    {
+      "track_id": "cd3b36b4-6726-4f5d-963d-90d3d6e12269",
+      "title": "2400",
+      "track_duration_seconds": 97,
+      "artist_id": "e520459c-dff4-491d-a6e4-c97be35e0044",
+      "artist_name": "Frank Ocean"
+    },
+    {
+      "track_id": "05735d60-8ee1-4cad-912c-5954c8888635",
+      "title": "4 Tears",
+      "track_duration_seconds": 106,
+      "artist_id": "e520459c-dff4-491d-a6e4-c97be35e0044",
+      "artist_name": "Frank Ocean"
+    },
+    {
+      "track_id": "052d311c-c9f5-4e55-b1cb-83e7d058520a",
+      "title": "911 / Mr. Lonely",
+      "track_duration_seconds": 255,
+      "artist_id": "e520459c-dff4-491d-a6e4-c97be35e0044",
+      "artist_name": "Frank Ocean"
+    },
+    {
+      "track_id": "64821cff-6ae0-49a3-8d61-884937ba5c47",
+      "title": "A Certain Way",
+      "track_duration_seconds": 11,
+      "artist_id": "e520459c-dff4-491d-a6e4-c97be35e0044",
+      "artist_name": "Frank Ocean"
+    },
+    {
+      "track_id": "6a4f06c2-d357-4bdd-bde8-9e6bb95fc237",
+      "title": "A Walk in the Park / White Ferrari",
+      "track_duration_seconds": 247,
+      "artist_id": "e520459c-dff4-491d-a6e4-c97be35e0044",
+      "artist_name": "Frank Ocean"
+    },
+    {
+      "track_id": "7a1f3d86-cc1d-4539-a6ec-207a936b1d45",
+      "title": "ABEL’S TRACK",
+      "track_duration_seconds": 50,
+      "artist_id": "e520459c-dff4-491d-a6e4-c97be35e0044",
+      "artist_name": "Frank Ocean"
+    },
+    {
+      "track_id": "a00fc91f-9aad-4bb0-bddf-69773d5a0f3a",
+      "title": "ABEL’S TRACK (extended version)",
+      "track_duration_seconds": 149,
+      "artist_id": "e520459c-dff4-491d-a6e4-c97be35e0044",
+      "artist_name": "Frank Ocean"
+    },
+    {
+      "track_id": "450e92df-e725-43fa-b656-8b6ef93c3e6e",
+      "title": "ANOTHER LIFE",
+      "track_duration_seconds": 234,
+      "artist_id": "e520459c-dff4-491d-a6e4-c97be35e0044",
+      "artist_name": "Frank Ocean"
+    },
+    {
+      "track_id": "6e155f3e-4872-4b70-9584-ffbc455c25cb",
+      "title": "20 Something",
+      "track_duration_seconds": 198,
+      "artist_id": "272989c8-5535-492d-a25c-9f58803e027f",
+      "artist_name": "SZA"
+    },
+    {
+      "track_id": "20a1c8e7-8cd5-4583-ac8c-8f4f67106f97",
+      "title": "2AM",
+      "track_duration_seconds": 243,
+      "artist_id": "272989c8-5535-492d-a25c-9f58803e027f",
+      "artist_name": "SZA"
+    },
+    {
+      "track_id": "6bba7497-d321-414c-b7d1-5c7f49dbeac1",
+      "title": "30 For 30",
+      "track_duration_seconds": 220,
+      "artist_id": "272989c8-5535-492d-a25c-9f58803e027f",
+      "artist_name": "SZA"
+    },
+    {
+      "track_id": "66be2eda-1e5d-4115-901b-4c53a2cbc815",
+      "title": "9",
+      "track_duration_seconds": 253,
+      "artist_id": "272989c8-5535-492d-a25c-9f58803e027f",
+      "artist_name": "SZA"
+    },
+    {
+      "track_id": "02808a0e-9418-4eb2-8602-e85eaa335d34",
+      "title": "AFTERMATH",
+      "track_duration_seconds": 218,
+      "artist_id": "272989c8-5535-492d-a25c-9f58803e027f",
+      "artist_name": "SZA"
+    },
+    {
+      "track_id": "b5a4f63f-e8a3-44b9-b875-dabf1be75576",
+      "title": "Advil",
+      "track_duration_seconds": 181,
+      "artist_id": "272989c8-5535-492d-a25c-9f58803e027f",
+      "artist_name": "SZA"
+    },
+    {
+      "track_id": "8f056243-ec20-4068-bcaf-1e64f7db94d5",
+      "title": "All The Stars",
+      "track_duration_seconds": 197,
+      "artist_id": "272989c8-5535-492d-a25c-9f58803e027f",
+      "artist_name": "SZA"
+    },
+    {
+      "track_id": "5252e7f7-4073-44c0-ac17-d2b19d0ddb3e",
+      "title": "All the Stars (SZA Reference)",
+      "track_duration_seconds": 233,
+      "artist_id": "272989c8-5535-492d-a25c-9f58803e027f",
+      "artist_name": "SZA"
+    },
+    {
+      "track_id": "09d0e72b-350c-4859-9d8f-bc7e996e7441",
+      "title": "Another Life",
+      "track_duration_seconds": 205,
+      "artist_id": "272989c8-5535-492d-a25c-9f58803e027f",
+      "artist_name": "SZA"
+    },
+    {
+      "track_id": "83b8c400-2116-4453-8819-0fc3bd12fd6d",
+      "title": "12:01",
+      "track_duration_seconds": 158,
+      "artist_id": "f6beac20-5dfe-4d1f-ae02-0b0a740aafd6",
+      "artist_name": "Tyler, The Creator"
+    },
+    {
+      "track_id": "2ae12672-8b4b-4237-8a38-6bfe10a99c17",
+      "title": "2SEATER",
+      "track_duration_seconds": 218,
+      "artist_id": "f6beac20-5dfe-4d1f-ae02-0b0a740aafd6",
+      "artist_name": "Tyler, The Creator"
+    },
+    {
+      "track_id": "826cf7c4-cbc4-4380-95c9-effefaa0924d",
+      "title": "2SEATER (instrumental)",
+      "track_duration_seconds": 410,
+      "artist_id": "f6beac20-5dfe-4d1f-ae02-0b0a740aafd6",
+      "artist_name": "Tyler, The Creator"
+    },
+    {
+      "track_id": "bd3600d4-20ed-4a62-b93e-2b59a88a2928",
+      "title": "2SEATER / HAIR BLOWS",
+      "track_duration_seconds": 410,
+      "artist_id": "f6beac20-5dfe-4d1f-ae02-0b0a740aafd6",
+      "artist_name": "Tyler, The Creator"
+    },
+    {
+      "track_id": "4d7d72cf-77ab-4a1f-a696-591d1e0f51dc",
+      "title": "2SEATER SLOW+REVERB",
+      "track_duration_seconds": 455,
+      "artist_id": "f6beac20-5dfe-4d1f-ae02-0b0a740aafd6",
+      "artist_name": "Tyler, The Creator"
+    },
+    {
+      "track_id": "7bb97a7b-d66a-4134-a1d3-51db2fdb4d3a",
+      "title": "3-D",
+      "track_duration_seconds": 131,
+      "artist_id": "f6beac20-5dfe-4d1f-ae02-0b0a740aafd6",
+      "artist_name": "Tyler, The Creator"
+    },
+    {
+      "track_id": "f42b50bd-1398-4b71-ad66-e0a705d0fd16",
+      "title": "327",
+      "track_duration_seconds": 349,
+      "artist_id": "f6beac20-5dfe-4d1f-ae02-0b0a740aafd6",
+      "artist_name": "Tyler, The Creator"
+    },
+    {
+      "track_id": "6b181b44-cd22-4abf-9720-50bcfefa5be1",
+      "title": "435",
+      "track_duration_seconds": 94,
+      "artist_id": "f6beac20-5dfe-4d1f-ae02-0b0a740aafd6",
+      "artist_name": "Tyler, The Creator"
+    },
+    {
+      "track_id": "78eca3b8-7bef-4d81-a374-7e1329dca369",
+      "title": "48",
+      "track_duration_seconds": 247,
+      "artist_id": "f6beac20-5dfe-4d1f-ae02-0b0a740aafd6",
+      "artist_name": "Tyler, The Creator"
+    },
+    {
+      "track_id": "5c4d30e9-b110-480e-8ae7-6961162d475e",
+      "title": "(?)",
+      "track_duration_seconds": 173,
+      "artist_id": "7fb57fba-a6ef-44c2-abab-2fa3bdee607e",
+      "artist_name": "Childish Gambino"
+    },
+    {
+      "track_id": "06addb3f-ff39-4f34-8c0d-4993d6df0bc4",
+      "title": "(encore break)",
+      "track_duration_seconds": 128,
+      "artist_id": "7fb57fba-a6ef-44c2-abab-2fa3bdee607e",
+      "artist_name": "Childish Gambino"
+    },
+    {
+      "track_id": "156fbcc6-15c9-4582-81ca-723c3189602f",
+      "title": "(interlude)",
+      "track_duration_seconds": 67,
+      "artist_id": "7fb57fba-a6ef-44c2-abab-2fa3bdee607e",
+      "artist_name": "Childish Gambino"
+    },
+    {
+      "track_id": "a6f70ae6-9458-4b4d-a52b-0d0c18758aa1",
+      "title": "(intro)",
+      "track_duration_seconds": 52,
+      "artist_id": "7fb57fba-a6ef-44c2-abab-2fa3bdee607e",
+      "artist_name": "Childish Gambino"
+    },
+    {
+      "track_id": "b99a5567-671f-4241-b6da-bac3c62669d1",
+      "title": "0.00",
+      "track_duration_seconds": 179,
+      "artist_id": "7fb57fba-a6ef-44c2-abab-2fa3bdee607e",
+      "artist_name": "Childish Gambino"
+    },
+    {
+      "track_id": "d4328eb0-9f94-456e-a16b-67cc6faf8ab0",
+      "title": "12.38",
+      "track_duration_seconds": 392,
+      "artist_id": "7fb57fba-a6ef-44c2-abab-2fa3bdee607e",
+      "artist_name": "Childish Gambino"
+    },
+    {
+      "track_id": "2f608a51-7f47-4171-91d8-ab473789f012",
+      "title": "12.38 - Psilocybae (Millenial Love)",
+      "track_duration_seconds": 245,
+      "artist_id": "7fb57fba-a6ef-44c2-abab-2fa3bdee607e",
+      "artist_name": "Childish Gambino"
+    },
+    {
+      "track_id": "aa6e52b0-2f21-43f0-890b-db39728f8147",
+      "title": "19.10",
+      "track_duration_seconds": 309,
+      "artist_id": "7fb57fba-a6ef-44c2-abab-2fa3bdee607e",
+      "artist_name": "Childish Gambino"
+    },
+    {
+      "track_id": "438d00f1-be7b-4ef9-8fec-ee18f809ce59",
+      "title": "2 Brains",
+      "track_duration_seconds": 191,
+      "artist_id": "7fb57fba-a6ef-44c2-abab-2fa3bdee607e",
+      "artist_name": "Childish Gambino"
+    },
+    {
+      "track_id": "217025c9-1eaa-4831-b29e-9e113067cc7b",
+      "title": "'03 Bonnie & Clyde",
+      "track_duration_seconds": 132,
+      "artist_id": "f82bcf78-5b69-4622-a5ef-73800768d9ac",
+      "artist_name": "JAŸ-Z"
+    },
+    {
+      "track_id": "0e935159-eac0-4f53-9951-7f9223397636",
+      "title": "'03 Bonnie & Clyde (instrumental)",
+      "track_duration_seconds": 207,
+      "artist_id": "f82bcf78-5b69-4622-a5ef-73800768d9ac",
+      "artist_name": "JAŸ-Z"
+    },
+    {
+      "track_id": "3799616a-7011-46e9-816e-fc7969456f67",
+      "title": "'03 Bonnie & Clyde (radio edit)",
+      "track_duration_seconds": 207,
+      "artist_id": "f82bcf78-5b69-4622-a5ef-73800768d9ac",
+      "artist_name": "JAŸ-Z"
+    },
+    {
+      "track_id": "ff935ab0-1915-4491-85c7-e43af268dfbd",
+      "title": "'03 Bonnie & Clyde / Daddy",
+      "track_duration_seconds": 517,
+      "artist_id": "f82bcf78-5b69-4622-a5ef-73800768d9ac",
+      "artist_name": "JAŸ-Z"
+    },
+    {
+      "track_id": "b72d28bd-700c-4896-93e9-6807ff661e5d",
+      "title": "(Always Be My) Sunshine",
+      "track_duration_seconds": 283,
+      "artist_id": "f82bcf78-5b69-4622-a5ef-73800768d9ac",
+      "artist_name": "JAŸ-Z"
+    },
+    {
+      "track_id": "28f12e42-b7cf-44cd-bd22-6a297cea278f",
+      "title": "(The Hangover) Sweet",
+      "track_duration_seconds": 216,
+      "artist_id": "f82bcf78-5b69-4622-a5ef-73800768d9ac",
+      "artist_name": "JAŸ-Z"
+    },
+    {
+      "track_id": "fe6cb32f-22c6-4d6d-ae15-0cfd22c4588e",
+      "title": "(The Party) Roc Boys (And the Winner Is)…",
+      "track_duration_seconds": 264,
+      "artist_id": "f82bcf78-5b69-4622-a5ef-73800768d9ac",
+      "artist_name": "JAŸ-Z"
+    },
+    {
+      "track_id": "037441d3-f1dc-496e-aff9-a7b402fb2df4",
+      "title": "03 Bonnie & Clyde",
+      "track_duration_seconds": 179,
+      "artist_id": "f82bcf78-5b69-4622-a5ef-73800768d9ac",
+      "artist_name": "JAŸ-Z"
+    },
+    {
+      "track_id": "ef08d86e-4a25-4134-a786-5ed5fb38e32b",
+      "title": "03' Bonnie & Clyde",
+      "track_duration_seconds": 78,
+      "artist_id": "f82bcf78-5b69-4622-a5ef-73800768d9ac",
+      "artist_name": "JAŸ-Z"
+    },
+    {
+      "track_id": "5b2bf010-055e-43bd-8424-6fa599b5ac0f",
+      "title": "\"Be a Nigger Too\" (remix)",
+      "track_duration_seconds": 191,
+      "artist_id": "cfbc0924-0035-4d6c-8197-f024653af823",
+      "artist_name": "Nas"
+    },
+    {
+      "track_id": "202b785f-1935-4a3a-8f6f-e4b5e8de16c9",
+      "title": "(interview)",
+      "track_duration_seconds": 6,
+      "artist_id": "cfbc0924-0035-4d6c-8197-f024653af823",
+      "artist_name": "Nas"
+    },
+    {
+      "track_id": "b626bf76-47a9-477b-9c14-18d9a22cec85",
+      "title": "1-800-Nas&Hit",
+      "track_duration_seconds": 277,
+      "artist_id": "cfbc0924-0035-4d6c-8197-f024653af823",
+      "artist_name": "Nas"
+    },
+    {
+      "track_id": "b4241108-f5c1-4b49-8b3b-32e6d4f12b52",
+      "title": "10 Points",
+      "track_duration_seconds": 184,
+      "artist_id": "cfbc0924-0035-4d6c-8197-f024653af823",
+      "artist_name": "Nas"
+    },
+    {
+      "track_id": "dd1afcd4-6fbf-49ea-889a-cbd3821c9902",
+      "title": "10 Points (Chopped Not Slopped)",
+      "track_duration_seconds": 193,
+      "artist_id": "cfbc0924-0035-4d6c-8197-f024653af823",
+      "artist_name": "Nas"
+    },
+    {
+      "track_id": "4caa3a25-25ae-471c-ac2b-7bf5221559b9",
+      "title": "10k Hours",
+      "track_duration_seconds": 258,
+      "artist_id": "cfbc0924-0035-4d6c-8197-f024653af823",
+      "artist_name": "Nas"
+    },
+    {
+      "track_id": "8943dc1d-d331-41ad-96e0-1c2bf5103878",
+      "title": "24 Years to Life (MB mix)",
+      "track_duration_seconds": 161,
+      "artist_id": "cfbc0924-0035-4d6c-8197-f024653af823",
+      "artist_name": "Nas"
+    },
+    {
+      "track_id": "4c24f94a-0d50-4ca3-a25b-fc07b3630d3e",
+      "title": "27 Summers",
+      "track_duration_seconds": 103,
+      "artist_id": "cfbc0924-0035-4d6c-8197-f024653af823",
+      "artist_name": "Nas"
+    },
+    {
+      "track_id": "8b19e5c0-9721-428f-8062-122bf22e0753",
+      "title": "27 Summers (Chopped Not Slopped)",
+      "track_duration_seconds": 120,
+      "artist_id": "cfbc0924-0035-4d6c-8197-f024653af823",
+      "artist_name": "Nas"
+    },
+    {
+      "track_id": "454e3dff-0f6d-4a31-8401-0a688427602c",
+      "title": "(D.J.) Wake Up",
+      "track_duration_seconds": 282,
+      "artist_id": "f90e8b26-9e52-4669-a5c9-e28529c47894",
+      "artist_name": "Snoop Dogg"
+    },
+    {
+      "track_id": "c3f20a79-3dcb-4c87-a6b8-a9f45f462fa7",
+      "title": "(Interlude)",
+      "track_duration_seconds": 81,
+      "artist_id": "f90e8b26-9e52-4669-a5c9-e28529c47894",
+      "artist_name": "Snoop Dogg"
+    },
+    {
+      "track_id": "1f8299e5-4a46-4778-9503-dc664d706b97",
+      "title": "(Intro) I Love to Give You Light",
+      "track_duration_seconds": 158,
+      "artist_id": "f90e8b26-9e52-4669-a5c9-e28529c47894",
+      "artist_name": "Snoop Dogg"
+    },
+    {
+      "track_id": "10885672-2374-41ab-9d1d-89850e167f8d",
+      "title": "(O.J.) Wake Up",
+      "track_duration_seconds": 284,
+      "artist_id": "f90e8b26-9e52-4669-a5c9-e28529c47894",
+      "artist_name": "Snoop Dogg"
+    },
+    {
+      "track_id": "702ba818-2a84-47a2-a4b0-5c9035e6feb3",
+      "title": "(Tear ’Em Off) Me & My Doggz",
+      "track_duration_seconds": 212,
+      "artist_id": "f90e8b26-9e52-4669-a5c9-e28529c47894",
+      "artist_name": "Snoop Dogg"
+    },
+    {
+      "track_id": "160c4bcb-a1ed-40c1-bbc5-cb7aee18d01a",
+      "title": "(Tear ’Em Off) Me and My Doggz",
+      "track_duration_seconds": 211,
+      "artist_id": "f90e8b26-9e52-4669-a5c9-e28529c47894",
+      "artist_name": "Snoop Dogg"
+    },
+    {
+      "track_id": "5a41a9f0-0335-44e4-a454-bd1cd6571d70",
+      "title": "---- You",
+      "track_duration_seconds": 205,
+      "artist_id": "f90e8b26-9e52-4669-a5c9-e28529c47894",
+      "artist_name": "Snoop Dogg"
+    },
+    {
+      "track_id": "29bbcd71-dec3-49db-9f14-54baa1274ee3",
+      "title": ". Snoop Intro",
+      "track_duration_seconds": 14,
+      "artist_id": "f90e8b26-9e52-4669-a5c9-e28529c47894",
+      "artist_name": "Snoop Dogg"
+    },
+    {
+      "track_id": "1023d15f-cc84-473d-b940-f898659179f1",
+      "title": "1,2 1,2",
+      "track_duration_seconds": 199,
+      "artist_id": "f90e8b26-9e52-4669-a5c9-e28529c47894",
+      "artist_name": "Snoop Dogg"
+    },
+    {
+      "track_id": "6dc6ca6a-52cc-4f94-820e-de0807539873",
+      "title": "$$ Monay $$",
+      "track_duration_seconds": 252,
+      "artist_id": "5f6ab597-f57a-40da-be9e-adad48708203",
+      "artist_name": "Dr. Dre"
+    },
+    {
+      "track_id": "5a41a9f0-0335-44e4-a454-bd1cd6571d70",
+      "title": "---- You",
+      "track_duration_seconds": 205,
+      "artist_id": "5f6ab597-f57a-40da-be9e-adad48708203",
+      "artist_name": "Dr. Dre"
+    },
+    {
+      "track_id": "086a9fe9-75c4-4ae2-9af2-bc9c259c8fb5",
+      "title": "187 (Deep Cover remix)",
+      "track_duration_seconds": 240,
+      "artist_id": "5f6ab597-f57a-40da-be9e-adad48708203",
+      "artist_name": "Dr. Dre"
+    },
+    {
+      "track_id": "e0ab00ec-36ce-41f2-a66f-fe1b771fca58",
+      "title": "187 On An Undercover Cop",
+      "track_duration_seconds": 418,
+      "artist_id": "5f6ab597-f57a-40da-be9e-adad48708203",
+      "artist_name": "Dr. Dre"
+    },
+    {
+      "track_id": "0fa34870-a374-49c4-b842-7ca305bc7c20",
+      "title": "187 Ulm",
+      "track_duration_seconds": 246,
+      "artist_id": "5f6ab597-f57a-40da-be9e-adad48708203",
+      "artist_name": "Dr. Dre"
+    },
+    {
+      "track_id": "059fd2db-dcd8-4589-a293-2e50b4ac838d",
+      "title": "187um",
+      "track_duration_seconds": 223,
+      "artist_id": "5f6ab597-f57a-40da-be9e-adad48708203",
+      "artist_name": "Dr. Dre"
+    },
+    {
+      "track_id": "b8b9e59c-20d0-4b86-bada-641aa853ce42",
+      "title": "187um (street version)",
+      "track_duration_seconds": 245,
+      "artist_id": "5f6ab597-f57a-40da-be9e-adad48708203",
+      "artist_name": "Dr. Dre"
+    },
+    {
+      "track_id": "11738cf0-9e17-4f8d-a5f8-21e724f0a771",
+      "title": "2Nite",
+      "track_duration_seconds": 249,
+      "artist_id": "5f6ab597-f57a-40da-be9e-adad48708203",
+      "artist_name": "Dr. Dre"
+    },
+    {
+      "track_id": "3fe4d8b0-f7cc-4dbe-ba27-03806bffc40e",
+      "title": "3 Kings",
+      "track_duration_seconds": 262,
+      "artist_id": "5f6ab597-f57a-40da-be9e-adad48708203",
+      "artist_name": "Dr. Dre"
+    },
+    {
+      "track_id": "19c07552-18c4-4c69-8551-7ea8e15f9939",
+      "title": "(interlude)",
+      "track_duration_seconds": 31,
+      "artist_id": "73fdb566-a9b1-494c-9f32-51768ec9fd27",
+      "artist_name": "OutKast"
+    },
+    {
+      "track_id": "bebb2a6a-894f-47a9-9835-14dedd97ca17",
+      "title": "13th Floor / Growing Old",
+      "track_duration_seconds": 338,
+      "artist_id": "73fdb566-a9b1-494c-9f32-51768ec9fd27",
+      "artist_name": "OutKast"
+    },
+    {
+      "track_id": "a0475616-f3d0-4052-b4b3-cef54990ec58",
+      "title": "13th Floor/Growing Old",
+      "track_duration_seconds": 441,
+      "artist_id": "73fdb566-a9b1-494c-9f32-51768ec9fd27",
+      "artist_name": "OutKast"
+    },
+    {
+      "track_id": "6832001f-44ef-4b31-9e48-907f7127e84e",
+      "title": "2 Dope Boyz in a Cadillac",
+      "track_duration_seconds": 168,
+      "artist_id": "73fdb566-a9b1-494c-9f32-51768ec9fd27",
+      "artist_name": "OutKast"
+    },
+    {
+      "track_id": "1d2c3c0b-0723-4698-bf3f-65b792ec6f2e",
+      "title": "4ize & Aphro Interlude",
+      "track_duration_seconds": 67,
+      "artist_id": "73fdb566-a9b1-494c-9f32-51768ec9fd27",
+      "artist_name": "OutKast"
+    },
+    {
+      "track_id": "a1e585f3-e073-4dca-912b-92c7ba4ac154",
+      "title": "85 (OS remix)",
+      "track_duration_seconds": 151,
+      "artist_id": "73fdb566-a9b1-494c-9f32-51768ec9fd27",
+      "artist_name": "OutKast"
+    },
+    {
+      "track_id": "c7717347-11f8-4132-a7c3-43180da79888",
+      "title": "?",
+      "track_duration_seconds": 89,
+      "artist_id": "73fdb566-a9b1-494c-9f32-51768ec9fd27",
+      "artist_name": "OutKast"
+    },
+    {
+      "track_id": "a4b5a15d-07b0-49f3-b933-e4c0acb3e513",
+      "title": "? (5.1 mix)",
+      "track_duration_seconds": 89,
+      "artist_id": "73fdb566-a9b1-494c-9f32-51768ec9fd27",
+      "artist_name": "OutKast"
+    },
+    {
+      "track_id": "70e45616-324a-4f2f-811b-9db0bc89fba2",
+      "title": "A Bad Note",
+      "track_duration_seconds": 527,
+      "artist_id": "73fdb566-a9b1-494c-9f32-51768ec9fd27",
+      "artist_name": "OutKast"
+    },
+    {
+      "track_id": "098d6992-9649-4160-9122-010602c8b543",
+      "title": "All My Time",
+      "track_duration_seconds": 169,
+      "artist_id": "b14191fa-24c5-44d8-b42d-5017b22b0430",
+      "artist_name": "Lauryn Hill"
+    },
+    {
+      "track_id": "465ccf92-1752-418e-abe9-73d019fb277f",
+      "title": "Forgive Them Father",
+      "track_duration_seconds": 180,
+      "artist_id": "b14191fa-24c5-44d8-b42d-5017b22b0430",
+      "artist_name": "Lauryn Hill"
+    },
+    {
+      "track_id": "070dcf25-b025-49cf-994e-7dc9d822f9ee",
+      "title": "(There Is) No Greater Love",
+      "track_duration_seconds": 170,
+      "artist_id": "dfe9a7c4-8cf2-47f4-9dcb-d233c2b86ec3",
+      "artist_name": "Amy Winehouse"
+    },
+    {
+      "track_id": "e28f1719-3f49-491b-aa23-66b46dac5f42",
+      "title": "(There Is) No Greater Love (BBC session Janice long '03)",
+      "track_duration_seconds": 132,
+      "artist_id": "dfe9a7c4-8cf2-47f4-9dcb-d233c2b86ec3",
+      "artist_name": "Amy Winehouse"
+    },
+    {
+      "track_id": "0ef30433-f3b1-4912-a83e-055f8d2dae52",
+      "title": "2006-16-11: Never Mind the Buzzcocks: Series 19, Episode 6 (clip)",
+      "track_duration_seconds": 181,
+      "artist_id": "dfe9a7c4-8cf2-47f4-9dcb-d233c2b86ec3",
+      "artist_name": "Amy Winehouse"
+    },
+    {
+      "track_id": "2d7a2475-7566-474a-8784-8557fe001a97",
+      "title": "A Message to You, Rudy",
+      "track_duration_seconds": 246,
+      "artist_id": "dfe9a7c4-8cf2-47f4-9dcb-d233c2b86ec3",
+      "artist_name": "Amy Winehouse"
+    },
+    {
+      "track_id": "ada14f13-8f75-4941-ab62-4ef51d99b194",
+      "title": "A Song for You",
+      "track_duration_seconds": 269,
+      "artist_id": "dfe9a7c4-8cf2-47f4-9dcb-d233c2b86ec3",
+      "artist_name": "Amy Winehouse"
+    },
+    {
+      "track_id": "1dde4355-8b41-4e4a-b080-ac9744fea394",
+      "title": "Addicted",
+      "track_duration_seconds": 164,
+      "artist_id": "dfe9a7c4-8cf2-47f4-9dcb-d233c2b86ec3",
+      "artist_name": "Amy Winehouse"
+    },
+    {
+      "track_id": "1a9c3ad3-5312-444a-a57d-0e609441ceb1",
+      "title": "Alcoholic Logic",
+      "track_duration_seconds": 242,
+      "artist_id": "dfe9a7c4-8cf2-47f4-9dcb-d233c2b86ec3",
+      "artist_name": "Amy Winehouse"
+    },
+    {
+      "track_id": "a98b4f57-89f2-4131-b0b3-626e1e3e03c2",
+      "title": "All My Loving",
+      "track_duration_seconds": 187,
+      "artist_id": "dfe9a7c4-8cf2-47f4-9dcb-d233c2b86ec3",
+      "artist_name": "Amy Winehouse"
+    },
+    {
+      "track_id": "08abb6ce-a1cd-4e1d-a858-ca8799bcc3ad",
+      "title": "Amy Amy Amy",
+      "track_duration_seconds": 255,
+      "artist_id": "dfe9a7c4-8cf2-47f4-9dcb-d233c2b86ec3",
+      "artist_name": "Amy Winehouse"
+    },
+    {
+      "track_id": "cc5e7938-3889-4490-a8e1-091cf40d0935",
+      "title": "\"Any Other Day\"",
+      "track_duration_seconds": 255,
+      "artist_id": "985c709c-7771-4de3-9024-7bda29ebe3f9",
+      "artist_name": "Norah Jones"
+    },
+    {
+      "track_id": "8e784de2-62b2-4a92-88b6-56d7f7c1e37e",
+      "title": "\"Sinkin' soon\" behind the scenes at the video shoot",
+      "track_duration_seconds": 328,
+      "artist_id": "985c709c-7771-4de3-9024-7bda29ebe3f9",
+      "artist_name": "Norah Jones"
+    },
+    {
+      "track_id": "500509b5-5b7e-412e-8df5-0dab4a3c7525",
+      "title": "\"Thinking about you\" behind the scenes at the video shoot",
+      "track_duration_seconds": 161,
+      "artist_id": "985c709c-7771-4de3-9024-7bda29ebe3f9",
+      "artist_name": "Norah Jones"
+    },
+    {
+      "track_id": "7a0e731a-50bd-4844-8c93-d637e8cdc175",
+      "title": "(Talk to Me of) Mendocino",
+      "track_duration_seconds": 194,
+      "artist_id": "985c709c-7771-4de3-9024-7bda29ebe3f9",
+      "artist_name": "Norah Jones"
+    },
+    {
+      "track_id": "97745608-bef5-4c3a-bbcb-16613912981f",
+      "title": "2 Men",
+      "track_duration_seconds": 150,
+      "artist_id": "985c709c-7771-4de3-9024-7bda29ebe3f9",
+      "artist_name": "Norah Jones"
+    },
+    {
+      "track_id": "1c3b3ecf-1273-4fbd-abbb-4acf7b006144",
+      "title": "4 Broken Hearts",
+      "track_duration_seconds": 210,
+      "artist_id": "985c709c-7771-4de3-9024-7bda29ebe3f9",
+      "artist_name": "Norah Jones"
+    },
+    {
+      "track_id": "4d13a060-4153-44a6-b4b5-4d3785f0e5b4",
+      "title": "A Holiday With You",
+      "track_duration_seconds": 160,
+      "artist_id": "985c709c-7771-4de3-9024-7bda29ebe3f9",
+      "artist_name": "Norah Jones"
+    },
+    {
+      "track_id": "d1408000-4a86-47f6-bfa9-53509510b4b2",
+      "title": "A Little at a Time",
+      "track_duration_seconds": 183,
+      "artist_id": "985c709c-7771-4de3-9024-7bda29ebe3f9",
+      "artist_name": "Norah Jones"
+    },
+    {
+      "track_id": "c253cb38-f406-485d-85bc-ac5ca828be4c",
+      "title": "A Lot of Claps, a Few Nasty Letters (interview)",
+      "track_duration_seconds": 50,
+      "artist_id": "985c709c-7771-4de3-9024-7bda29ebe3f9",
+      "artist_name": "Norah Jones"
+    },
+    {
+      "track_id": "32279909-4159-4200-8e53-dbcc24ee9f7e",
+      "title": "\"If You Were to Run the Numbers...\"",
+      "track_duration_seconds": 169,
+      "artist_id": "144ef525-85e9-40c3-8335-02c32d0861f3",
+      "artist_name": "John Mayer"
+    },
+    {
+      "track_id": "f3015887-29af-4cc1-97f6-dea6c7336d34",
+      "title": "'I Am Nervous But Actually That is A Beautiful Thing'",
+      "track_duration_seconds": 38,
+      "artist_id": "144ef525-85e9-40c3-8335-02c32d0861f3",
+      "artist_name": "John Mayer"
+    },
+    {
+      "track_id": "02319022-c898-4b03-bcff-06e0bddd2fcc",
+      "title": "'Whats Next?'",
+      "track_duration_seconds": 40,
+      "artist_id": "144ef525-85e9-40c3-8335-02c32d0861f3",
+      "artist_name": "John Mayer"
+    },
+    {
+      "track_id": "ebd08ae3-bd1c-47c5-884e-32eb33583799",
+      "title": "(Encore)",
+      "track_duration_seconds": 134,
+      "artist_id": "144ef525-85e9-40c3-8335-02c32d0861f3",
+      "artist_name": "John Mayer"
+    },
+    {
+      "track_id": "6e105cfe-8247-4fd1-aeec-f70c9b3fbd23",
+      "title": "(Opening)",
+      "track_duration_seconds": 39,
+      "artist_id": "144ef525-85e9-40c3-8335-02c32d0861f3",
+      "artist_name": "John Mayer"
+    },
+    {
+      "track_id": "3c7b6d7b-9d1c-4333-9734-3240ff04767f",
+      "title": "3x5",
+      "track_duration_seconds": 380,
+      "artist_id": "144ef525-85e9-40c3-8335-02c32d0861f3",
+      "artist_name": "John Mayer"
+    },
+    {
+      "track_id": "b6c7a003-0b11-4720-9ef7-269da823fb0e",
+      "title": "3x5 (5.1 mix)",
+      "track_duration_seconds": 290,
+      "artist_id": "144ef525-85e9-40c3-8335-02c32d0861f3",
+      "artist_name": "John Mayer"
+    },
+    {
+      "track_id": "ae6ba352-2935-4ed4-aec7-7f87c37601f5",
+      "title": "3x5 (live from the X Lounge)",
+      "track_duration_seconds": 293,
+      "artist_id": "144ef525-85e9-40c3-8335-02c32d0861f3",
+      "artist_name": "John Mayer"
+    },
+    {
+      "track_id": "9deba55c-818e-4d6b-866b-bf128c8778fb",
+      "title": "3x5 (live)",
+      "track_duration_seconds": 321,
+      "artist_id": "144ef525-85e9-40c3-8335-02c32d0861f3",
+      "artist_name": "John Mayer"
+    },
+    {
+      "track_id": "95605c94-610a-45f9-979a-76ca081b3696",
+      "title": "\"The whole mudfootball crew is here ...\"",
+      "track_duration_seconds": 59,
+      "artist_id": "ff6e677f-91dd-4986-a174-8db0474b1799",
+      "artist_name": "Jack Johnson"
+    },
+    {
+      "track_id": "200f490c-921b-4640-a2b9-03a54704be7f",
+      "title": "\"Was My Belt Undone the Whole Time?\"",
+      "track_duration_seconds": 43,
+      "artist_id": "ff6e677f-91dd-4986-a174-8db0474b1799",
+      "artist_name": "Jack Johnson"
+    },
+    {
+      "track_id": "77fbe00e-fee1-4573-8e50-f9259c18cb5e",
+      "title": "3 Is a Magic Number",
+      "track_duration_seconds": 112,
+      "artist_id": "ff6e677f-91dd-4986-a174-8db0474b1799",
+      "artist_name": "Jack Johnson"
+    },
+    {
+      "track_id": "5c23428e-fb16-4527-bad8-7c453003b58d",
+      "title": "3 Is the Magic Number",
+      "track_duration_seconds": 236,
+      "artist_id": "ff6e677f-91dd-4986-a174-8db0474b1799",
+      "artist_name": "Jack Johnson"
+    },
+    {
+      "track_id": "f3243340-229b-4255-bf30-48004ca807a5",
+      "title": "3AM Radio",
+      "track_duration_seconds": 196,
+      "artist_id": "ff6e677f-91dd-4986-a174-8db0474b1799",
+      "artist_name": "Jack Johnson"
+    },
+    {
+      "track_id": "4f191877-fb7d-4e6d-83c5-fd6dc6d25339",
+      "title": "A Brokedown Melody",
+      "track_duration_seconds": 213,
+      "artist_id": "ff6e677f-91dd-4986-a174-8db0474b1799",
+      "artist_name": "Jack Johnson"
+    },
+    {
+      "track_id": "f87853e7-7102-4065-abe9-698ddb3200c3",
+      "title": "A Mosquito On My Nose (Interview)",
+      "track_duration_seconds": 95,
+      "artist_id": "ff6e677f-91dd-4986-a174-8db0474b1799",
+      "artist_name": "Jack Johnson"
+    },
+    {
+      "track_id": "a40ceda0-072d-48dd-952b-e2ef50aae6b9",
+      "title": "A Pirate Looks At 40 (ft Dave Matthews, Tim Reynolds)",
+      "track_duration_seconds": 324,
+      "artist_id": "ff6e677f-91dd-4986-a174-8db0474b1799",
+      "artist_name": "Jack Johnson"
+    },
+    {
+      "track_id": "acb61be2-327b-4625-9e34-3f91a8426e37",
+      "title": "A Pirate Looks at 40",
+      "track_duration_seconds": 144,
+      "artist_id": "ff6e677f-91dd-4986-a174-8db0474b1799",
+      "artist_name": "Jack Johnson"
+    },
+    {
+      "track_id": "6f488800-4112-45f8-9c0b-337d6b564aed",
+      "title": "\"But there's plenty more to say on this subject\"",
+      "track_duration_seconds": 49,
+      "artist_id": "72c536dc-7137-4477-a521-567eeb840fa8",
+      "artist_name": "Bob Dylan"
+    },
+    {
+      "track_id": "017bf5c2-4167-466c-a528-061d8df6ec5c",
+      "title": "\"Can You Please Crawl Out Your Window\" Take 1 (7/30/1965)",
+      "track_duration_seconds": 246,
+      "artist_id": "72c536dc-7137-4477-a521-567eeb840fa8",
+      "artist_name": "Bob Dylan"
+    },
+    {
+      "track_id": "eed348d1-89f9-441a-af04-e45ad7d8f0d8",
+      "title": "\"Hello friends\"",
+      "track_duration_seconds": 103,
+      "artist_id": "72c536dc-7137-4477-a521-567eeb840fa8",
+      "artist_name": "Bob Dylan"
+    },
+    {
+      "track_id": "ac0efd7c-7d7b-4ddd-b282-b718231321de",
+      "title": "\"Like a Rolling Stone\" Take 4 (6/16/1965)",
+      "track_duration_seconds": 389,
+      "artist_id": "72c536dc-7137-4477-a521-567eeb840fa8",
+      "artist_name": "Bob Dylan"
+    },
+    {
+      "track_id": "6447f061-360f-4f57-807d-c39bb7ae82c5",
+      "title": "\"So stay safe, see you soon, oh, yeah!\"",
+      "track_duration_seconds": 68,
+      "artist_id": "72c536dc-7137-4477-a521-567eeb840fa8",
+      "artist_name": "Bob Dylan"
+    },
+    {
+      "track_id": "c44f3d26-d1b7-4003-8009-d0723541e3d2",
+      "title": "'Cross the Green Mountain",
+      "track_duration_seconds": 190,
+      "artist_id": "72c536dc-7137-4477-a521-567eeb840fa8",
+      "artist_name": "Bob Dylan"
+    },
+    {
+      "track_id": "23579823-7279-4bc3-b822-616eef5dd8f5",
+      "title": "'Til I Fell In Love With You",
+      "track_duration_seconds": 258,
+      "artist_id": "72c536dc-7137-4477-a521-567eeb840fa8",
+      "artist_name": "Bob Dylan"
+    },
+    {
+      "track_id": "4c72f64d-953c-4d32-9304-b78c6d86db77",
+      "title": "'Til I Fell in Love With You (5 Apr.-07)",
+      "track_duration_seconds": 381,
+      "artist_id": "72c536dc-7137-4477-a521-567eeb840fa8",
+      "artist_name": "Bob Dylan"
+    },
+    {
+      "track_id": "345ce296-1867-4ba8-aab8-ea9e138f301a",
+      "title": "'til I Get It Right",
+      "track_duration_seconds": 190,
+      "artist_id": "72c536dc-7137-4477-a521-567eeb840fa8",
+      "artist_name": "Bob Dylan"
+    },
+    {
+      "track_id": "77c3ea75-712a-445f-bac4-fcc2b6fd547c",
+      "title": "(Come Along) And Ride This Train",
+      "track_duration_seconds": 67,
+      "artist_id": "d43d12a1-2dc9-4257-a2fd-0a3bb1081b86",
+      "artist_name": "Johnny Cash"
+    },
+    {
+      "track_id": "28fbfae6-eb88-40e9-ad09-028b84f59ade",
+      "title": "(Ghost) Riders In The Sky",
+      "track_duration_seconds": 225,
+      "artist_id": "d43d12a1-2dc9-4257-a2fd-0a3bb1081b86",
+      "artist_name": "Johnny Cash"
+    },
+    {
+      "track_id": "8d0f815f-37d8-4647-8864-f6c5c41903a1",
+      "title": "(Ghost) Riders in the Sky (5.1 mix)",
+      "track_duration_seconds": 230,
+      "artist_id": "d43d12a1-2dc9-4257-a2fd-0a3bb1081b86",
+      "artist_name": "Johnny Cash"
+    },
+    {
+      "track_id": "b5d3c06c-93cb-4194-b5d4-c393a99261e6",
+      "title": "(Ghost) Riders in the Sky (clean version)",
+      "track_duration_seconds": 221,
+      "artist_id": "d43d12a1-2dc9-4257-a2fd-0a3bb1081b86",
+      "artist_name": "Johnny Cash"
+    },
+    {
+      "track_id": "b1d63368-ba1c-4744-9afe-ade0fe87188a",
+      "title": "(Ghost) Riders in the Sky (live at Exit Inn, Nashville, Tenn, December 10, 1979)",
+      "track_duration_seconds": 221,
+      "artist_id": "d43d12a1-2dc9-4257-a2fd-0a3bb1081b86",
+      "artist_name": "Johnny Cash"
+    },
+    {
+      "track_id": "8c3f99fc-44de-4c65-959b-bf8e8855fb02",
+      "title": "(I Heard That) Lonesome Whistle",
+      "track_duration_seconds": 145,
+      "artist_id": "d43d12a1-2dc9-4257-a2fd-0a3bb1081b86",
+      "artist_name": "Johnny Cash"
+    },
+    {
+      "track_id": "a61e55a5-d770-4c8f-a950-0e0d61c9c60e",
+      "title": "(I’m Proud) The Baby Is Mine",
+      "track_duration_seconds": 154,
+      "artist_id": "d43d12a1-2dc9-4257-a2fd-0a3bb1081b86",
+      "artist_name": "Johnny Cash"
+    },
+    {
+      "track_id": "1ef201c2-cc48-4b80-b3ce-9bb6aee5ddac",
+      "title": "(There'll Be) Peace In the Valley (For Me)",
+      "track_duration_seconds": 167,
+      "artist_id": "d43d12a1-2dc9-4257-a2fd-0a3bb1081b86",
+      "artist_name": "Johnny Cash"
+    },
+    {
+      "track_id": "186329d5-6e5b-44f8-a80e-955d170c426e",
+      "title": "(There'll Be) Peace in the Valley",
+      "track_duration_seconds": 157,
+      "artist_id": "d43d12a1-2dc9-4257-a2fd-0a3bb1081b86",
+      "artist_name": "Johnny Cash"
+    },
+    {
+      "track_id": "6596b534-6628-44cd-b014-011c6996e741",
+      "title": "$1000 Wedding",
+      "track_duration_seconds": 185,
+      "artist_id": "668fd73c-bf54-4310-a139-305517f05311",
+      "artist_name": "Willie Nelson"
+    },
+    {
+      "track_id": "1e9a4b49-3785-438f-92a9-6513f47206fc",
+      "title": "'Til I Gain Control Again",
+      "track_duration_seconds": 308,
+      "artist_id": "668fd73c-bf54-4310-a139-305517f05311",
+      "artist_name": "Willie Nelson"
+    },
+    {
+      "track_id": "3976824c-5132-475b-961a-4594cf85fd3e",
+      "title": "'Till I Can Gain Control Again",
+      "track_duration_seconds": 312,
+      "artist_id": "668fd73c-bf54-4310-a139-305517f05311",
+      "artist_name": "Willie Nelson"
+    },
+    {
+      "track_id": "bcd71741-c28b-402d-a1c3-c54a80cb7251",
+      "title": "'till I Gain Control Again",
+      "track_duration_seconds": 315,
+      "artist_id": "668fd73c-bf54-4310-a139-305517f05311",
+      "artist_name": "Willie Nelson"
+    },
+    {
+      "track_id": "a787e317-9d21-4b91-a2aa-5faf18f05abd",
+      "title": "(Ghost) Riders in the Sky",
+      "track_duration_seconds": 373,
+      "artist_id": "668fd73c-bf54-4310-a139-305517f05311",
+      "artist_name": "Willie Nelson"
+    },
+    {
+      "track_id": "aff4b927-9aa3-485d-a79c-084340b68a12",
+      "title": "(How Will I Know) I’m Falling in Love Again",
+      "track_duration_seconds": 207,
+      "artist_id": "668fd73c-bf54-4310-a139-305517f05311",
+      "artist_name": "Willie Nelson"
+    },
+    {
+      "track_id": "3f64cb89-58ff-4f0e-9bf3-f59c2b7ac244",
+      "title": "(I Don’t Have a Reason) To Go to California Anymore",
+      "track_duration_seconds": 187,
+      "artist_id": "668fd73c-bf54-4310-a139-305517f05311",
+      "artist_name": "Willie Nelson"
+    },
+    {
+      "track_id": "1e5df42c-5e29-45d4-9585-cc11a0ce952e",
+      "title": "(I Heard That) Lonesome Whistle",
+      "track_duration_seconds": 151,
+      "artist_id": "668fd73c-bf54-4310-a139-305517f05311",
+      "artist_name": "Willie Nelson"
+    },
+    {
+      "track_id": "5de12bfa-d36a-4aa3-b925-faa56ba561cf",
+      "title": "(Now and Then There's) A Fool Such as I",
+      "track_duration_seconds": 185,
+      "artist_id": "668fd73c-bf54-4310-a139-305517f05311",
+      "artist_name": "Willie Nelson"
+    },
+    {
+      "track_id": "6f7cff05-9702-4ca9-bd96-3c8277580352",
+      "title": "(I Can’t Get No) Satisfaction",
+      "track_duration_seconds": 233,
+      "artist_id": "1d543e07-d0d2-4834-a8db-d65c50c2a856",
+      "artist_name": "Dolly Parton"
+    },
+    {
+      "track_id": "c0b87626-1716-4056-bae1-ce163e153b8f",
+      "title": "(I Can’t Get No) Satisfaction [feat. P!nk & Brandi Carlile]",
+      "track_duration_seconds": 233,
+      "artist_id": "1d543e07-d0d2-4834-a8db-d65c50c2a856",
+      "artist_name": "Dolly Parton"
+    },
+    {
+      "track_id": "ea7e38a9-1507-48a2-b25c-739379c011c0",
+      "title": "(I'd Like to Spend) Christmas with Santa",
+      "track_duration_seconds": 133,
+      "artist_id": "1d543e07-d0d2-4834-a8db-d65c50c2a856",
+      "artist_name": "Dolly Parton"
+    },
+    {
+      "track_id": "230f54a5-622a-4476-8ecf-83749c458736",
+      "title": "(It Wasn’t God Who Made) Honky Tonk Angels",
+      "track_duration_seconds": 155,
+      "artist_id": "1d543e07-d0d2-4834-a8db-d65c50c2a856",
+      "artist_name": "Dolly Parton"
+    },
+    {
+      "track_id": "cf78a0e2-cd1f-460a-b5dc-07a6c0bd43e6",
+      "title": "(You Got Me Over) A Heartache Tonight",
+      "track_duration_seconds": 184,
+      "artist_id": "1d543e07-d0d2-4834-a8db-d65c50c2a856",
+      "artist_name": "Dolly Parton"
+    },
+    {
+      "track_id": "4256bb5e-75dd-4110-aa01-7984efed7139",
+      "title": "(Your Love Has Lifted Me) Higher and Higher",
+      "track_duration_seconds": 174,
+      "artist_id": "1d543e07-d0d2-4834-a8db-d65c50c2a856",
+      "artist_name": "Dolly Parton"
+    },
+    {
+      "track_id": "01f8682c-5ba2-4d5e-9236-868be79ff90d",
+      "title": "(Your Love Keeps Lifting Me) Higher and Higher",
+      "track_duration_seconds": 224,
+      "artist_id": "1d543e07-d0d2-4834-a8db-d65c50c2a856",
+      "artist_name": "Dolly Parton"
+    },
+    {
+      "track_id": "033ec807-2a65-4cf5-8568-debc0d539636",
+      "title": "---Introducing the Band---",
+      "track_duration_seconds": 128,
+      "artist_id": "1d543e07-d0d2-4834-a8db-d65c50c2a856",
+      "artist_name": "Dolly Parton"
+    },
+    {
+      "track_id": "1712a4ee-ce22-4bbc-bb95-cc11689ebd9e",
+      "title": "---Talking---",
+      "track_duration_seconds": 56,
+      "artist_id": "1d543e07-d0d2-4834-a8db-d65c50c2a856",
+      "artist_name": "Dolly Parton"
+    }
+  ]
+}
