@@ -27,6 +27,7 @@ with synthetic events instead.
 from __future__ import annotations
 
 import json
+import logging
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -189,3 +190,154 @@ def test_both_factories_take_their_window_size_from_the_loaded_thresholds():
         topology_b_windows(FIXTURE_THRESHOLDS).window_hours
         == FIXTURE_THRESHOLDS.topology_b_window_hours
     )
+
+
+# --------------------------------------------------------------------------------
+# The boundary convention, pinned with synthetic events
+#
+# The fixture cannot pin this and MUST NOT be regenerated to try: FA01's 12 plays
+# sit about 12 hours inside the 24-hour window, so the half-open and the closed
+# convention both return 12 there. Everything below is built in-test instead, and
+# every docstring names the number the OTHER convention would produce -- which is
+# what makes the assertion discriminating rather than merely true.
+# --------------------------------------------------------------------------------
+def test_the_hour_edge_is_half_open():
+    """A bucket is [hour, hour + 1h). 20:59:59 and 21:00:00 are different hours.
+
+    A CLOSED bucket [hour, hour + 1h] would put 21:00:00 in hour 20 as well as
+    hour 21, and this rolling count would be 2. It is 1.
+    """
+    accumulator = topology_b_windows(FIXTURE_THRESHOLDS)
+    assert accumulator.window_hours == 1, "this test needs the 1-hour window"
+
+    accumulator.add("T", parse_event_time("2026-03-01T20:59:59Z"))
+    accumulator.add("T", parse_event_time("2026-03-01T21:00:00Z"))
+
+    assert accumulator.rolling_count("T", as_of="2026-03-01T20:00:00Z") == 1
+    assert accumulator.rolling_count("T", as_of="2026-03-01T21:00:00Z") == 1
+
+
+def test_the_window_edge_is_half_open():
+    """CONTEXT success criterion 3, the half the fixture cannot supply.
+
+    Two events exactly 24 hours apart, read through a 24-hour window ending at
+    the second one's hour. The 24 buckets run from day-1 hour 1 to day-2 hour 0,
+    so the day-1 hour-0 event is outside and the count is 1.
+
+    A CLOSED reading spans 25 buckets -- day-1 hour 0 through day-2 hour 0 --
+    and would return 2. This assertion fails under that convention, which is the
+    point of it.
+    """
+    accumulator = topology_a_windows(FIXTURE_THRESHOLDS)
+    assert accumulator.window_hours == 24, "this test needs the 24-hour window"
+
+    accumulator.add("L", parse_event_time("2026-01-01T00:00:00Z"))
+    accumulator.add("L", parse_event_time("2026-01-02T00:00:00Z"))
+
+    assert accumulator.rolling_count("L", as_of="2026-01-02T00:00:00Z") == 1
+    # And the excluded event really is one bucket outside, not absent entirely:
+    # ending one hour earlier brings it back.
+    assert accumulator.rolling_count("L", as_of="2026-01-01T23:00:00Z") == 1
+    assert accumulator.rolling_count("L", as_of="2026-01-01T00:00:00Z") == 1
+
+
+# --------------------------------------------------------------------------------
+# Both window sizes are honoured BEHAVIOURALLY, not merely read
+# --------------------------------------------------------------------------------
+THREE_CONSECUTIVE_HOURS = (
+    "2026-03-01T10:15:00Z",
+    "2026-03-01T11:15:00Z",
+    "2026-03-01T12:15:00Z",
+)
+
+
+def test_changing_a_configured_window_size_changes_the_modules_answer():
+    """Phase 1 warning W4, killed: `topology_b_window_hours` now has behaviour.
+
+    One identical three-hour sequence, three accumulators. The 24-hour window
+    sums all three hours; the 1-hour window sums only the last; and an in-memory
+    Thresholds with `topology_b_window_hours` retuned to 3 makes the B answer
+    move to match A's. Before this test the field could be mutated in the config
+    and every assertion in the repo still passed.
+
+    `model_copy` builds the retuned Thresholds in memory. Nothing is written, so
+    `config/*.json` is untouched and the phase scope fence holds.
+    """
+    retuned = FIXTURE_THRESHOLDS.model_copy(update={"topology_b_window_hours": 3})
+
+    def score(accumulator: RollingHourlyWindows) -> int:
+        for event_time in THREE_CONSECUTIVE_HOURS:
+            accumulator.add("K", parse_event_time(event_time))
+        return accumulator.rolling_count("K")
+
+    wide = score(topology_a_windows(FIXTURE_THRESHOLDS))
+    narrow = score(topology_b_windows(FIXTURE_THRESHOLDS))
+    widened = score(topology_b_windows(retuned))
+
+    assert wide == len(THREE_CONSECUTIVE_HOURS)
+    assert narrow == 1
+    assert narrow != wide, "the two configured window sizes must differ in effect"
+    assert widened == wide
+    # The retune stayed in memory.
+    assert FIXTURE_THRESHOLDS.topology_b_window_hours != retuned.topology_b_window_hours
+
+
+# --------------------------------------------------------------------------------
+# WNDW-03: one watermark, late arrivals dropped loudly, never buffered
+# --------------------------------------------------------------------------------
+def test_the_watermark_is_the_greatest_event_time_seen_and_starts_unset():
+    accumulator = topology_a_windows(FIXTURE_THRESHOLDS)
+    assert accumulator.watermark is None
+    assert accumulator.late_dropped == 0
+
+    accumulator.add("K", parse_event_time("2026-03-01T05:40:00Z"))
+    assert accumulator.watermark == parse_event_time("2026-03-01T05:40:00Z")
+
+    # An earlier event inside the SAME open hour must not walk it backwards.
+    accumulator.add("K", parse_event_time("2026-03-01T05:10:00Z"))
+    assert accumulator.watermark == parse_event_time("2026-03-01T05:40:00Z")
+
+
+def test_out_of_order_inside_the_same_hour_is_not_late():
+    """A bucket stays open until the watermark moves PAST it.
+
+    Judging lateness at instant granularity would drop the 05:10 event here and
+    under-count the hour. Judging it at bucket granularity -- which is what
+    WNDW-03 means by a watermark over hourly buckets -- keeps both.
+    """
+    accumulator = topology_b_windows(FIXTURE_THRESHOLDS)
+    accumulator.add("K", parse_event_time("2026-03-01T05:40:00Z"))
+    accumulator.add("K", parse_event_time("2026-03-01T05:10:00Z"))
+
+    assert accumulator.rolling_count("K", as_of="2026-03-01T05:00:00Z") == 2
+    assert accumulator.late_dropped == 0
+
+
+def test_an_event_from_a_closed_hour_is_dropped_counted_and_logged(caplog):
+    """WNDW-03: no buffering. The drop is visible in a counter AND in the log.
+
+    A silently discarded event yields a count nobody can reconstruct, which is
+    the repudiation threat T-02-04. `late_dropped` non-zero on a real run means
+    the producer's nondecreasing-`event_time` guarantee broke.
+    """
+    accumulator = topology_b_windows(FIXTURE_THRESHOLDS)
+    accumulator.add("K", parse_event_time("2026-03-01T05:30:00Z"))
+    before = accumulator.rolling_count("K")
+
+    with caplog.at_level(logging.WARNING, logger="src.windowing"):
+        returned = accumulator.add("K", parse_event_time("2026-03-01T04:30:00Z"))
+
+    assert accumulator.late_dropped == 1
+    assert returned == before, "add must still return the key's rolling count"
+    assert accumulator.rolling_count("K") == before
+    # The event was dropped, not buffered into its own hour for later.
+    assert accumulator.rolling_count("K", as_of="2026-03-01T04:00:00Z") == 0
+    # The watermark did not move backwards.
+    assert accumulator.watermark == parse_event_time("2026-03-01T05:30:00Z")
+
+    warnings = [r for r in caplog.records if r.levelno == logging.WARNING]
+    assert len(warnings) == 1
+    message = warnings[0].getMessage()
+    assert "K" in message
+    assert parse_event_time("2026-03-01T04:30:00Z").isoformat() in message
+    assert parse_event_time("2026-03-01T05:30:00Z").isoformat() in message
