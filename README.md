@@ -92,12 +92,39 @@ Re-running with the same `--seed` produces a **byte-identical** file.
 
 ---
 
+## Local Kafka (no Confluent needed)
+
+We run a Kafka-compatible broker (Redpanda) locally via Docker. This is the
+"local Kafka-compatible setup" the assignment allows — free, no cloud account.
+
+```bash
+docker compose up -d          # start broker + web console
+# broker for code:  localhost:9092
+# web console:      http://localhost:8080   (see topics/messages/keys)
+
+# create the topics once (idempotent):
+docker exec redpanda rpk topic create play-events track-activity -p 1 -r 1
+
+# stream the events into the topic:
+python src/replay_to_kafka.py            # all 45k events (keyed by listener_id)
+python src/replay_to_kafka.py --limit 100    # quick smoke test
+
+docker compose down           # stop broker when done
+```
+
+`replay_to_kafka.py` re-validates every line against the contract before
+publishing, so only valid `PlayEventV1` events reach the topic.
+
+---
+
 ## Files
 
 ```
 contracts/play_event_v1.py         # shared PlayEventV1 model (import this)
 src/fetch_musicbrainz_catalog.py   # one-time MusicBrainz → data/catalog.json
 src/generate_events.py             # producer: catalog → play_events.jsonl
+src/replay_to_kafka.py             # replay: play_events.jsonl → topic play-events
+docker-compose.yml                 # local Redpanda broker + console
 data/catalog.json                  # cached catalog
 data/play_events.jsonl             # the event stream (PJ's input)
 requirements.txt
@@ -106,6 +133,6 @@ requirements.txt
 ## Status & next steps
 
 - ✅ Producer done and verified (schema validation, rule-tripping, reproducibility).
-- ⏭️ Next (in progress): local Kafka via Docker (Redpanda) + a `replay_to_kafka.py`
-  script that streams `play_events.jsonl` into the `play-events` topic.
+- ✅ Local Kafka (Redpanda via Docker) + `replay_to_kafka.py` — all 45k events
+  land in the `play-events` topic, keyed by `listener_id`, 0 errors.
 - ⏭️ PJ: consumer on `play-events` → applies Topology A/B rules → `track-activity`.

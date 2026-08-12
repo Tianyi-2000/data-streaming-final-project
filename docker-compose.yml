@@ -1,0 +1,49 @@
+# Local Kafka for the streaming-fraud pipeline — no Confluent required.
+#
+# Redpanda is a Kafka-compatible broker: your Python clients talk to it exactly
+# like Apache Kafka (bootstrap server localhost:9092). The console is a web UI
+# for inspecting topics/keys/partitions (good for report screenshots).
+#
+# Usage:
+#   docker compose up -d       # start broker + console in the background
+#   docker compose ps          # check status
+#   docker compose down        # stop and remove containers
+#   docker compose down -v      # also wipe stored messages (fresh start)
+#
+# After it's up:
+#   Broker (for code):   localhost:9092
+#   Web console:         http://localhost:8080
+
+name: streaming-fraud-kafka
+
+services:
+  redpanda:
+    image: redpandadata/redpanda:v24.2.7
+    container_name: redpanda
+    command:
+      - redpanda
+      - start
+      - --smp=1
+      - --overprovisioned
+      - --node-id=0
+      - --kafka-addr=INTERNAL://0.0.0.0:29092,EXTERNAL://0.0.0.0:9092
+      # INTERNAL = other containers (console); EXTERNAL = your host (Python).
+      - --advertise-kafka-addr=INTERNAL://redpanda:29092,EXTERNAL://localhost:9092
+    ports:
+      - "9092:9092"     # Kafka API — this is what your producer/consumer use
+      - "9644:9644"     # admin API
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster health | grep -qE 'Healthy:.+true'"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  console:
+    image: redpandadata/console:v2.7.2
+    container_name: redpanda-console
+    depends_on:
+      - redpanda
+    ports:
+      - "8080:8080"     # open http://localhost:8080 in your browser
+    environment:
+      KAFKA_BROKERS: redpanda:29092
