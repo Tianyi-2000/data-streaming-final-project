@@ -482,16 +482,30 @@ non-vacuous by asserting that the same sentence with one digit changed is reject
 
 ```bash
 python3 src/summarize_review_queue.py
+python3 src/summarize_review_queue.py --input output/track_review_queue.json
+python3 src/summarize_review_queue.py --json     # machine-readable
 ```
 
-It reads the review queue, never writes it, and prints one provenance line naming which path
-produced the notes — the model or the template — and, if it fell back, why.
+It reads the review queue, never writes it, and prints a provenance block naming the file it
+read, which path produced the notes — `model` or `template` — and, if it fell back, why. With no
+key set the output looks like this:
+
+```
+Reviewer notes from output/track_review_queue.json
+  source: template
+  fell back because: no model client is configured (OPENAI_API_KEY unset)
+  notes: 1 (cap 3)
+```
+
+Exit code 0. The **only** exit-1 case is a missing or unparseable *input file*, which means the
+pipeline has not been run — and it prints the commands that regenerate it.
 
 ---
 
 ## Tests
 
-**272 tests.** Run them all:
+**328 tests** — the **272** that cover the pipeline itself, plus 56 covering the bounded summary
+added last. Run them all:
 
 ```bash
 python3 -m pytest tests/ -q
@@ -567,7 +581,7 @@ this phase shipped.
   terminal report), both review queues, and the bounded LLM summary with its fallback.
 - ✅ **The central claim is asserted, not just described** — `tests/test_two_key_proof.py` proves
   neither key catches both topologies, and that two replays produce identical detection.
-- ✅ **272 tests passing.**
+- ✅ **328 tests passing** — the 272 covering the pipeline, plus 56 for the bounded summary.
 - 📋 **The demo:** [`DEMO.md`](DEMO.md) — the script, and the record of running it end to end
   from a wiped broker, with real timings.
 - ⏭️ **Post-submission:** Phase 7, a Streamlit review UI over the queues; Phase 8, the ArangoDB
