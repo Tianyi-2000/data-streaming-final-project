@@ -35,7 +35,13 @@ if str(REPO_ROOT) not in sys.path:
 from contracts.play_event_v1 import PlayEventV1  # noqa: E402
 from src import consumer_stage1  # noqa: E402
 from src.config import load_thresholds  # noqa: E402
-from src.consumer_stage1 import Stage1Processor  # noqa: E402
+from src.consumer_stage1 import (  # noqa: E402
+    DUPLICATE_EVENT_ID,
+    INVALID_VALUE,
+    KEY_MISMATCH,
+    Stage1Processor,
+    replay_records,
+)
 
 BROKER = "localhost:9092"
 REPLAY = REPO_ROOT / "src" / "replay_to_kafka.py"
@@ -51,6 +57,18 @@ FIXTURE_LINES: List[str] = [
     if line.strip()
 ]
 FIXTURE_THRESHOLDS = load_thresholds(EXPECTED["thresholds_path"])
+
+INVALID_EVENTS_PATH = REPO_ROOT / EXPECTED["invalid_cases_path"]
+INVALID_ENVELOPES: List[Dict[str, Any]] = [
+    json.loads(line)
+    for line in INVALID_EVENTS_PATH.read_text(encoding="utf-8").splitlines()
+    if line.strip()
+]
+
+# How many envelope-wrapped invalid cases Phase 1 shipped. A structural count of
+# the fixture file, not a threshold: it is here so that shrinking the file
+# reduces the parametrized test's reach loudly rather than silently.
+INVALID_CASE_COUNT = 9
 
 # The one record the tracer sends: `replay_to_kafka.py` strips each line and
 # encodes it, so this is exactly the byte string that reaches `play-events`.
@@ -184,6 +202,39 @@ def _committed_offsets(group: str, topic: str) -> Dict[int, int]:
         probe.close()
 
 
+def _fixture_records() -> List[tuple]:
+    """The 63 fixture lines as `(key_bytes, value_bytes)` pairs, in file order.
+
+    The key is derived the way the shipped producer derives it -- UTF-8
+    `listener_id` -- so every pair here is contract-valid on both halves.
+    """
+    return [
+        (
+            json.loads(line)["listener_id"].encode("utf-8"),
+            line.strip().encode("utf-8"),
+        )
+        for line in FIXTURE_LINES
+    ]
+
+
+def _invalid_case_record(envelope: Dict[str, Any]) -> tuple:
+    """One invalid envelope as a `(key_bytes, value_bytes)` pair.
+
+    `kafka_key` when the envelope carries one -- case 9 is a wholly valid record
+    arriving under the wrong key -- otherwise the record's own `listener_id`.
+    """
+    record = envelope["record"]
+    key = envelope.get("kafka_key", record.get("listener_id", ""))
+    return key.encode("utf-8"), json.dumps(record).encode("utf-8")
+
+
+def _record_with(**overrides: Any) -> bytes:
+    """The fixture's first record with fields replaced -- valid unless told otherwise."""
+    record = dict(FIRST_FIXTURE_RECORD)
+    record.update(overrides)
+    return json.dumps(record).encode("utf-8")
+
+
 def _replay_into(topic: str, limit: int, input_path: Path = FIXTURE_PATH):
     """Put `limit` events on `topic` using the SHIPPED producer, not a copy."""
     return subprocess.run(
@@ -306,3 +357,195 @@ def test_the_tracer_path_rekeys_one_real_event_end_to_end(tmp_path):
         )
     finally:
         _delete_throwaway_topics(in_topic, out_topic)
+
+
+# --------------------------------------------------------------------------------
+# Task 2: the decision layer -- invalid classification and dedup
+# --------------------------------------------------------------------------------
+def test_the_invalid_case_fixture_still_holds_every_documented_case():
+    """A shrunken fixture must fail here, not quietly hollow out the test below."""
+    assert len(INVALID_ENVELOPES) == INVALID_CASE_COUNT
+    assert sum(1 for e in INVALID_ENVELOPES if e["expect"] == "key_mismatch") == 1
+
+
+@pytest.mark.parametrize(
+    "envelope", INVALID_ENVELOPES, ids=[e["case"] for e in INVALID_ENVELOPES]
+)
+def test_every_contract_invalid_case_is_dropped_with_its_documented_reason(envelope):
+    """Contract section 6: every invalid record is logged and never forwarded.
+
+    Eight cases the shared model rejects; the ninth is a wholly valid record
+    arriving under another listener's key, which the model structurally cannot
+    catch and `key_matches_listener_id` therefore has to.
+    """
+    key, value = _invalid_case_record(envelope)
+    decision = Stage1Processor(FIXTURE_THRESHOLDS).decide(key, value)
+
+    assert decision.forward is False
+    expected_reason = (
+        KEY_MISMATCH if envelope["expect"] == "key_mismatch" else INVALID_VALUE
+    )
+    assert decision.drop_reason == expected_reason
+
+    if envelope["error_contains"] is not None:
+        assert envelope["error_contains"] in decision.detail, (
+            f"case {envelope['case']}: detail does not name "
+            f"{envelope['error_contains']!r}\n{decision.detail}"
+        )
+    if expected_reason is KEY_MISMATCH:
+        # Both sides of the disagreement, so the log line is actionable.
+        assert envelope["kafka_key"] in decision.detail
+        assert envelope["record"]["listener_id"] in decision.detail
+
+
+@pytest.mark.parametrize(
+    "envelope", INVALID_ENVELOPES, ids=[e["case"] for e in INVALID_ENVELOPES]
+)
+def test_a_dropped_record_never_produces_an_outgoing_value(envelope):
+    """Nothing invalid reaches `track-activity`, key or value."""
+    key, value = _invalid_case_record(envelope)
+    decision = Stage1Processor(FIXTURE_THRESHOLDS).decide(key, value)
+    assert decision.out_value is None
+    assert decision.out_key is None
+
+
+# --------------------------------------------------------------------------------
+# Task 2: the Topology A judgment
+# --------------------------------------------------------------------------------
+def _fixture_processor(thresholds=FIXTURE_THRESHOLDS) -> Stage1Processor:
+    processor = Stage1Processor(thresholds)
+    replay_records(processor, _fixture_records())
+    return processor
+
+
+def test_the_fixture_flags_exactly_the_oracles_topology_a_listener():
+    """The oracle's flagged list, reproduced by the running detector."""
+    processor = _fixture_processor()
+    flagged = [entry["listener_id"] for entry in processor.flagged_listeners()]
+
+    assert flagged == EXPECTED["expected_flagged_listeners"]
+    assert set(flagged).isdisjoint(EXPECTED["expected_unflagged_listeners"])
+
+
+def test_the_listener_sitting_exactly_on_the_threshold_is_not_flagged():
+    """CD-4 is strictly MORE THAN. Flip `>` to `>=` here and FN01 flags.
+
+    Every other listener clears or misses its threshold with margin, so without
+    this case the comparison operator itself is untested.
+    """
+    boundary = EXPECTED["boundaries"]["topology_a_strict_greater_than"]
+    processor = _fixture_processor()
+
+    assert processor.peak_for(boundary["listener_id"]) == boundary["plays_in_window"]
+    assert boundary["plays_in_window"] == FIXTURE_THRESHOLDS.topology_a_plays_over
+    assert boundary["expected_flagged"] is False
+    flagged = [entry["listener_id"] for entry in processor.flagged_listeners()]
+    assert boundary["listener_id"] not in flagged
+
+
+def test_a_listener_that_crosses_the_threshold_and_goes_quiet_stays_flagged():
+    """The regression this phase exists to avoid.
+
+    `RollingHourlyWindows.add` returns the count as of the event just added, and
+    that count FALLS as the 24-bucket window slides past hours the listener did
+    not play in. Here QUIET plays twelve times inside one hour, then once two
+    days later: `add`'s last return for QUIET is 1, well under the threshold of
+    10. An implementation that flags on "the last value `add` returned" reports
+    1 and silently un-flags a listener it had already flagged. The flag has to
+    come from a per-listener high-water mark.
+
+    Synthetic rather than fixture-driven: every fixture listener's last event is
+    inside its own peak window, so the fixture cannot discriminate.
+    """
+    plays_over = FIXTURE_THRESHOLDS.topology_a_plays_over
+    processor = Stage1Processor(FIXTURE_THRESHOLDS)
+
+    burst = plays_over + 2
+    last_return = 0
+    for i in range(burst):
+        last_return = processor.commit_event(
+            f"quiet-{i:03d}", "QUIET", f"2026-08-08T00:{i:02d}:00Z"
+        )
+    assert last_return > plays_over
+
+    # Two days later, the burst has slid out of the window entirely.
+    later_return = processor.commit_event("quiet-late", "QUIET", "2026-08-10T00:00:00Z")
+    assert later_return < plays_over
+
+    assert processor.peak_for("QUIET") > plays_over
+    flagged = [entry["listener_id"] for entry in processor.flagged_listeners()]
+    assert "QUIET" in flagged
+
+
+def test_the_same_event_id_is_counted_once_and_a_different_one_is_not():
+    """Dedup is keyed on `event_id` and on nothing else (contract section 5)."""
+    listener = FIRST_FIXTURE_RECORD["listener_id"]
+    key = listener.encode("utf-8")
+    original = _record_with()
+    processor = Stage1Processor(FIXTURE_THRESHOLDS)
+
+    first, second = replay_records(processor, [(key, original), (key, original)])
+    assert first.forward is True
+    assert second.forward is False
+    assert second.drop_reason == DUPLICATE_EVENT_ID
+    peak_after_duplicate = processor.peak_for(listener)
+    assert peak_after_duplicate == 1
+
+    # Identical in every field but `event_id`: a genuinely different play.
+    twin = _record_with(event_id=FIRST_FIXTURE_RECORD["event_id"] + "-twin")
+    (third,) = replay_records(processor, [(key, twin)])
+    assert third.forward is True
+    assert processor.peak_for(listener) == peak_after_duplicate + 1
+
+
+# --------------------------------------------------------------------------------
+# Task 2: the review document
+# --------------------------------------------------------------------------------
+def test_the_review_document_names_the_numbers_behind_every_flag():
+    """A flag a reader cannot dispute is an accusation, not a review queue.
+
+    Every entry has to carry the count that produced it, the window it was
+    counted over, the threshold it was compared against, and the span of the
+    listener's activity -- and the document has to name the config file the
+    thresholds came from.
+    """
+    processor = _fixture_processor()
+    document = processor.review_document()
+
+    assert document["flagged_listeners"], "no flags, so this test would be vacuous"
+    for entry in document["flagged_listeners"]:
+        for field in (
+            "listener_id",
+            "peak_plays_in_window",
+            "window_hours",
+            "threshold",
+            "first_event_time",
+            "last_event_time",
+        ):
+            assert field in entry, f"review entry is missing {field}"
+        assert entry["threshold"] == FIXTURE_THRESHOLDS.topology_a_plays_over
+        assert entry["window_hours"] == FIXTURE_THRESHOLDS.topology_a_window_hours
+        assert entry["peak_plays_in_window"] > entry["threshold"]
+
+    assert document["thresholds_source_path"] == FIXTURE_THRESHOLDS.source_path
+
+
+def test_the_review_document_is_byte_stable_across_two_identical_runs():
+    """PROF-02 leans on this in Phase 5: same input, byte-identical artifact."""
+    first = json.dumps(_fixture_processor().review_document(), indent=2, sort_keys=True)
+    second = json.dumps(_fixture_processor().review_document(), indent=2, sort_keys=True)
+    assert first.encode("utf-8") == second.encode("utf-8")
+
+
+def test_the_accumulator_is_built_through_the_sanctioned_factory():
+    """Retuning the window in configuration has to reach the running detector.
+
+    A `RollingHourlyWindows(24)` built from a literal passes every other test in
+    this file and fails this one (CTRT-04).
+    """
+    retuned_hours = 3
+    assert retuned_hours != FIXTURE_THRESHOLDS.topology_a_window_hours
+    retuned = FIXTURE_THRESHOLDS.model_copy(
+        update={"topology_a_window_hours": retuned_hours}
+    )
+    assert Stage1Processor(retuned).window_hours == retuned.topology_a_window_hours
