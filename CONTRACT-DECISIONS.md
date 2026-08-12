@@ -86,7 +86,7 @@ three of these, in a 1-hour window on one track:
 |---|---|---|
 | at least 200 unique listeners | roughly 1 to 20 per hour | 900 |
 | plays per unique listener at or below 1.1 | ~1.4 | 1.0 |
-| at least 60% of plays stopping between 30 and 35 seconds | ~6% | 92% |
+| at least 60% of plays stopping in the band `30 <= played_seconds <= 35`, inclusive at both ends | ~6% | 92% |
 
 The stop-time condition is what separates fraud from real popularity. Platforms only
 count a play toward royalties after about 30 seconds, so automated playback stops in

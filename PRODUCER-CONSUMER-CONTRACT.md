@@ -117,6 +117,7 @@ Example transformation:
 - In `play-events`, records for the same `listener_id` must reach the same partition and preserve that listener's order.
 - In `track-activity`, records for the same `track_id` must reach the same partition and preserve that track's order.
 - There is no global order across all listeners, tracks, partitions, or topics.
+- The producer emits events in nondecreasing `event_time` order, so consumers can advance a single watermark instead of buffering late arrivals. This guarantee holds per replay of the seeded file, not across repeated replays into the same topic, since a second replay restarts at the same beginning timestamp. This records an existing guarantee rather than new producer work: `src/generate_events.py` already sorts by `(event_time, event_id)` before writing, and `data/play_events_manifest.json` declares `"event_time_order": "nondecreasing"`.
 - Replaying the same seeded file must reuse the same `event_id` values.
 - Consumers must use `event_id` for idempotent handling or deduplication.
 - For a valid input record, Consumer 1 commits its input offset only after producing the corresponding `track-activity` record successfully.
@@ -134,6 +135,8 @@ An event is invalid if, for example:
 - `played_seconds` is negative or greater than `track_duration_seconds`;
 - `track_duration_seconds` is not positive; or
 - `event_time` is not a valid UTC timestamp.
+
+The key-versus-value rule is the one item on that list the shared model cannot enforce. `PlayEventV1` validates the Kafka *value* and never sees the key, so no validator on the model can compare the two. The producer guarantees the match structurally, by deriving the key with `play_events_key()`. Consumer 1 must therefore assert it explicitly, using `key_matches_listener_id` from `contracts/play_event_v1.py`.
 
 Minimum-version behavior:
 
@@ -176,7 +179,9 @@ Scenario labels and expected answers must be stored in a separate ground-truth f
 With the agreed v1 fields, Consumer 2 should combine at least:
 
 - a high `unique_listener_count` for one track within a time window; and
-- a high share of `played_seconds` values in the 30–35 second range.
+- a high share of `played_seconds` values in the stop band, which is `30 <= played_seconds <= 35` — inclusive at both ends.
+
+The band includes 35 deliberately. The generator spreads Topology B stop times evenly across the six integer values 30 through 35, so treating the upper edge as exclusive discards one sixth of the signal and moves the measured band share on the fraud window from 0.923 to 0.762. Both figures clear the 0.60 threshold, which is precisely why this would never surface as a failing check — only as a wrong number. Both sides use `in_stop_band` from `contracts/play_event_v1.py` so neither re-derives the boundary.
 
 The exact time window and thresholds belong to the consumer detection design and remain `TBD` until Tianyi and P.J. agree.
 
