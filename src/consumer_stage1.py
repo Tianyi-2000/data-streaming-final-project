@@ -12,7 +12,7 @@ import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional, Union
+from typing import Any, Dict, Iterable, Iterator, List, Optional, Tuple, Union
 
 from confluent_kafka import Consumer, Producer
 from pydantic import ValidationError
@@ -26,6 +26,7 @@ if str(REPO_ROOT) not in sys.path:
 from contracts.play_event_v1 import (  # noqa: E402
     PlayEventV1,
     key_matches_listener_id,
+    parse_event_time,
 )
 from src.config import Thresholds  # noqa: E402
 from src.windowing import topology_a_windows  # noqa: E402
@@ -41,6 +42,20 @@ DUPLICATE_EVENT_ID = "duplicate_event_id"
 # The only persisted state this stage keeps. Named here rather than at the call
 # site so recovery and the tests cannot disagree about which file it is.
 JOURNAL_FILENAME = "consumer1_journal.jsonl"
+
+
+@dataclass
+class _ListenerState:
+    """One listener's Topology A evidence: the peak, the volume and the span.
+
+    `peak` is a HIGH-WATER MARK over every value `RollingHourlyWindows.add`
+    returned for this listener, not the last of them.
+    """
+
+    peak: int = 0
+    plays: int = 0
+    first_event_time: str = ""
+    last_event_time: str = ""
 
 
 @dataclass(frozen=True)
@@ -78,7 +93,7 @@ class Stage1Processor:
         # falls as the 24-bucket window slides past hours a listener did not play
         # in, so a flag derived from the last value silently un-flags a listener
         # later in the stream.
-        self._peak: Dict[str, int] = {}
+        self._listeners: Dict[str, _ListenerState] = {}
         self._counts_seen = 0
         self._counts_forwarded = 0
         self._counts_invalid_value = 0
@@ -183,43 +198,104 @@ class Stage1Processor:
         """
         self._seen_event_ids.add(event_id)
         count = self._windows.add(listener_id, event_time)
-        self._peak[listener_id] = max(self._peak.get(listener_id, 0), count)
+
+        state = self._listeners.get(listener_id)
+        if state is None:
+            state = _ListenerState(
+                first_event_time=event_time, last_event_time=event_time
+            )
+            self._listeners[listener_id] = state
+        else:
+            # Compare instants, store the contract strings: the review document
+            # quotes the wire format a reader can match back to the stream.
+            moment = parse_event_time(event_time)
+            if moment < parse_event_time(state.first_event_time):
+                state.first_event_time = event_time
+            if moment > parse_event_time(state.last_event_time):
+                state.last_event_time = event_time
+        state.plays += 1
+        state.peak = max(state.peak, count)
         return count
 
     # --- the Topology A judgment -----------------------------------------
-    def flagged_listeners(self) -> List[Dict[str, Any]]:
-        """Listeners whose peak rolling count is STRICTLY GREATER than the threshold.
-
-        CD-4 says *more than*. A listener sitting exactly on the threshold is not
-        flagged, and `>=` here would quietly change who gets accused.
-        """
-        return [
-            {
-                "listener_id": listener_id,
-                "peak_plays_in_window": peak,
-                "window_hours": self.window_hours,
-                "threshold": self._thresholds.topology_a_plays_over,
-            }
-            for listener_id, peak in sorted(self._peak.items())
-            if peak > self._thresholds.topology_a_plays_over
-        ]
+    def peak_for(self, listener_id: str) -> int:
+        """The highest rolling count ever seen for `listener_id`, or 0."""
+        state = self._listeners.get(listener_id)
+        return state.peak if state is not None else 0
 
     @property
     def window_hours(self) -> int:
         """The accumulator's own window size, not a copy of the config value."""
         return self._windows.window_hours
 
+    @property
+    def late_dropped(self) -> int:
+        """The accumulator's own count of per-key `event_time` disorder.
+
+        Delegated rather than tracked separately, so this number cannot drift
+        from the one the windowing module actually acted on.
+        """
+        return self._windows.late_dropped
+
+    def flagged_listeners(self) -> List[Dict[str, Any]]:
+        """Listeners whose peak rolling count is STRICTLY GREATER than the threshold.
+
+        CD-4 says *more than*. A listener sitting exactly on the threshold is not
+        flagged, and `>=` here would quietly change who gets accused -- the
+        fixture's FN01 sits exactly there for that reason.
+
+        `threshold` and `window_hours` are read from the loaded configuration, so
+        a retune reaches both the decision and the record of it (CTRT-04).
+        """
+        return [
+            {
+                "listener_id": listener_id,
+                "peak_plays_in_window": state.peak,
+                "plays_recorded": state.plays,
+                "window_hours": self.window_hours,
+                "threshold": self._thresholds.topology_a_plays_over,
+                "first_event_time": state.first_event_time,
+                "last_event_time": state.last_event_time,
+            }
+            for listener_id, state in sorted(self._listeners.items())
+            if state.peak > self._thresholds.topology_a_plays_over
+        ]
+
+    def counts(self) -> Dict[str, int]:
+        """What this run saw, forwarded and dropped, plus per-key disorder."""
+        return {
+            "records_seen": self._counts_seen,
+            "forwarded": self._counts_forwarded,
+            "invalid_value": self._counts_invalid_value,
+            "key_mismatch": self._counts_key_mismatch,
+            "duplicate_event_id": self._counts_duplicate_event_id,
+            "late_dropped": self.late_dropped,
+            "listeners_seen": len(self._listeners),
+        }
+
     def review_document(self) -> Dict[str, Any]:
-        """The listener-side review queue: flags, and the numbers behind them."""
+        """The listener-side review queue: which listeners, and on what evidence.
+
+        This document describes what was counted and against which numbers, and
+        reaches no conclusion beyond "flagged". The project's stated ethical
+        failure is accusing an innocent artist, so this is a review queue for a
+        human, not a verdict -- which is why every entry carries the count, the
+        window, the threshold and the config file behind it, and why the strict
+        inequality is spelled out rather than left for a reader to assume.
+        """
         return {
             "flagged_listeners": self.flagged_listeners(),
-            "counts": {
-                "records_seen": self._counts_seen,
-                "forwarded": self._counts_forwarded,
-                "invalid_value": self._counts_invalid_value,
-                "key_mismatch": self._counts_key_mismatch,
-                "duplicate_event_id": self._counts_duplicate_event_id,
-            },
+            "counts": self.counts(),
+            "thresholds_source_path": self._thresholds.source_path,
+            "rule": (
+                "topology_a: a listener's plays in a rolling "
+                "topology_a_window_hours window, compared against "
+                "topology_a_plays_over"
+            ),
+            "comparison": (
+                "strictly greater than (>): a listener sitting exactly on "
+                "topology_a_plays_over is NOT flagged"
+            ),
         }
 
 
@@ -302,6 +378,29 @@ class Journal:
             self._handle.flush()
             self._handle.close()
             self._handle = None
+
+
+def replay_records(
+    processor: Stage1Processor,
+    records: Iterable[Tuple[Optional[bytes], Optional[bytes]]],
+) -> List[Decision]:
+    """Decide and count a sequence of `(key, value)` pairs, with no broker.
+
+    The same decide -> count ordering the poll loop uses, minus the produce and
+    the offset discipline. Tests drive the fixture through this, and it is the
+    one place that ordering is written down for the no-broker path.
+    """
+    decisions: List[Decision] = []
+    for key, value in records:
+        decision = processor.decide(key, value)
+        processor.tally(decision)
+        decisions.append(decision)
+        if decision.forward:
+            event = decision.event
+            processor.commit_event(
+                event.event_id, event.listener_id, event.event_time
+            )
+    return decisions
 
 
 def write_listener_review(
