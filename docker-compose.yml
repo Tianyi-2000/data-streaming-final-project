@@ -123,6 +123,64 @@ services:
       retries: 12
       start_period: 20s
 
+  connect:
+    # THE SAME `graph` PROFILE AS ARANGODB, DELIBERATELY NOT A SECOND ONE.
+    # A plain `docker compose up -d` must still yield exactly the v1 stack, and
+    # a half-configured Connect worker that failed to start would otherwise
+    # break the one command the whole pipeline is judged on -- for everyone,
+    # including a future reader who never wanted the graph at all.
+    profiles: ["graph"]
+    image: confluentinc/cp-kafka-connect:7.6.1
+    container_name: streaming-fraud-connect
+    depends_on:
+      redpanda:
+        condition: service_healthy
+      arangodb:
+        condition: service_healthy
+    ports:
+      - "8083:8083"     # the Connect REST API, used to POST the connectors
+    environment:
+      # THE CONTAINER TALKS TO THE CONTAINER. `redpanda:29092` is the INTERNAL
+      # listener; `localhost:9092` is the EXTERNAL one and means "inside this
+      # Connect container", where nothing is listening. Getting this wrong is
+      # the single most common way a Connect setup fails in a compose file that
+      # already defines both listeners, and it fails slowly -- the worker starts,
+      # reports RUNNING, and never consumes anything.
+      CONNECT_BOOTSTRAP_SERVERS: redpanda:29092
+      CONNECT_REST_ADVERTISED_HOST_NAME: connect
+      CONNECT_GROUP_ID: streaming-fraud-connect
+      CONNECT_CONFIG_STORAGE_TOPIC: _connect-configs
+      CONNECT_OFFSET_STORAGE_TOPIC: _connect-offsets
+      CONNECT_STATUS_STORAGE_TOPIC: _connect-status
+      # Single-node broker, so the internal topics cannot be replicated further.
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+      # The emitter produces plain JSON with no schema envelope, and UTF-8 ids
+      # as keys. Each connector restates these too, so a config read on its own
+      # is still complete.
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
+      # Lets a connector config reference a secret by path instead of embedding
+      # it, which is why no password appears in connect/*.json.
+      CONNECT_CONFIG_PROVIDERS: file
+      CONNECT_CONFIG_PROVIDERS_FILE_CLASS: org.apache.kafka.common.config.provider.FileConfigProvider
+      CONNECT_PLUGIN_PATH: /usr/share/java,/usr/share/confluent-hub-components
+    volumes:
+      # The verified connector JAR. Mounted read-only: the worker needs to read
+      # the plugin, never to write it.
+      - ./connect/plugins:/usr/share/confluent-hub-components:ro
+      # The database credential, generated from $ARANGO_ROOT_PASSWORD at run
+      # time and gitignored -- see connect/README.md.
+      - ./connect/secrets:/etc/connect-secrets:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8083/connectors || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 40s
+
 volumes:
   # Named so `docker compose down -v` from THIS directory removes it and nothing
   # else. The compose project is `streaming-fraud-kafka`, so the real volume is

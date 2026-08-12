@@ -1,0 +1,23 @@
+{
+  "name": "graph-played-sink",
+  "config": {
+    "connector.class": "com.arangodb.kafka.ArangoSinkConnector",
+    "tasks.max": "1",
+    "topics": "graph-played",
+
+    "connection.endpoints": "arangodb:8529",
+    "connection.user": "root",
+    "connection.password": "${file:/etc/connect-secrets/arango.properties:password}",
+    "connection.database": "streaming_fraud_graph_connect",
+    "connection.collection": "played",
+
+    "insert.overwriteMode": "replace",
+
+    "data.errors.tolerance": "none",
+    "data.errors.log.enable": "true",
+
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false"
+  }
+}

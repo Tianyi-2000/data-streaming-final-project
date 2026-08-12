@@ -265,6 +265,67 @@ innocent artist. `output/` is gitignored, so it stays local.
 
 ## The Kafka Connect path (GRPH-05)
 
-*Filled in by Task 4.*
+**It works, and it produced identical counts.** ArangoDB's own Kafka Connect sink connector consumes
+the *same three topics* and writes a **second** database, which is what makes it an alternative write
+path rather than a second implementation.
 
-<!-- gsd:connect-section -->
+Full setup, the artifact's provenance and every configuration property are in
+[`connect/README.md`](connect/README.md). The short version:
+
+| | |
+|---|---|
+| Connector | `com.arangodb:kafka-connect-arangodb:2.0.0`, Maven Central, sha256 `519afaf0…7ccac` |
+| Publisher | the `arangodb` GitHub **Organization** — approved at a blocking provenance gate before download |
+| Target | `streaming_fraud_graph_connect` — **never** the database the direct writer owns |
+| Opt-in | the **same `--profile graph`** as ArangoDB; a plain `docker compose up -d` starts neither |
+
+```bash
+docker compose --profile graph up -d connect
+for f in connect/graph-*-sink.json; do
+  curl -sS -X POST -H 'Content-Type: application/json' --data @"$f" http://localhost:8083/connectors
+done
+```
+
+### The proof it is an equivalent write path
+
+Not "the connector started" — a misconfigured sink reports `RUNNING` while writing nothing. The
+acceptance test is a count comparison:
+
+```
+direct  (python-arango) : {"dangling_edges": 0, "listeners": 1308, "played": 45473, "tracks": 464}
+connect (kafka sink)    : {"dangling_edges": 0, "listeners": 1308, "played": 45473, "tracks": 464}
+```
+
+Stronger still, both cohort queries run unchanged against the Connect-written graph and return the
+same finding — so `_from`/`_to` survived the converter and the edges genuinely resolve:
+
+```
+A003 446 | A001 442 | A002 442 | A004 442 | A005 440 | A006 440 | A007 438
+fan-in: 928 inbound, 900 with one play and one distinct track
+```
+
+`insert.overwriteMode=replace` is the connector-side counterpart of the direct writer's
+`overwrite_mode="replace"` — the REPSERT semantic whose loss, when the connector was originally
+descoped, is the reason GRPH-04 exists at all. `data.errors.tolerance=none` is the counterpart of
+`raise_on_document_error=True`: fail rather than silently skip.
+
+### The fallback, which is required either way
+
+**The direct `python-arango` writer is the working path**, and it satisfies GRPH-01 through GRPH-04
+**without the Connect worker running at all**. The ROADMAP's success criterion 6 provides for exactly
+this degradation. If the worker misbehaves — a bad plugin path, a converter mismatch, a broker
+address pointing at `localhost` from inside a container — the recovery is simply not to use it:
+
+```bash
+docker compose --profile graph up -d              # broker + ArangoDB, no Connect worker
+python3 src/graph_emitter.py --group graph-emitter-full
+python3 src/graph_loader.py --drop --group graph-loader-full
+python3 src/graph_queries.py
+```
+
+That path is what every number in this document was produced by. The Connect sink is an *additional*
+demonstration, and nothing in the phase's claim depends on it.
+
+Because the worker sits behind the `graph` profile, a broken Connect configuration cannot affect
+`docker compose up -d`, and because it writes a separate database it cannot damage the graph the
+direct writer already proved.

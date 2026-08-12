@@ -1,0 +1,3 @@
+# The connector JAR is a 9.5 MB binary and is NOT committed.
+# Fetch and verify it with the command in ../README.md.
+*.jar
