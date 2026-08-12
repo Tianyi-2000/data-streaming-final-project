@@ -25,6 +25,30 @@ def play_events_key(event: "PlayEventV1") -> bytes:
     return event.listener_id.encode("utf-8")
 
 
+def key_matches_listener_id(key: "bytes | str | None", event: "PlayEventV1") -> bool:
+    """True when the Kafka message key equals the value's listener_id.
+
+    PRODUCER-CONSUMER-CONTRACT.md section 6 lists "the Kafka key does not equal
+    the value's listener_id" as an invalidity rule, but PlayEventV1 never sees
+    the Kafka key -- key and value are independent byte strings on the wire --
+    so the model structurally cannot enforce it. This helper is where that rule
+    lives instead.
+
+    Intended caller: Consumer 1 (Phase 3), which must assert this explicitly on
+    every record it reads rather than trusting the producer to have set it.
+
+    A missing key (None) is False: an unkeyed record cannot satisfy the rule.
+    """
+    if key is None:
+        return False
+    if isinstance(key, (bytes, bytearray)):
+        try:
+            key = bytes(key).decode("utf-8")
+        except UnicodeDecodeError:
+            return False
+    return key == event.listener_id
+
+
 class PlayEventV1(BaseModel):
     """A single validated 'play' event.
 
