@@ -133,6 +133,86 @@ DUPLICATE_EVENT_ID = "duplicate_event_id"
 # This design holds exactly one bucket per event-time hour.
 SUPPORTED_WINDOW_HOURS = 1
 
+# The two measured ratios are rendered to a fixed two decimals wherever they are
+# spoken about in prose, so the note a human reads and the note a test parses are
+# the same string.
+_NOTE_DECIMALS = 2
+
+
+def template_note(entry: Dict[str, Any]) -> str:
+    """One deterministic sentence describing what was measured for one bucket.
+
+    PHASE 6's SUMM-03 FALLBACK. This name and signature are a cross-phase
+    contract: the LLM summary layer degrades to exactly this function when the
+    model is unavailable, refuses, or returns something that fails its bound, so
+    the report is never left bare. Renaming either means editing Phase 6.
+
+    TWO PROPERTIES THE TESTS ENFORCE, both of which matter more than the wording.
+
+    First, it introduces NO NUMBER that is not already in `entry`. Every value
+    rendered here is read off the entry -- the measured numbers, their thresholds,
+    the window and the stop-band edges -- and nothing is typed. That is the bound
+    Phase 6's SUMM-02 inherits, and it is the only reason a generated sentence can
+    be trusted alongside a JSON record a human may not read.
+
+    Second, it REACHES NO VERDICT. It describes what was measured against what
+    threshold and stops. A false positive in this project withholds money from an
+    innocent artist, so the sentence must not conclude anything about the artist,
+    the track or the listeners -- the review queue names candidates and the
+    evidence behind them, and a human decides.
+    """
+    unique = entry["conditions"][CONDITION_MIN_UNIQUE_LISTENERS]
+    ratio = entry["conditions"][CONDITION_MAX_PLAYS_PER_LISTENER]
+    share = entry["conditions"][CONDITION_MIN_BAND_SHARE]
+    low, high = entry["stop_band_seconds"]
+
+    return (
+        f"Track {entry['track_id']} in the {entry['window_hours']}-hour window "
+        f"beginning {entry['window_start']}: {unique['measured']} unique "
+        f"listeners ({unique['comparison']} {unique['threshold']}), "
+        f"{entry['total_plays']} plays at "
+        f"{ratio['measured']:.{_NOTE_DECIMALS}f} per listener "
+        f"({ratio['comparison']} {ratio['threshold']:.{_NOTE_DECIMALS}f}), and a "
+        f"{share['measured']:.{_NOTE_DECIMALS}f} share of plays stopping inside "
+        f"the {low}-{high} second band "
+        f"({share['comparison']} {share['threshold']:.{_NOTE_DECIMALS}f}). "
+        "These are the measured numbers against the configured thresholds; this "
+        "entry is a review candidate for a human and states no conclusion."
+    )
+
+
+def read_listener_review(path: Union[str, Path]) -> List[Dict[str, Any]]:
+    """Consumer 1's `flagged_listeners`, or an empty list and a warning.
+
+    STG2-04 wants the terminal report to show flagged tracks AND flagged
+    listeners. The listeners are Consumer 1's answer, written by another process
+    at another time, so this file may be absent, stale or truncated -- and a
+    missing artifact from the other stage must not take down this stage's report
+    (threat T-04-08). Absent-tolerant, and it names the path it looked at so the
+    absence is legible rather than silent.
+    """
+    target = Path(path)
+    try:
+        doc = json.loads(target.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        _LOG.warning(
+            "no listener review queue at %s; the flagged-listener half of the "
+            "report will be empty. Run src/consumer_stage1.py to produce it.",
+            target,
+        )
+        return []
+    except (OSError, json.JSONDecodeError) as exc:
+        _LOG.warning("could not read the listener review queue at %s: %s", target, exc)
+        return []
+
+    listeners = doc.get("flagged_listeners") if isinstance(doc, dict) else None
+    if not isinstance(listeners, list):
+        _LOG.warning(
+            "the listener review queue at %s has no 'flagged_listeners' list", target
+        )
+        return []
+    return listeners
+
 
 @dataclass(frozen=True)
 class Decision:
@@ -416,6 +496,14 @@ class Stage2Processor:
     def review_document(self) -> Dict[str, Any]:
         """The track-side review queue: which tracks, and on what evidence.
 
+        THE `note` IS ATTACHED HERE, NOT IN `evaluate_all()`. Both placements
+        would emit an identical schema, so this is a choice rather than a
+        correctness question -- but that schema is Phase 5's PROF-02 comparison
+        target and Phase 6's LLM input, so it gets ONE producer and one
+        documented home. `evaluate_all()` stays a pure measurement that the decoy
+        tests read without a note attached; this method copies each flagged entry
+        and adds its note.
+
         Every entry carries all three measured numbers, all three thresholds, the
         window, the stop-band edges and the config file behind them, so a named
         artist can dispute a flag on its own evidence (threat T-04-06). The
@@ -427,7 +515,10 @@ class Stage2Processor:
         which config a run actually used (threat T-04-07).
         """
         return {
-            "flagged_tracks": self.flagged_buckets(),
+            "flagged_tracks": [
+                {**entry, "note": template_note(entry)}
+                for entry in self.flagged_buckets()
+            ],
             "counts": self.counts(),
             "thresholds_source_path": self._thresholds.source_path,
             "rule": (
@@ -516,6 +607,10 @@ class RunSummary:
     buckets_seen: int
     flagged_buckets: int
     flagged_tracks: List[str]
+    # STG2-04's other half, read from Consumer 1's output rather than recomputed
+    # here -- computing a Topology A signal behind the `track_id` key would make
+    # CD-9's separability claim false.
+    flagged_listeners: int
 
     def as_dict(self) -> Dict[str, Any]:
         return {
@@ -528,6 +623,7 @@ class RunSummary:
             "buckets_seen": self.buckets_seen,
             "flagged_buckets": self.flagged_buckets,
             "flagged_tracks": list(self.flagged_tracks),
+            "flagged_listeners": self.flagged_listeners,
         }
 
 
@@ -558,6 +654,7 @@ def run(
     in_topic: str,
     thresholds: Thresholds,
     review_path: Union[str, Path],
+    listener_review_path: Union[str, Path],
     max_events: int = 0,
     commit_every: int = 1,
     idle_timeout: float = 10.0,
@@ -622,6 +719,7 @@ def run(
         consumer.close()
 
     counts = processor.counts()
+    flagged_listeners = read_listener_review(listener_review_path)
     summary = RunSummary(
         polled=counts["records_seen"],
         counted=counts["counted"],
@@ -634,10 +732,11 @@ def run(
         flagged_tracks=sorted(
             {entry["track_id"] for entry in processor.flagged_buckets()}
         ),
+        flagged_listeners=len(flagged_listeners),
     )
 
     write_review_queue(processor, review_path)
-    _report(summary, processor, review_path)
+    _report(summary, processor, review_path, listener_review_path)
     return summary
 
 
@@ -645,8 +744,15 @@ def _report(
     summary: RunSummary,
     processor: Stage2Processor,
     review_path: Union[str, Path],
+    listener_review_path: Union[str, Path],
 ) -> None:
-    """A human-readable block, then one machine-readable line, on stdout."""
+    """A human-readable block, then one machine-readable line, on stdout.
+
+    Both halves of STG2-04 are here: the flagged TRACKS this stage measured, with
+    the numbers behind each flag, and the flagged LISTENERS Consumer 1 found,
+    read from its output file. When that file is absent the report says which
+    path it looked at and continues.
+    """
     print("")
     print(f"Consumer 2 done. Polled {summary.polled}, counted {summary.counted}.")
     print(f"  dropped, invalid value : {summary.invalid_value}")
@@ -668,6 +774,23 @@ def _report(
                 f"          {name}: measured {condition['measured']}, "
                 f"{condition['comparison']} {condition['threshold']}"
             )
+        print(f"          {template_note(entry)}")
+
+    flagged_listeners = read_listener_review(listener_review_path)
+    print(f"  flagged listeners      : {len(flagged_listeners)}")
+    if flagged_listeners:
+        for listener in flagged_listeners:
+            print(
+                f"      {listener.get('listener_id')}: peak "
+                f"{listener.get('peak_plays_in_window')} plays in "
+                f"{listener.get('window_hours')}h, over "
+                f"{listener.get('threshold')}"
+            )
+    else:
+        print(
+            f"      none read from {listener_review_path} -- run "
+            "src/consumer_stage1.py to produce it"
+        )
     print(f"  review queue           : {review_path}")
     print("SUMMARY " + json.dumps(summary.as_dict(), sort_keys=True))
 
@@ -686,6 +809,14 @@ def main(argv: Optional[List[str]] = None) -> int:
     parser.add_argument(
         "--review-out",
         default=str(REPO_ROOT / "output" / "track_review_queue.json"),
+    )
+    parser.add_argument(
+        "--listener-review",
+        default=str(REPO_ROOT / "output" / "listener_review_queue.json"),
+        help=(
+            "Consumer 1's review output, read at report time for the "
+            "flagged-listener half of STG2-04. Absent-tolerant."
+        ),
     )
     parser.add_argument(
         "--thresholds",
@@ -740,6 +871,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             in_topic=args.in_topic,
             thresholds=thresholds,
             review_path=args.review_out,
+            listener_review_path=args.listener_review,
             max_events=args.max_events,
             commit_every=args.commit_every,
             idle_timeout=args.idle_timeout,

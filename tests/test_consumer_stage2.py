@@ -25,9 +25,10 @@ import ast
 import json
 import math
 import random
+import re
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence, Set, Tuple
+from typing import Any, Dict, List, Sequence, Set, Tuple
 
 import pytest
 
@@ -43,7 +44,11 @@ from src.consumer_stage2 import (  # noqa: E402
     CONDITION_MIN_UNIQUE_LISTENERS,
     DUPLICATE_EVENT_ID,
     Stage2Processor,
+    _report,
+    read_listener_review,
     replay_records,
+    template_note,
+    write_review_queue,
 )
 
 FIXTURE_PATH = REPO_ROOT / "tests" / "fixtures" / "play_events_fixture.jsonl"
@@ -603,3 +608,243 @@ def test_the_two_configs_really_are_different_files_with_different_numbers():
         FIXTURE_THRESHOLDS.topology_b_min_unique_listeners
         < PRODUCTION_THRESHOLDS.topology_b_min_unique_listeners
     )
+
+
+# --------------------------------------------------------------------------------
+# The reviewer's end: the note, its bounds, and the provenance a dispute needs
+# --------------------------------------------------------------------------------
+NUMERIC_TOKEN = re.compile(r"\d+(?:\.\d+)?")
+
+# Words a review candidate must never carry. The check runs over the GENERATED
+# note strings, never over a source file, so `src/consumer_stage2.py` stays free
+# to discuss the failure mode it is avoiding.
+ACCUSATORY_TERMS = (
+    "fraud",
+    "fraudulent",
+    "fake",
+    "bot",
+    "guilty",
+    "cheat",
+    "scam",
+    "abuse",
+    "illegitimate",
+    "criminal",
+    "manipulat",
+    "suspicious",
+    "steal",
+)
+
+
+def flagged_entries_with_notes(
+    thresholds: Thresholds = FIXTURE_THRESHOLDS,
+) -> List[Dict[str, Any]]:
+    """`review_document()`'s flagged entries -- the ones that carry a note."""
+    doc = processor_over(EVENTS, thresholds).review_document()
+    entries = doc["flagged_tracks"]
+    assert entries, "the fixture must flag something, or these tests are vacuous"
+    return entries
+
+
+def rendered_values(entry: Dict[str, Any]) -> Set[str]:
+    """Every number the entry itself can legitimately put into a sentence.
+
+    The two-decimal rendering is pinned here as well as in the module: a note
+    that quoted a raw `0.875` would be quoting a number the reader cannot match
+    against the rendered evidence.
+    """
+    conditions = entry["conditions"]
+    return {
+        str(entry["window_hours"]),
+        str(entry["unique_listeners"]),
+        str(entry["total_plays"]),
+        str(entry["plays_in_band"]),
+        str(entry["stop_band_seconds"][0]),
+        str(entry["stop_band_seconds"][1]),
+        str(conditions[CONDITION_MIN_UNIQUE_LISTENERS]["threshold"]),
+        f"{conditions[CONDITION_MAX_PLAYS_PER_LISTENER]['measured']:.2f}",
+        f"{conditions[CONDITION_MAX_PLAYS_PER_LISTENER]['threshold']:.2f}",
+        f"{conditions[CONDITION_MIN_BAND_SHARE]['measured']:.2f}",
+        f"{conditions[CONDITION_MIN_BAND_SHARE]['threshold']:.2f}",
+    }
+
+
+def test_every_flagged_entry_carries_a_locally_generated_note():
+    """SUMM-01: a deterministic template, no external service call."""
+    for entry in flagged_entries_with_notes():
+        assert isinstance(entry["note"], str) and entry["note"]
+        assert entry["note"] == template_note(entry)
+
+
+def test_the_note_is_attached_by_review_document_not_by_evaluate_all():
+    """One producer for the schema Phase 5 compares and Phase 6 reads.
+
+    `evaluate_all()` stays a pure measurement, which is what lets the decoy tests
+    read all three conditions off it without a note in the way.
+    """
+    processor = processor_over(EVENTS)
+    assert all("note" not in entry for entry in processor.evaluate_all())
+    assert all(
+        "note" in entry for entry in processor.review_document()["flagged_tracks"]
+    )
+
+
+def test_the_note_states_the_track_the_window_and_all_three_measured_numbers():
+    for entry in flagged_entries_with_notes():
+        note = entry["note"]
+        assert entry["track_id"] in note
+        assert entry["window_start"] in note
+        for name, condition in entry["conditions"].items():
+            if isinstance(condition["measured"], float):
+                measured = f"{condition['measured']:.2f}"
+                threshold = f"{condition['threshold']:.2f}"
+            else:
+                measured = str(condition["measured"])
+                threshold = str(condition["threshold"])
+            assert measured in note, f"{name}: measured {measured} missing from note"
+            assert threshold in note, f"{name}: threshold {threshold} missing"
+
+
+def test_the_note_introduces_no_number_absent_from_its_own_entry():
+    """The bound Phase 6's SUMM-02 inherits.
+
+    The track id and the window start are stripped FIRST: both are legitimately
+    in the note and both are full of digits an ISO timestamp and a uuid would
+    otherwise contribute as phantom "invented" numbers.
+    """
+    for entry in flagged_entries_with_notes():
+        stripped = entry["note"].replace(entry["track_id"], "").replace(
+            entry["window_start"], ""
+        )
+        allowed = rendered_values(entry)
+        invented = [
+            token for token in NUMERIC_TOKEN.findall(stripped) if token not in allowed
+        ]
+        assert not invented, (
+            f"the note introduced numbers not in its entry: {invented}\n"
+            f"note: {entry['note']}"
+        )
+
+
+def test_the_note_reaches_no_verdict():
+    """A false positive here withholds money from an innocent artist."""
+    for entry in flagged_entries_with_notes():
+        lowered = entry["note"].lower()
+        offenders = [term for term in ACCUSATORY_TERMS if term in lowered]
+        assert not offenders, (
+            f"the note reaches a verdict with {offenders}: {entry['note']}"
+        )
+
+
+def test_every_flagged_entry_names_the_configuration_that_produced_it():
+    """STG2-03: a disputed flag has to be arguable on its own evidence."""
+    doc = processor_over(EVENTS).review_document()
+    assert doc["thresholds_source_path"] == FIXTURE_THRESHOLDS.source_path
+    assert doc["posture"] and doc["rule"]
+
+    for entry in doc["flagged_tracks"]:
+        assert entry["window_hours"] == FIXTURE_THRESHOLDS.topology_b_window_hours
+        assert set(entry["conditions"]) == ALL_CONDITIONS
+        for name, condition in entry["conditions"].items():
+            assert condition["threshold"] == getattr(
+                FIXTURE_THRESHOLDS, THRESHOLD_FIELD[name]
+            )
+        low, high = entry["stop_band_seconds"]
+        assert low < high
+        assert entry["first_event_time"] and entry["last_event_time"]
+
+
+# --------------------------------------------------------------------------------
+# STG2-04: the flagged-listener half of the report, read from Consumer 1
+# --------------------------------------------------------------------------------
+def summary_for(processor: Stage2Processor, flagged_listeners: int):
+    from src.consumer_stage2 import RunSummary
+
+    counts = processor.counts()
+    return RunSummary(
+        polled=counts["records_seen"],
+        counted=counts["counted"],
+        invalid_value=counts["invalid_value"],
+        key_mismatch=counts["key_mismatch"],
+        duplicate_event_id=counts["duplicate_event_id"],
+        tracks_seen=counts["tracks_seen"],
+        buckets_seen=counts["buckets_seen"],
+        flagged_buckets=counts["flagged_buckets"],
+        flagged_tracks=sorted(
+            {entry["track_id"] for entry in processor.flagged_buckets()}
+        ),
+        flagged_listeners=flagged_listeners,
+    )
+
+
+def listener_review_document() -> Dict[str, Any]:
+    """A Consumer 1-shaped document built from the oracle's own flagged listener."""
+    return {
+        "flagged_listeners": [
+            {
+                "listener_id": EXPECTED["topology_a"]["listener_id"],
+                "peak_plays_in_window": EXPECTED["topology_a"]["plays_in_window"],
+                "plays_recorded": EXPECTED["topology_a"]["plays_in_window"],
+                "window_hours": EXPECTED["topology_a"]["window_hours"],
+                "threshold": FIXTURE_THRESHOLDS.topology_a_plays_over,
+            }
+        ]
+    }
+
+
+def test_the_report_prints_each_flagged_listener_with_its_numbers(tmp_path, capsys):
+    """STG2-04's other half. These are Consumer 1's numbers, never recomputed here."""
+    listener_path = tmp_path / "listener_review_queue.json"
+    doc = listener_review_document()
+    listener_path.write_text(json.dumps(doc, indent=2), encoding="utf-8")
+
+    listeners = read_listener_review(listener_path)
+    assert listeners == doc["flagged_listeners"]
+
+    processor = processor_over(EVENTS)
+    review_out = tmp_path / "track_review_queue.json"
+    write_review_queue(processor, review_out)
+    _report(summary_for(processor, len(listeners)), processor, review_out, listener_path)
+
+    printed = capsys.readouterr().out
+    listener = doc["flagged_listeners"][0]
+    assert listener["listener_id"] in printed
+    assert str(listener["peak_plays_in_window"]) in printed
+    assert str(listener["window_hours"]) in printed
+    assert str(listener["threshold"]) in printed
+    # The machine-readable line carries the count too.
+    summary_line = [l for l in printed.splitlines() if l.startswith("SUMMARY ")][-1]
+    assert json.loads(summary_line[len("SUMMARY "):])["flagged_listeners"] == len(
+        doc["flagged_listeners"]
+    )
+
+
+def test_an_absent_listener_review_names_the_path_and_does_not_stop_the_report(
+    tmp_path, capsys
+):
+    """A missing artifact from the other stage must not take down this report."""
+    missing = tmp_path / "does-not-exist" / "listener_review_queue.json"
+    assert not missing.exists()
+    assert read_listener_review(missing) == []
+
+    processor = processor_over(EVENTS)
+    review_out = tmp_path / "track_review_queue.json"
+    write_review_queue(processor, review_out)
+    _report(summary_for(processor, 0), processor, review_out, missing)
+
+    printed = capsys.readouterr().out
+    assert str(missing) in printed, "the report did not say which path it looked at"
+    # The queue was still written, and the flagged tracks are still reported.
+    written = json.loads(review_out.read_text(encoding="utf-8"))
+    assert written["flagged_tracks"]
+    for track_id in EXPECTED["expected_flagged_tracks"]:
+        assert track_id in printed
+
+
+def test_an_unparsable_listener_review_is_tolerated_the_same_way(tmp_path):
+    truncated = tmp_path / "listener_review_queue.json"
+    truncated.write_text('{"flagged_listeners": [{"listener_id"', encoding="utf-8")
+    assert read_listener_review(truncated) == []
+
+    wrong_shape = tmp_path / "wrong_shape.json"
+    wrong_shape.write_text(json.dumps({"counts": {}}), encoding="utf-8")
+    assert read_listener_review(wrong_shape) == []
