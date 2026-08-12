@@ -5,6 +5,11 @@ __pycache__/
 venv/
 .DS_Store
 
+# Runtime artifacts written by the consumers, not source: the listener/track
+# review queues and the recovery journal are outputs of a run.
+output/
+state/
+
 # GSD planning artifacts (local only)
 .planning/
 .gsd-ingest-manifest.yaml
