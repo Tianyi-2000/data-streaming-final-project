@@ -93,9 +93,9 @@ def _case_id(case: Dict[str, Any]) -> str:
 # --------------------------------------------------------------------------------
 # The accept half of CTRT-02
 # --------------------------------------------------------------------------------
-def test_the_valid_fixture_holds_all_48_records():
-    assert len(VALID_LINES) == 48, (
-        f"expected 48 fixture records, found {len(VALID_LINES)} in {FIXTURE_PATH}"
+def test_the_valid_fixture_holds_all_63_records():
+    assert len(VALID_LINES) == 63, (
+        f"expected 63 fixture records, found {len(VALID_LINES)} in {FIXTURE_PATH}"
     )
 
 

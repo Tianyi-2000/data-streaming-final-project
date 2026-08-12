@@ -7,12 +7,13 @@
   "invalid_cases_note": "Invalid records live outside the replayable fixture. Nothing prevents someone pointing src/replay_to_kafka.py --input at that file -- the flag takes any path -- but every line fails PlayEventV1.model_validate_json at the envelope's top level, so the replay producer rejects all of them and places no record on play-events. The file is structurally incapable of contaminating the topic, not structurally impossible to open.",
   "cohort_labels_note": "No fixture event carries a cohort label. Contract section 7 keeps scenario labels in this ground-truth file because a real production event would not carry one; the cohort is inferable from the listener ID prefix.",
   "separability_note": "At fixture scale, separability is protected by FA01's 12 distinct track_ids (each Rule B bucket holds one listener, failing the unique-listener condition), not by the 40s stop floor. The floor is the FULL-SCALE protection: per CONTRACT-DECISIONS.md section 6, concentrated Topology A plays inside the 30-35s band would trip Rule B and destroy separability.",
-  "total_events": 48,
+  "total_events": 63,
   "counts_by_cohort": {
     "normal": 20,
     "topology_a": 12,
     "topology_b": 8,
-    "decoy": 8
+    "decoy": 8,
+    "boundary": 15
   },
   "topology_a": {
     "listener_id": "FA01",
@@ -58,10 +59,17 @@
     "FL07",
     "FL08",
     "FL09",
-    "FL10"
+    "FL10",
+    "FN01",
+    "FN02",
+    "FN03",
+    "FN04",
+    "FN05",
+    "FN06"
   ],
   "expected_flagged_tracks": [
-    "070dcf25-b025-49cf-994e-7dc9d822f9ee"
+    "070dcf25-b025-49cf-994e-7dc9d822f9ee",
+    "08110056-2183-43fa-9dea-bd7daafb7813"
   ],
   "expected_unflagged_tracks": [
     "00215b21-5262-40a3-ac37-10b64e70ba70",
@@ -87,8 +95,33 @@
     "06addb3f-ff39-4f34-8c0d-4993d6df0bc4",
     "06ba1e04-d986-46ea-92c8-76797fdd821e",
     "073f79ac-c114-46a2-8188-5d75728434f3",
-    "079bdc17-e199-40f0-b69b-cd5b95598f51"
+    "079bdc17-e199-40f0-b69b-cd5b95598f51",
+    "079e6137-8638-4098-b754-756a805b02dc"
   ],
+  "boundaries": {
+    "note": "These cases sit EXACTLY on a threshold so a detector cannot flip a comparison operator and still pass. Every other cohort clears its threshold with margin.",
+    "topology_a_strict_greater_than": {
+      "listener_id": "FN01",
+      "plays_in_window": 10,
+      "threshold": 10,
+      "expected_flagged": false,
+      "why": "CD-4 says MORE THAN, strictly. 10 is not > 10. Flip the comparison to >= and FN01 flags."
+    },
+    "topology_b_unique_listeners_and_band_share": {
+      "track_id": "08110056-2183-43fa-9dea-bd7daafb7813",
+      "window_start": "2026-08-10T08:00:00Z",
+      "unique_listeners": 5,
+      "unique_threshold": 5,
+      "band_share": 0.6,
+      "band_share_threshold": 0.6,
+      "plays_per_listener": 1.0,
+      "expected_flagged": true,
+      "why": "Both conditions use >=, so a bucket sitting exactly on both thresholds must flag. Flip either to > and it unflags."
+    },
+    "not_pinned": {
+      "topology_b_max_plays_per_listener": "An exact 1.1 ratio needs 11 plays across 10 unique listeners. That is 11 more events for the least consequential operator, since real fraud sits at 1.0 and 1.1 is already a fudge factor. Deliberate gap, recorded so it is visible rather than forgotten."
+    }
+  },
   "decoys": {
     "popular_track": {
       "track_id": "073f79ac-c114-46a2-8188-5d75728434f3",

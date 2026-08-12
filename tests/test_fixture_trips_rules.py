@@ -199,11 +199,23 @@ def test_every_other_listener_scores_at_or_below_the_rule_a_threshold():
 # --------------------------------------------------------------------------------
 # Rule B at fixture scale
 # --------------------------------------------------------------------------------
-def test_exactly_one_bucket_trips_rule_b_and_it_is_the_recorded_one():
+def test_exactly_two_buckets_trip_rule_b_and_they_are_the_recorded_ones():
+    """The Topology B burst, plus the Boundary B bucket sitting on both thresholds.
+
+    Any third bucket flagging means a cohort drifted into Rule B by accident.
+    """
     recorded = EXPECTED["topology_b"]
+    boundary = EXPECTED["boundaries"]["topology_b_unique_listeners_and_band_share"]
     flagged = rule_b_flagged(FIXTURE_THRESHOLDS)
-    assert flagged == [(recorded["track_id"], recorded["window_start"])]
-    assert EXPECTED["expected_flagged_tracks"] == [recorded["track_id"]]
+    assert sorted(flagged) == sorted(
+        [
+            (recorded["track_id"], recorded["window_start"]),
+            (boundary["track_id"], boundary["window_start"]),
+        ]
+    )
+    assert EXPECTED["expected_flagged_tracks"] == sorted(
+        {recorded["track_id"], boundary["track_id"]}
+    )
 
 
 def test_the_flagged_bucket_measures_match_the_recorded_numbers():
@@ -348,4 +360,74 @@ def test_the_two_configs_really_are_different_files_with_different_numbers():
     assert (
         FIXTURE_THRESHOLDS.topology_b_min_unique_listeners
         < PRODUCTION_THRESHOLDS.topology_b_min_unique_listeners
+    )
+
+
+# --------------------------------------------------------------------------------
+# Comparison-operator boundaries
+#
+# Every other cohort clears its threshold with margin, so before these tests a
+# detector could flip `>` to `>=` (or `>=` to `>`) and the whole fixture would still
+# pass. Listener counts jumped 12 -> 2 with nothing at 10; bucket uniques went
+# 8 -> 6 -> 1 with nothing at 5; band shares went 1.0 -> 0.875 -> 0.0 with nothing at
+# 0.60. These cases sit exactly on the line, so the operator itself is under test.
+# --------------------------------------------------------------------------------
+def test_fn01_sits_exactly_on_the_rule_a_threshold():
+    """The fixture must actually contain the boundary, or the next test is vacuous."""
+    boundary = EXPECTED["boundaries"]["topology_a_strict_greater_than"]
+    assert boundary["listener_id"] == "FN01"
+    assert boundary["plays_in_window"] == FIXTURE_THRESHOLDS.topology_a_plays_over
+    assert rule_a_scores(FIXTURE_THRESHOLDS)["FN01"] == (
+        FIXTURE_THRESHOLDS.topology_a_plays_over
+    )
+
+
+def test_rule_a_is_strictly_more_than_not_at_least():
+    """CD-4 says MORE THAN, strictly. Flipping `>` to `>=` flags FN01 and fails here."""
+    assert "FN01" not in rule_a_flagged(FIXTURE_THRESHOLDS)
+    assert "FN01" in EXPECTED["expected_unflagged_listeners"]
+
+    at_least = [
+        listener
+        for listener, score in rule_a_scores(FIXTURE_THRESHOLDS).items()
+        if score >= FIXTURE_THRESHOLDS.topology_a_plays_over
+    ]
+    assert "FN01" in at_least, (
+        "FN01 must be the case that distinguishes > from >=; if it is not caught by "
+        ">=, this fixture no longer pins the operator"
+    )
+
+
+def test_boundary_b_bucket_sits_exactly_on_two_thresholds():
+    boundary = EXPECTED["boundaries"]["topology_b_unique_listeners_and_band_share"]
+    bucket = hour_buckets()[(boundary["track_id"], boundary["window_start"])]
+    unique, ratio, share = bucket_measures(bucket)
+    assert unique == FIXTURE_THRESHOLDS.topology_b_min_unique_listeners
+    assert share == pytest.approx(FIXTURE_THRESHOLDS.topology_b_min_band_share)
+    assert ratio == pytest.approx(1.0)
+
+
+def test_rule_b_unique_listeners_and_band_share_are_at_least_not_more_than():
+    """Both conditions use `>=`. Flipping either to `>` unflags this bucket."""
+    boundary = EXPECTED["boundaries"]["topology_b_unique_listeners_and_band_share"]
+    key = (boundary["track_id"], boundary["window_start"])
+    bucket = hour_buckets()[key]
+
+    assert all(rule_b_conditions(bucket, FIXTURE_THRESHOLDS).values())
+    assert key in rule_b_flagged(FIXTURE_THRESHOLDS)
+
+    unique, _, share = bucket_measures(bucket)
+    assert not unique > FIXTURE_THRESHOLDS.topology_b_min_unique_listeners
+    assert not share > FIXTURE_THRESHOLDS.topology_b_min_band_share
+
+
+def test_the_unpinned_operator_is_recorded_rather_than_forgotten():
+    """The ratio operator is deliberately not pinned. Keep that visible."""
+    assert "topology_b_max_plays_per_listener" in EXPECTED["boundaries"]["not_pinned"]
+    ratios = {
+        bucket_measures(b)[1] for b in hour_buckets().values()
+    }
+    assert FIXTURE_THRESHOLDS.topology_b_max_plays_per_listener not in ratios, (
+        "a bucket now sits exactly on the ratio threshold -- pin the operator with a "
+        "real test and drop it from boundaries.not_pinned"
     )

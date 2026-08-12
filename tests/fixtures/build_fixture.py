@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic builder for the shared 48-event fixture and its ground truth.
+"""Deterministic builder for the shared 63-event fixture and its ground truth.
 
 CD-8 / CTRT-03 ask for a small checked-in fixture plus a companion expected-flags
 file. Both generated artifacts are committed; this script exists so their internal
@@ -63,14 +63,14 @@ REL_PRODUCTION_THRESHOLDS = "config/thresholds.json"
 BASE_TIME = datetime(2026, 8, 8, 0, 0, 0, tzinfo=timezone.utc)
 
 MIN_TRACK_SECONDS = 60
-POOL_SIZE = 25
+POOL_SIZE = 27
 
 
 # --------------------------------------------------------------------------------
 # Track pool
 # --------------------------------------------------------------------------------
 def load_track_pool() -> List[Dict[str, Any]]:
-    """The fixture's 25-track pool: filter, sort, DEDUPE BY track_id, then take 25.
+    """The fixture's 27-track pool: filter, sort, DEDUPE BY track_id, then take 27.
 
     Real MusicBrainz track and artist IDs keep the fixture contract-shaped and
     preserve the real track_id -> artist_id relationship the contract's section 8
@@ -97,10 +97,11 @@ def load_track_pool() -> List[Dict[str, Any]]:
 
     After deduping, the pool's durations are:
         190, 215, 346, 246, 224, 494, 126, 218, 304, 128, 297, 924, 179,
-        290, 196, 255, 106, 223, 113, 385, 128, 96, 170, 221, 108
+        290, 196, 255, 106, 223, 113, 385, 128, 96, 170, 221, 108, 289, 285
     Positions 10..21 give 12 genuinely distinct tracks; the Topology B target at
     position 22 runs 170s; the first decoy track at position 23 runs 221s; FD07's
-    track at position 24 runs 108s.
+    track at position 24 runs 108s; the Rule A boundary track at position 25 runs
+    289s and the Rule B boundary track at position 26 runs 285s.
     """
     catalog = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
     eligible = [
@@ -196,8 +197,9 @@ TOPOLOGY_A_PLAYS: List[Tuple[str, str, int, int, int, int, int]] = [
 #
 # Seven of the eight stop inside the 30-35s band, and BOTH EDGES appear deliberately
 # (30 and 35): a future exclusive-upper-bound regression would change this fixture's
-# measured band share from 0.875 to 0.750 and get caught by the trip test rather than
-# silently shifting a percentage. The eighth stops at 48, outside the band.
+# measured band share from 0.875 to 0.625 -- TWO events sit at 35, not one -- and get
+# caught by the trip test rather than silently shifting a percentage. The eighth stops
+# at 48, outside the band.
 #
 # Result: 8 unique listeners, 1.0 plays per listener, band share 0.875.
 TOPOLOGY_B_PLAYS: List[Tuple[str, str, int, int, int, int, int]] = [
@@ -244,11 +246,63 @@ DECOY_PLAYS: List[Tuple[str, str, int, int, int, int, int]] = [
     ("fx-d-008", "FD07", 24, 2, 21, 33, 33),  # in band -> share 1.0, ratio 2.0
 ]
 
-COHORT_BY_PREFIX = {"FL": "normal", "FA": "topology_a", "FB": "topology_b", "FD": "decoy"}
+# Boundaries -- 6 listeners, 15 events, existing solely to pin the COMPARISON
+# OPERATORS. Every other cohort sits comfortably clear of its threshold, so before
+# these existed a detector could flip `>` to `>=` (or `>=` to `>`) and the whole
+# fixture would still pass. Counts jumped 12 -> 2 with nothing at 10; bucket uniques
+# went 8 -> 6 -> 1 with nothing at 5; band shares went 1.0 -> 0.875 -> 0.0 with
+# nothing at 0.60. These cases sit EXACTLY on the line.
+#
+# Boundary A -- FN01, exactly 10 plays inside one 24h window on day 1 at distinct
+# hours, all on pool position 25. CD-4 says "MORE THAN 300 plays", strictly, and
+# `topology_a_plays_over` is named `_over` to carry that. At fixture scale the
+# threshold is 10, so FN01 sits at exactly 10 and must stay UNFLAGGED. Flip Phase 3's
+# comparison to `>=` and FN01 flags, which is the regression this cohort exists to
+# catch. Stop times stay >= 40s and each play lands in its own hour, so every bucket
+# holds one listener and none of this touches Rule B.
+#
+# Boundary B -- FN02..FN06, one play each on pool position 26 inside a single clock
+# hour on day 2, three of the five inside the 30-35s band. That is exactly 5 unique
+# listeners against a threshold of 5, and a band share of exactly 3/5 = 0.60 against
+# a threshold of 0.60, with a ratio of 1.0. Both of those conditions use `>=`, so
+# this bucket MUST be flagged, and flipping either to `>` unflags it. It is the
+# fixture's second flagged track, which is why `expected_flagged_tracks` holds two.
+#
+# Not pinned, deliberately: `topology_b_max_plays_per_listener`. An exact 1.1 ratio
+# needs 11 plays across 10 unique listeners -- 11 more events for the least
+# consequential of the four operators, since real fraud sits at 1.0 and 1.1 is
+# already a fudge factor. Recorded in the oracle's `boundaries.not_pinned` so the
+# gap is visible rather than forgotten.
+BOUNDARY_PLAYS: List[Tuple[str, str, int, int, int, int, int]] = [
+    ("fx-y-001", "FN01", 25, 1, 0, 5, 45),
+    ("fx-y-002", "FN01", 25, 1, 1, 12, 60),
+    ("fx-y-003", "FN01", 25, 1, 2, 26, 72),
+    ("fx-y-004", "FN01", 25, 1, 3, 40, 88),
+    ("fx-y-005", "FN01", 25, 1, 4, 8, 41),
+    ("fx-y-006", "FN01", 25, 1, 5, 33, 95),
+    ("fx-y-007", "FN01", 25, 1, 6, 19, 52),
+    ("fx-y-008", "FN01", 25, 1, 7, 47, 66),
+    ("fx-y-009", "FN01", 25, 1, 8, 2, 79),
+    ("fx-y-010", "FN01", 25, 1, 9, 55, 104),  # exactly 10 plays -> NOT flagged
+    ("fx-y-011", "FN02", 26, 2, 8, 3, 31),  # in band
+    ("fx-y-012", "FN03", 26, 2, 8, 14, 33),  # in band
+    ("fx-y-013", "FN04", 26, 2, 8, 27, 35),  # in band, upper edge
+    ("fx-y-014", "FN05", 26, 2, 8, 39, 55),  # outside band
+    ("fx-y-015", "FN06", 26, 2, 8, 50, 70),  # outside -> share exactly 3/5 = 0.60
+]
+
+COHORT_BY_PREFIX = {
+    "FL": "normal",
+    "FA": "topology_a",
+    "FB": "topology_b",
+    "FD": "decoy",
+    "FN": "boundary",
+}
 
 # Window starts named by the decoy design, asserted against the data below.
 DECOY_POPULAR_WINDOW_START = at(0, 15, 0)
 DECOY_REPEAT_WINDOW_START = at(2, 21, 0)
+BOUNDARY_B_WINDOW_START = at(2, 8, 0)
 
 
 def cohort_of(listener_id: str) -> str:
@@ -263,9 +317,15 @@ def cohort_of(listener_id: str) -> str:
 
 
 def build_events(pool: List[Dict[str, Any]]) -> List[PlayEventV1]:
-    """Materialise all 48 events, validating each through the shared model."""
+    """Materialise all 63 events, validating each through the shared model."""
     events: List[PlayEventV1] = []
-    for table in (NORMAL_PLAYS, TOPOLOGY_A_PLAYS, TOPOLOGY_B_PLAYS, DECOY_PLAYS):
+    for table in (
+        NORMAL_PLAYS,
+        TOPOLOGY_A_PLAYS,
+        TOPOLOGY_B_PLAYS,
+        DECOY_PLAYS,
+        BOUNDARY_PLAYS,
+    ):
         for event_id, listener_id, pool_index, day, hour, minute, stop in table:
             track = pool[pool_index]
             duration = track["track_duration_seconds"]
@@ -306,8 +366,8 @@ def assert_design_invariants(events: List[PlayEventV1]) -> None:
     """Fail loudly here rather than emit a fixture that quietly lies about itself."""
     by_id = {e.event_id: e for e in events}
 
-    if len(events) != 48:
-        raise SystemExit(f"expected 48 events, built {len(events)}")
+    if len(events) != 63:
+        raise SystemExit(f"expected 63 events, built {len(events)}")
 
     # The two CTRT-03 boundary values, pinned by identity rather than by hope. If the
     # catalog ever shifts a duration, this fails instead of silently demoting
@@ -445,14 +505,42 @@ def build_expected_flags(events: List[PlayEventV1]) -> Dict[str, Any]:
             f"{REL_FIXTURE_THRESHOLDS}, got {flagged_listeners}. Retune the cohorts "
             f"here or the numbers in the fixture config -- never the assertions."
         )
-    if len(flagged_buckets) != 1:
+    # Two buckets flag by design: the Topology B burst, and the Boundary B bucket
+    # sitting exactly on the unique-listener and band-share thresholds.
+    if len(flagged_buckets) != 2:
         raise SystemExit(
-            f"fixture design broken: expected exactly 1 Rule B bucket flagged at "
-            f"{REL_FIXTURE_THRESHOLDS}, got {len(flagged_buckets)}"
+            f"fixture design broken: expected exactly 2 Rule B buckets flagged at "
+            f"{REL_FIXTURE_THRESHOLDS} (the Topology B burst and the Boundary B "
+            f"bucket), got {len(flagged_buckets)}"
         )
 
     a_count, a_window_start = listener_scores["FA01"]
-    b_track_id, b_window_start, b_stats = flagged_buckets[0]
+
+    boundary_rows = [r for r in flagged_buckets if r[1] == BOUNDARY_B_WINDOW_START]
+    burst_rows = [r for r in flagged_buckets if r[1] != BOUNDARY_B_WINDOW_START]
+    if len(boundary_rows) != 1 or len(burst_rows) != 1:
+        raise SystemExit(
+            "fixture design broken: could not tell the Topology B burst apart from "
+            "the Boundary B bucket by window start"
+        )
+    b_track_id, b_window_start, b_stats = burst_rows[0]
+    boundary_b_track_id = boundary_rows[0][0]
+
+    # FN01 sits exactly on the Rule A threshold and must NOT be flagged. Assert it
+    # here so a threshold change that silently swallows the boundary case fails the
+    # build rather than the test suite.
+    fn01_count = listener_scores["FN01"][0]
+    if fn01_count != thresholds.topology_a_plays_over:
+        raise SystemExit(
+            f"fixture design broken: FN01 must sit exactly on "
+            f"topology_a_plays_over ({thresholds.topology_a_plays_over}), got "
+            f"{fn01_count}"
+        )
+    if "FN01" in flagged_listeners:
+        raise SystemExit(
+            "fixture design broken: FN01 sits exactly on the Rule A threshold and "
+            "must stay unflagged -- CD-4 is strictly MORE THAN"
+        )
 
     all_listeners = sorted(by_listener)
     all_tracks = sorted({e.track_id for e in events})
@@ -462,6 +550,7 @@ def build_expected_flags(events: List[PlayEventV1]) -> Dict[str, Any]:
         "topology_a": 0,
         "topology_b": 0,
         "decoy": 0,
+        "boundary": 0,
     }
     for event in events:
         counts_by_cohort[cohort_of(event.listener_id)] += 1
@@ -543,8 +632,49 @@ def build_expected_flags(events: List[PlayEventV1]) -> Dict[str, Any]:
         "expected_unflagged_listeners": [
             listener for listener in all_listeners if listener not in flagged_listeners
         ],
-        "expected_flagged_tracks": [b_track_id],
-        "expected_unflagged_tracks": [t for t in all_tracks if t != b_track_id],
+        "expected_flagged_tracks": sorted({b_track_id, boundary_b_track_id}),
+        "expected_unflagged_tracks": [
+            t for t in all_tracks if t not in {b_track_id, boundary_b_track_id}
+        ],
+        "boundaries": {
+            "note": (
+                "These cases sit EXACTLY on a threshold so a detector cannot flip a "
+                "comparison operator and still pass. Every other cohort clears its "
+                "threshold with margin."
+            ),
+            "topology_a_strict_greater_than": {
+                "listener_id": "FN01",
+                "plays_in_window": 10,
+                "threshold": thresholds.topology_a_plays_over,
+                "expected_flagged": False,
+                "why": (
+                    "CD-4 says MORE THAN, strictly. 10 is not > 10. Flip the "
+                    "comparison to >= and FN01 flags."
+                ),
+            },
+            "topology_b_unique_listeners_and_band_share": {
+                "track_id": boundary_b_track_id,
+                "window_start": BOUNDARY_B_WINDOW_START,
+                "unique_listeners": 5,
+                "unique_threshold": thresholds.topology_b_min_unique_listeners,
+                "band_share": 0.6,
+                "band_share_threshold": thresholds.topology_b_min_band_share,
+                "plays_per_listener": 1.0,
+                "expected_flagged": True,
+                "why": (
+                    "Both conditions use >=, so a bucket sitting exactly on both "
+                    "thresholds must flag. Flip either to > and it unflags."
+                ),
+            },
+            "not_pinned": {
+                "topology_b_max_plays_per_listener": (
+                    "An exact 1.1 ratio needs 11 plays across 10 unique listeners. "
+                    "That is 11 more events for the least consequential operator, "
+                    "since real fraud sits at 1.0 and 1.1 is already a fudge factor. "
+                    "Deliberate gap, recorded so it is visible rather than forgotten."
+                )
+            },
+        },
         "decoys": {
             "popular_track": decoy_block(
                 next(e.track_id for e in events if e.event_id == "fx-d-001"),
