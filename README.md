@@ -103,7 +103,7 @@ docker compose up -d          # start broker + web console
 # web console:      http://localhost:8080   (see topics/messages/keys)
 
 # create the topics once (idempotent):
-docker exec redpanda rpk topic create play-events track-activity -p 1 -r 1
+docker exec redpanda rpk topic create play-events track-activity -p 3 -r 1
 
 # stream the events into the topic:
 python src/replay_to_kafka.py            # all 45k events (keyed by listener_id)

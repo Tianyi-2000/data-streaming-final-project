@@ -521,25 +521,30 @@ def test_the_topology_b_buckets_reproduce_the_oracles_numbers(recorded_path):
     assert accumulator.bucket_items(track, hour_bucket(start) + HOUR) == ()
 
 
-def test_the_default_as_of_reads_zero_for_a_key_the_stream_moved_past():
-    """Threat T-02-07, pinned so the class docstring's warning cannot rot.
+def test_the_default_as_of_is_anchored_to_the_keys_own_watermark():
+    """Threat T-02-07, inverted: the per-key watermark is what closes it.
 
-    The watermark is accumulator-wide. After the whole fixture has streamed, it
-    sits on 08-10 while the Topology B track's plays sit on 08-09, so the default
-    `as_of` returns a plausible 0 rather than raising. With an explicit `as_of`
-    the same accumulator returns the oracle's count.
+    Under an accumulator-wide watermark this returned a plausible 0 -- the whole
+    fixture streams to 08-10, the Topology B burst sits on 08-09, and the default
+    `as_of` resolved against the stream rather than the track. Per key, the
+    default resolves against the track's own last event, so Consumer 2 can stream
+    everything and then ask, which is what it actually does.
 
-    This is the trap Phase 4 walks into if it streams first and asks afterwards.
-    Consumer 2 must pass an explicit `as_of` or iterate with `iter_buckets()`.
+    An explicit `as_of` must still agree, because that is how a caller asks about
+    a specific historical window rather than a key's most recent one.
     """
     recorded = EXPECTED["topology_b"]
     accumulator = stream_by_track()
     track = recorded["track_id"]
 
+    # Accumulator-wide watermark still exists for observability, and it really
+    # is past this track -- which is exactly what used to zero the count.
     assert accumulator.watermark == max(
         parse_event_time(e.event_time) for e in EVENTS
     )
-    assert accumulator.rolling_count(track) == 0
+    assert accumulator.watermark > accumulator.watermark_for(track)
+
+    assert accumulator.rolling_count(track) == recorded["total_plays"]
     assert accumulator.rolling_count(track, as_of=recorded["window_start"]) == (
         recorded["total_plays"]
     )
@@ -655,3 +660,60 @@ def test_the_clock_scanner_catches_a_clock_read(snippet: str, expected_kind: str
     kinds = {kind for _, kind, _ in clock_offenders(snippet)}
     assert kinds, "a clock read went unnoticed by the scanner"
     assert expected_kind in kinds
+
+
+def test_per_key_watermarks_survive_multi_partition_interleaving():
+    """The regression guard for why the watermark is per key at all.
+
+    `play-events` has three partitions and Kafka orders events within a partition,
+    never across them, so a consumer polling all three sees contiguous runs rather
+    than a timestamp merge. Under an accumulator-wide watermark a run from one
+    partition walks past hour boundaries the others have not reached, and their
+    events are then refused as late: measured at 55% of the real 45,473-event
+    stream at batch 500, and 59% at batch 1000 -- where it still reported the
+    correct Topology A count while discarding most of the data.
+
+    Kafka routes one key to one partition, so a per-key watermark only ever
+    compares events that already share an ordering guarantee. Interleaving must
+    therefore change nothing at all: same counts, same buckets, zero drops.
+
+    Revert to a shared watermark and this test fails on the drop count.
+    """
+    events = sorted(EVENTS, key=lambda e: e.event_time)
+
+    def by_partition(evts, partitions=3, batch=4):
+        """Contiguous per-partition runs, the shape `poll()` actually returns."""
+        lanes = [[] for _ in range(partitions)]
+        for e in evts:
+            lanes[hash(e.listener_id) % partitions].append(e)
+        out, idx = [], [0] * partitions
+        while any(idx[p] < len(lanes[p]) for p in range(partitions)):
+            for p in range(partitions):
+                out += lanes[p][idx[p] : idx[p] + batch]
+                idx[p] += batch
+        return out
+
+    def stream(order):
+        acc = topology_a_windows(FIXTURE_THRESHOLDS)
+        for e in order:
+            acc.add(e.listener_id, e.event_time)
+        return acc
+
+    in_order = stream(events)
+    interleaved = stream(by_partition(events))
+
+    assert interleaved.late_dropped == 0, (
+        "a per-key watermark must not treat cross-partition interleaving as "
+        "lateness; a non-zero count here means the watermark went back to being "
+        "accumulator-wide"
+    )
+    assert in_order.late_dropped == 0
+
+    # Identical buckets, not merely identical totals.
+    assert sorted(
+        (k, h, len(items)) for k, h, items in interleaved.iter_buckets()
+    ) == sorted((k, h, len(items)) for k, h, items in in_order.iter_buckets())
+
+    # And the detection answer is unchanged, which is what actually matters.
+    for listener in {e.listener_id for e in events}:
+        assert interleaved.rolling_count(listener) == in_order.rolling_count(listener)

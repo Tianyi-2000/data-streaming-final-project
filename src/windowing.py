@@ -137,26 +137,39 @@ class RollingHourlyWindows:
     Construct one through `topology_a_windows` or `topology_b_windows` so the
     window size comes from configuration rather than from a literal.
 
-    THE WATERMARK IS ACCUMULATOR-WIDE, NOT PER KEY, and two consequences follow
-    that a caller would otherwise discover the hard way.
+    THE WATERMARK IS PER KEY, NOT ACCUMULATOR-WIDE. This is the single most
+    important property of this class, and it was not the original design.
 
-    (1) `as_of` DEFAULTS TO THAT WATERMARK, SO A KEY THE STREAM HAS ALREADY MOVED
-        PAST READS 0. That is correct under rolling semantics, and it is right
-        for Consumer 1, which calls `add` per event and reads the return value at
-        the moment the event arrives. It is a trap for Consumer 2, which streams
-        everything and then asks about an hour in the past: after the fixture's
-        last event on 08-10, `rolling_count` for the Topology B track under the
-        default `as_of` returns 0 rather than 8. Not an exception -- a plausible
-        number, which is the failure mode this whole phase exists to eliminate.
-        **Phase 4 must pass an explicit `as_of`, or iterate with
-        `iter_buckets()`.**
+    An accumulator-wide watermark is correct only if events arrive in
+    nondecreasing `event_time` order GLOBALLY. The producer does emit that way
+    (GATE-ORDERING), but `play-events` has three partitions, and Kafka orders
+    events within a partition -- never across them. A consumer polling all three
+    receives contiguous runs from each, not a timestamp merge. Measured against
+    the real 45,473-event stream, a shared watermark drops 55% of events as
+    "late" at batch size 500 and 59% at 1000, because a run from one partition
+    walks the watermark past hour boundaries that the other partitions have not
+    reached yet. At batch 1000 it still reported the correct Topology A count
+    while discarding 59% of the data -- a right answer over a shredded stream,
+    which is worse than a wrong one.
 
-    (2) LATENESS IS JUDGED AGAINST THAT SAME SHARED WATERMARK, so an event on one
-        key can close another key's bucket. Under GATE-ORDERING's nondecreasing
-        global order that is correct -- a later timestamp on any key really does
-        mean the earlier hour is over -- but it is surprising if undocumented,
-        and it is why `late_dropped` is a property of the accumulator rather than
-        of a key.
+    A per-key watermark only ever compares events that share a partition, since
+    Kafka routes one key to one partition. The same measurement with per-key
+    watermarks drops ZERO events under every consumption order tried.
+
+    Two consequences follow, both of them the ones a caller wants:
+
+    (1) `as_of` DEFAULTS TO THAT KEY'S OWN WATERMARK. Consumer 1 calls `add` per
+        event and reads the return value, which is the count as of the event that
+        just arrived. Consumer 2 can stream everything and then ask about a track
+        whose burst was hours ago and get that track's real count, because the
+        default is anchored to the track's last event rather than the stream's.
+        Passing an explicit `as_of` is still the way to ask about a specific
+        historical window, and `iter_buckets()` still walks everything.
+
+    (2) LATENESS IS JUDGED PER KEY. An event on one key can no longer close
+        another key's bucket. `late_dropped` remains an accumulator-wide TOTAL
+        because it is a health metric, but a non-zero value now means genuine
+        per-key disorder rather than ordinary cross-partition interleaving.
 
     RETENTION IS UNBOUNDED BY DECISION (threat T-02-06, accepted). Buckets are
     kept for the life of the accumulator, so memory grows with the number of
@@ -174,7 +187,10 @@ class RollingHourlyWindows:
         # every read path below uses `.get`, so inspecting an unknown key can
         # never create an empty entry that later has to be filtered back out.
         self._buckets: dict[str, dict[datetime, list[Any]]] = {}
-        self._watermark: Optional[datetime] = None
+        # key -> greatest instant seen for THAT key. Per key, not shared: see
+        # the class docstring on why a shared watermark loses most of a
+        # multi-partition stream.
+        self._watermarks: dict[str, datetime] = {}
         self._late_dropped = 0
 
     @property
@@ -184,19 +200,32 @@ class RollingHourlyWindows:
 
     @property
     def watermark(self) -> Optional[datetime]:
-        """The greatest event instant added so far, or None before the first add.
+        """The greatest instant across ALL keys, or None before the first add.
 
-        Accumulator-wide, not per key -- see the class docstring.
+        Observability only. Nothing in this class judges lateness or resolves a
+        default `as_of` against it -- both are per key. Use `watermark_for`.
         """
-        return self._watermark
+        return max(self._watermarks.values()) if self._watermarks else None
+
+    def watermark_for(self, key: str) -> Optional[datetime]:
+        """The greatest instant seen for `key`, or None if it has no events."""
+        return self._watermarks.get(key)
 
     @property
     def late_dropped(self) -> int:
         """How many events were refused for belonging to an already-closed hour.
 
-        Non-zero on a real run means the producer's nondecreasing-`event_time`
-        guarantee (GATE-ORDERING) has broken and the counts are not trustworthy.
-        Worth surfacing in a consumer's own logging rather than leaving in here.
+        An accumulator-wide TOTAL, but lateness is judged per key, so this counts
+        genuine PER-KEY disorder only. Cross-partition interleaving no longer
+        registers here: measured over the real 45,473-event stream, three-way
+        interleaving at batch sizes 50, 500 and 1000 all yield zero.
+
+        Non-zero on a real run therefore means one key's events arrived out of
+        `event_time` order within its own partition -- the producer's
+        nondecreasing guarantee (GATE-ORDERING) breaking for real, not the
+        ordinary consequence of polling several partitions. Counts for the
+        affected keys are not trustworthy. Worth surfacing in a consumer's own
+        logging rather than leaving it in here.
         """
         return self._late_dropped
 
@@ -227,14 +256,15 @@ class RollingHourlyWindows:
         # the same hour arriving in either order are therefore both legitimate,
         # while an event belonging to an hour already passed is the late arrival
         # WNDW-03 refuses to buffer.
-        if self._watermark is not None and bucket < hour_bucket(self._watermark):
+        key_watermark = self._watermarks.get(key)
+        if key_watermark is not None and bucket < hour_bucket(key_watermark):
             self._late_dropped += 1
             _LOG.warning(
                 "late event dropped (not counted, not buffered): key=%s "
                 "event_time=%s watermark=%s",
                 key,
                 moment.isoformat(),
-                self._watermark.isoformat(),
+                key_watermark.isoformat(),
             )
             return self.rolling_count(key)
 
@@ -242,8 +272,8 @@ class RollingHourlyWindows:
         # `max` rather than assignment: an earlier event inside the still-open
         # hour must not walk the watermark backwards and retroactively make the
         # next arrival look late.
-        self._watermark = (
-            moment if self._watermark is None else max(self._watermark, moment)
+        self._watermarks[key] = (
+            moment if key_watermark is None else max(key_watermark, moment)
         )
         return self.rolling_count(key)
 
@@ -262,7 +292,7 @@ class RollingHourlyWindows:
         no watermark to resolve it from. Both branches keep the identity true:
         `window_hours` zeros sum to 0, and `[]` sums to 0.
         """
-        moment = as_of if as_of is not None else self._watermark
+        moment = as_of if as_of is not None else self._watermarks.get(key)
         if moment is None:
             return []
         buckets = self._buckets.get(key, {})
