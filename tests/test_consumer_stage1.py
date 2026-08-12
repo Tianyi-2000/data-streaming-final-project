@@ -17,6 +17,7 @@ Requires the broker for the tests marked as such: docker compose up -d
 from __future__ import annotations
 
 import json
+import logging
 import subprocess
 import sys
 import time
@@ -549,3 +550,174 @@ def test_the_accumulator_is_built_through_the_sanctioned_factory():
         update={"topology_a_window_hours": retuned_hours}
     )
     assert Stage1Processor(retuned).window_hours == retuned.topology_a_window_hours
+
+
+# --------------------------------------------------------------------------------
+# Task 3: the run loop -- recovery, offset discipline, late_dropped, the CLI
+# --------------------------------------------------------------------------------
+def _fixture_listener_ids() -> List[str]:
+    return sorted({json.loads(line)["listener_id"] for line in FIXTURE_LINES})
+
+
+def _peaks(processor: Stage1Processor) -> Dict[str, int]:
+    return {
+        listener_id: processor.peak_for(listener_id)
+        for listener_id in _fixture_listener_ids()
+    }
+
+
+def _journal(path: Path) -> consumer_stage1.Journal:
+    return consumer_stage1.Journal(path)
+
+
+def test_a_restarted_processor_rebuilds_its_state_from_the_journal_alone(tmp_path):
+    """The journal is the only persisted state, and it is enough.
+
+    Counts, flags and the dedup set are all derived by replaying it through the
+    same `commit_event` the live path uses, so a restart cannot drift from an
+    uninterrupted run.
+    """
+    records = _fixture_records()
+    split = 30
+    journal_path = tmp_path / consumer_stage1.JOURNAL_FILENAME
+
+    before = Stage1Processor(FIXTURE_THRESHOLDS)
+    writer = _journal(journal_path)
+    replay_records(before, records[:split], journal=writer)
+    writer.close()
+
+    restarted = Stage1Processor(FIXTURE_THRESHOLDS)
+    recovered = consumer_stage1.recover_from_journal(restarted, _journal(journal_path))
+    assert recovered == before.counts()["forwarded"]
+    replay_records(restarted, records[split:])
+
+    uninterrupted = Stage1Processor(FIXTURE_THRESHOLDS)
+    replay_records(uninterrupted, records)
+
+    assert uninterrupted.flagged_listeners(), "no flags, so this test would be vacuous"
+    assert restarted.flagged_listeners() == uninterrupted.flagged_listeners()
+    assert _peaks(restarted) == _peaks(uninterrupted)
+    assert restarted.late_dropped == uninterrupted.late_dropped
+
+
+def test_recovery_survives_a_journal_truncated_mid_line(tmp_path, caplog):
+    """A SIGKILL lands mid-write; recovery must not be the thing that breaks."""
+    records = _fixture_records()
+    journal_path = tmp_path / consumer_stage1.JOURNAL_FILENAME
+
+    writer = _journal(journal_path)
+    replay_records(Stage1Processor(FIXTURE_THRESHOLDS), records[:10], journal=writer)
+    writer.close()
+
+    lines = journal_path.read_text(encoding="utf-8").splitlines()
+    complete, last = lines[:-1], lines[-1]
+    half = last[: max(1, len(last) // 2)]
+    assert half != last, "the truncation has to actually remove something"
+    journal_path.write_text("\n".join(complete) + "\n" + half, encoding="utf-8")
+
+    restarted = Stage1Processor(FIXTURE_THRESHOLDS)
+    with caplog.at_level(logging.WARNING):
+        recovered = consumer_stage1.recover_from_journal(
+            restarted, _journal(journal_path)
+        )
+
+    assert recovered == len(complete)
+    assert "journal" in caplog.text.lower()
+
+
+def test_a_recovered_event_id_is_still_deduplicated(tmp_path):
+    """Dedup state is derived from the journal, so it cannot drift from it."""
+    key = FIRST_FIXTURE_RECORD["listener_id"].encode("utf-8")
+    journal_path = tmp_path / consumer_stage1.JOURNAL_FILENAME
+
+    writer = _journal(journal_path)
+    replay_records(
+        Stage1Processor(FIXTURE_THRESHOLDS),
+        [(key, FIRST_FIXTURE_BYTES)],
+        journal=writer,
+    )
+    writer.close()
+
+    restarted = Stage1Processor(FIXTURE_THRESHOLDS)
+    assert consumer_stage1.recover_from_journal(restarted, _journal(journal_path)) == 1
+
+    decision = restarted.decide(key, FIRST_FIXTURE_BYTES)
+    assert decision.forward is False
+    assert decision.drop_reason == DUPLICATE_EVENT_ID
+
+
+def test_the_run_summary_reports_late_dropped_and_the_counters(tmp_path, capsys):
+    """`late_dropped` is surfaced rather than swallowed, in both outputs.
+
+    The final stdout line is machine-readable on purpose: the end-to-end tests
+    in later phases parse it instead of running a regex over prose.
+    """
+    in_topic = f"summary-in-{uuid.uuid4().hex}"
+    out_topic = f"summary-out-{uuid.uuid4().hex}"
+    _create_throwaway_topics(in_topic, out_topic)
+    try:
+        limit = 12
+        proc = _replay_into(in_topic, limit=limit)
+        assert proc.returncode == 0, proc.stderr
+
+        summary = consumer_stage1.run(
+            broker=BROKER,
+            group=f"stage1-summary-{uuid.uuid4().hex}",
+            in_topic=in_topic,
+            out_topic=out_topic,
+            state_dir=tmp_path,
+            thresholds=FIXTURE_THRESHOLDS,
+            review_path=tmp_path / "listener_review_queue.json",
+            max_events=limit,
+            commit_every=4,
+        )
+
+        printed = capsys.readouterr().out
+        summary_lines = [
+            line for line in printed.splitlines() if line.startswith("SUMMARY ")
+        ]
+        assert len(summary_lines) == 1, (
+            f"expected exactly one machine-readable SUMMARY line:\n{printed}"
+        )
+        reported = json.loads(summary_lines[0][len("SUMMARY ") :])
+
+        for field in (
+            "polled",
+            "forwarded",
+            "invalid_value",
+            "key_mismatch",
+            "duplicate_event_id",
+            "late_dropped",
+            "flagged_listeners",
+        ):
+            assert hasattr(summary, field), f"RunSummary is missing {field}"
+            assert field in reported, f"the SUMMARY line is missing {field}"
+            assert getattr(summary, field) == reported[field]
+
+        assert summary.polled == limit
+        assert summary.forwarded == limit
+        assert summary.late_dropped == 0
+    finally:
+        _delete_throwaway_topics(in_topic, out_topic)
+
+    # And `late_dropped` is READ OFF THE ACCUMULATOR rather than tracked here: a
+    # second counter kept alongside could disagree with the number the windowing
+    # module actually acted on. Forced per-key disorder, three readings, one value.
+    disordered = Stage1Processor(FIXTURE_THRESHOLDS)
+    listener = FIRST_FIXTURE_RECORD["listener_id"]
+    disordered.commit_event("disorder-late-1", listener, "2026-08-10T00:00:00Z")
+    disordered.commit_event("disorder-late-2", listener, "2026-08-08T00:00:00Z")
+    assert disordered.late_dropped == 1
+    assert disordered.counts()["late_dropped"] == disordered.late_dropped
+    assert (
+        disordered.review_document()["counts"]["late_dropped"]
+        == disordered.late_dropped
+    )
+
+
+def test_the_cli_refuses_to_start_without_a_threshold_config(capsys):
+    """No threshold field carries a default, so there is nothing to fall back to."""
+    missing = "config/nope.json"
+    code = consumer_stage1.main(["--thresholds", missing])
+    assert code != 0
+    assert "nope.json" in capsys.readouterr().err
