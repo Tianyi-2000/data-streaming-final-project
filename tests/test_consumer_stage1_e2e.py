@@ -815,6 +815,76 @@ def test_replaying_the_same_input_twice_changes_neither_the_output_nor_the_flags
     assert review["counts"]["late_dropped"] == 0
 
 
+@pytest.mark.parametrize("commit_every", [1, 500])
+def test_event_id_dedup_holds_at_every_commit_every(topics, tmp_path, commit_every):
+    """Two records sharing an `event_id` produce one output record at any batch size.
+
+    THE REGRESSION THIS PINS WAS FOUND BY THE FULL-SCALE RUN, NOT BY A TEST.
+    `_seen_event_ids` is only populated by `commit_event`, which `_settle` calls
+    at the end of a batch, so at `--commit-every 500` both copies of an
+    `event_id` inside one batch used to pass `decide` and both were produced and
+    counted: `forwarded=2, duplicate_event_id=0` where the correct answer is
+    `1, 1`. On the real 45,473-event stream that forwarded and counted 903
+    records twice and inflated every Topology A peak above the empirically
+    measured band.
+
+    Every other test in this phase runs at the default `--commit-every 1`, where
+    the settle is per record and the bug is invisible -- which is exactly why the
+    batch size is parametrized here rather than left at the default. `N=1` is
+    kept in the parametrization as the control: it passed before the fix and must
+    still pass, byte for byte.
+
+    Both copies go to the same partition, because they carry the same
+    `listener_id` and therefore the same key. A test that let them land on
+    different partitions would not reliably put them in one batch.
+    """
+    in_topic, out_topic = topics
+    line = _fixture_lines()[0]
+    record = json.loads(line)
+    key = record["listener_id"].encode("utf-8")
+
+    producer = Producer(
+        {"bootstrap.servers": BROKER, "acks": "all", "client.id": "e2e-dedup"}
+    )
+    failures: List[Any] = []
+
+    def _on_delivery(err, _msg) -> None:
+        if err is not None:
+            failures.append(err)
+
+    for _ in range(2):
+        producer.produce(in_topic, key=key, value=line, on_delivery=_on_delivery)
+    assert producer.flush(DRAIN_TIMEOUT_SECONDS) == 0
+    assert not failures
+
+    run = _run_consumer(
+        in_topic=in_topic,
+        out_topic=out_topic,
+        state_dir=tmp_path / f"state-dedup-{commit_every}",
+        review_out=tmp_path / f"review-dedup-{commit_every}.json",
+        commit_every=commit_every,
+    )
+
+    assert run.summary["polled"] == 2
+    assert run.summary["forwarded"] == 1, (
+        f"at --commit-every {commit_every} the consumer forwarded "
+        f"{run.summary['forwarded']} copies of one event_id; dedup must hold "
+        f"inside an unsettled batch, not only across batches"
+    )
+    assert run.summary["duplicate_event_id"] == 1, (
+        f"at --commit-every {commit_every} the duplicate was not counted as one; "
+        f"duplicate_event_id has to mean the same thing at every batch size"
+    )
+
+    records = _drain(out_topic, expected_at_least=1)
+    assert len(records) == 1, (
+        f"{len(records)} records reached the output topic from two copies of one "
+        f"event_id at --commit-every {commit_every}"
+    )
+    assert records[0].value == line
+    assert records[0].key.decode("utf-8") == record["track_id"]
+
+
 def test_a_second_consumer_run_over_the_same_input_forwards_nothing_new(
     topics, tmp_path
 ):

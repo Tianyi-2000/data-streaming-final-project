@@ -499,6 +499,113 @@ def test_the_same_event_id_is_counted_once_and_a_different_one_is_not():
     assert processor.peak_for(listener) == peak_after_duplicate + 1
 
 
+class _RecordingConsumer:
+    """Just enough `Consumer` for `_settle`: records what it was asked to do."""
+
+    def __init__(self) -> None:
+        self.stored: List[Any] = []
+        self.commits = 0
+
+    def store_offsets(self, message=None) -> None:
+        self.stored.append(message)
+
+    def commit(self, asynchronous: bool = True) -> None:
+        self.commits += 1
+
+
+class _NoQueueProducer:
+    """Just enough `Producer` for `_settle`: nothing is ever left queued."""
+
+    def flush(self, _timeout=None) -> int:
+        return 0
+
+
+def test_a_settle_failure_forgets_the_batch_so_the_redelivery_is_forwarded(tmp_path):
+    """The trap inside the in-flight dedup set: it must be discarded, never promoted.
+
+    `_in_flight_event_ids` exists so that two copies of one `event_id` in a
+    single unsettled batch are not both produced. The danger is the obvious
+    simplification -- promoting those ids into `_seen_event_ids` when the batch is
+    handed off. If a delivery then FAILS, `_settle` raises before anything is
+    journalled, counted or committed, so the broker redelivers those records. A
+    redelivery that looked like a duplicate would be dropped, and the record
+    would never reach `track-activity` at all: an idempotency fix that loses
+    data, which is strictly worse than the duplicate it set out to prevent.
+
+    So: after a failed settle the id must look new, and it must not be in the
+    seen set. After a SUCCESSFUL settle the same id must look seen, because
+    `commit_event` promoted it -- both halves are asserted here, since a
+    `discard_in_flight` that ran only on failure would pass the first half alone.
+    """
+    key = FIRST_FIXTURE_RECORD["listener_id"].encode("utf-8")
+    event_id = FIRST_FIXTURE_RECORD["event_id"]
+    journal = consumer_stage1.Journal(tmp_path / "journal.jsonl")
+    processor = Stage1Processor(FIXTURE_THRESHOLDS)
+
+    decision = processor.decide(key, FIRST_FIXTURE_BYTES)
+    assert decision.forward is True
+    processor.mark_in_flight(event_id)
+    # While in flight, a second copy in the same batch is a duplicate.
+    assert processor.decide(key, FIRST_FIXTURE_BYTES).drop_reason == (
+        DUPLICATE_EVENT_ID
+    )
+
+    consumer = _RecordingConsumer()
+    failed = [
+        consumer_stage1._Pending(
+            msg=object(),
+            decision=decision,
+            delivery={"fired": True, "err": "simulated delivery failure"},
+        )
+    ]
+    with pytest.raises(RuntimeError, match="delivery to"):
+        consumer_stage1._settle(
+            consumer,
+            _NoQueueProducer(),
+            processor,
+            journal,
+            failed,
+            "track-activity-test",
+            1.0,
+        )
+
+    # Nothing was stored, committed, journalled or counted.
+    assert consumer.stored == []
+    assert consumer.commits == 0
+    assert processor.counts()["listeners_seen"] == 0
+    assert list(journal.entries()) == []
+
+    # And the redelivery looks new rather than duplicate.
+    redelivered = processor.decide(key, FIRST_FIXTURE_BYTES)
+    assert redelivered.forward is True, (
+        "the redelivery of a record whose produce failed was dropped as a "
+        "duplicate; the in-flight ids were promoted instead of discarded, so the "
+        "record is now lost"
+    )
+
+    # The success path promotes the same id, so the discard is not a blanket reset.
+    processor.mark_in_flight(event_id)
+    consumer_stage1._settle(
+        consumer,
+        _NoQueueProducer(),
+        processor,
+        journal,
+        [
+            consumer_stage1._Pending(
+                msg=object(),
+                decision=redelivered,
+                delivery={"fired": True, "err": None},
+            )
+        ],
+        "track-activity-test",
+        1.0,
+    )
+    assert consumer.commits == 1
+    assert processor.decide(key, FIRST_FIXTURE_BYTES).drop_reason == (
+        DUPLICATE_EVENT_ID
+    )
+
+
 # --------------------------------------------------------------------------------
 # Task 2: the review document
 # --------------------------------------------------------------------------------

@@ -53,6 +53,18 @@ Five things a later reader needs, in the order they matter.
    That makes delivery AT-LEAST-ONCE, which is why `event_id` dedup is required
    rather than optional: a crash between produce and commit replays the record.
 
+   DEDUP THEREFORE NEEDS TWO SETS, NOT ONE. `_seen_event_ids` only grows in
+   `commit_event`, which `_settle` calls at the END of a batch, so at
+   `--commit-every N > 1` every copy of one `event_id` inside a single batch
+   passed `decide` and was produced -- measured on the full stream, 903 records
+   were forwarded and counted twice. `_in_flight_event_ids` closes that window.
+   The two are deliberately not merged: a settle failure must FORGET the
+   in-flight ids, because those records were never journalled, counted or
+   committed and the broker will redeliver them. Treating them as seen would
+   suppress the redelivery of a record that never reached `track-activity` --
+   an idempotency fix that loses data. Hence the discard in `_settle`'s
+   `finally`, and hence `discard_in_flight` rather than a promotion.
+
 4. THE JOURNAL IS THE ONLY PERSISTED STATE. Counts, flags and the dedup set are
    all derived by replaying it through the same `commit_event` the live path uses,
    so recovery cannot drift from live processing. File order matters -- `add`
@@ -169,6 +181,16 @@ class Stage1Processor:
         self._windows = topology_a_windows(thresholds)
         # Dedup is keyed on `event_id` and on nothing else (contract section 5).
         self._seen_event_ids: set = set()
+        # THE SAME DEDUP, FOR RECORDS NOT YET SETTLED. `_seen_event_ids` is only
+        # populated by `commit_event`, which `_settle` calls at the END of a
+        # batch, so at `--commit-every N > 1` every copy of one `event_id` inside
+        # a single batch used to pass `decide` and be produced. This set closes
+        # that window. It is deliberately separate rather than merged into
+        # `_seen_event_ids`: a settle failure must forget these ids, because
+        # those records are redelivered and treating them as already seen would
+        # suppress the redelivery and lose them -- turning an idempotency fix
+        # into data loss.
+        self._in_flight_event_ids: set = set()
         # THE HIGH-WATER MARK, NOT THE LAST VALUE `add` RETURNED. `add`'s return
         # falls as the 24-bucket window slides past hours a listener did not play
         # in, so a flag derived from the last value silently un-flags a listener
@@ -238,6 +260,23 @@ class Stage1Processor:
                 ),
             )
 
+        if event.event_id in self._in_flight_event_ids:
+            # Same rule, one batch earlier: this id has been produced but not yet
+            # settled, so it is not in `_seen_event_ids` yet. Reported under the
+            # same reason as a cross-batch duplicate so `duplicate_event_id` means
+            # the same thing at every `--commit-every`.
+            return Decision(
+                forward=False,
+                out_key=None,
+                out_value=None,
+                event=event,
+                drop_reason=DUPLICATE_EVENT_ID,
+                detail=(
+                    f"event_id {event.event_id!r} was already produced in the "
+                    f"current unsettled batch"
+                ),
+            )
+
         return Decision(
             forward=True,
             # `value` itself, not a re-serialization of `event` (contract 4).
@@ -263,6 +302,27 @@ class Stage1Processor:
             self._counts_key_mismatch += 1
         elif decision.drop_reason == DUPLICATE_EVENT_ID:
             self._counts_duplicate_event_id += 1
+
+    # --- the unsettled batch ---------------------------------------------
+    def mark_in_flight(self, event_id: str) -> None:
+        """Record that `event_id` has been produced but not yet settled.
+
+        Called immediately before the produce, so a second copy of the same id
+        later in the same batch is a duplicate rather than a second produce.
+        """
+        self._in_flight_event_ids.add(event_id)
+
+    def discard_in_flight(self) -> None:
+        """Forget the unsettled batch's ids, whether the settle succeeded or not.
+
+        On success `commit_event` has already moved every one of them into
+        `_seen_event_ids`, so this is a clear. On FAILURE it is the load-bearing
+        half: those records were never journalled, never counted and never
+        committed, so the broker will redeliver them, and they must look new when
+        it does. Merging them into `_seen_event_ids` instead would suppress the
+        redelivery of a record that never reached `track-activity`.
+        """
+        self._in_flight_event_ids.clear()
 
     # --- counting ---------------------------------------------------------
     def commit_event(self, event_id: str, listener_id: str, event_time: str) -> int:
@@ -631,45 +691,59 @@ def _settle(
     A delivery failure raises here, so the journal is not written, no offset is
     stored and nothing is committed. The record is redelivered on the next run,
     which is the point -- and `event_id` dedup absorbs the replay.
+
+    THE IN-FLIGHT DEDUP SET IS DISCARDED ON BOTH PATHS, which is why the discard
+    lives in a `finally`. On the success path `commit_event` has already promoted
+    every id into `_seen_event_ids`, so clearing is housekeeping. On the failure
+    path it is the correctness half: nothing was journalled, counted or
+    committed, so those records come back, and they have to look new when they
+    do.
     """
     if not pending:
         return
 
-    remaining = producer.flush(flush_timeout)
-    if remaining:
-        raise RuntimeError(
-            f"{remaining} message(s) still queued for '{out_topic}' after "
-            f"{flush_timeout:.0f}s; refusing to commit an unconfirmed offset"
-        )
-
-    for entry in pending:
-        if entry.delivery is None:
-            continue
-        if not entry.delivery.get("fired"):
+    try:
+        remaining = producer.flush(flush_timeout)
+        if remaining:
             raise RuntimeError(
-                f"no delivery callback fired for '{out_topic}' "
-                f"(event_id {entry.decision.event.event_id}); refusing to commit "
-                "an unconfirmed offset"
-            )
-        if entry.delivery["err"] is not None:
-            raise RuntimeError(
-                f"delivery to '{out_topic}' failed for event_id "
-                f"{entry.decision.event.event_id}: {entry.delivery['err']}; the "
-                "input offset is neither stored nor committed, so the record will "
-                "be redelivered"
+                f"{remaining} message(s) still queued for '{out_topic}' after "
+                f"{flush_timeout:.0f}s; refusing to commit an unconfirmed offset"
             )
 
-    forwarded = [entry.decision.event for entry in pending if entry.decision.forward]
-    for event in forwarded:
-        journal.append(event.event_id, event.listener_id, event.event_time)
-    journal.flush()
-    for event in forwarded:
-        processor.commit_event(event.event_id, event.listener_id, event.event_time)
+        for entry in pending:
+            if entry.delivery is None:
+                continue
+            if not entry.delivery.get("fired"):
+                raise RuntimeError(
+                    f"no delivery callback fired for '{out_topic}' "
+                    f"(event_id {entry.decision.event.event_id}); refusing to "
+                    "commit an unconfirmed offset"
+                )
+            if entry.delivery["err"] is not None:
+                raise RuntimeError(
+                    f"delivery to '{out_topic}' failed for event_id "
+                    f"{entry.decision.event.event_id}: {entry.delivery['err']}; "
+                    "the input offset is neither stored nor committed, so the "
+                    "record will be redelivered"
+                )
 
-    for entry in pending:
-        consumer.store_offsets(message=entry.msg)
-    consumer.commit(asynchronous=False)
-    pending.clear()
+        forwarded = [
+            entry.decision.event for entry in pending if entry.decision.forward
+        ]
+        for event in forwarded:
+            journal.append(event.event_id, event.listener_id, event.event_time)
+        journal.flush()
+        for event in forwarded:
+            processor.commit_event(
+                event.event_id, event.listener_id, event.event_time
+            )
+
+        for entry in pending:
+            consumer.store_offsets(message=entry.msg)
+        consumer.commit(asynchronous=False)
+        pending.clear()
+    finally:
+        processor.discard_in_flight()
 
 
 def run(
@@ -750,6 +824,10 @@ def run(
                     _slot["fired"] = True
                     _slot["err"] = err
 
+                # Before the produce, not after: a second copy of this id later
+                # in the same unsettled batch has to be a duplicate rather than a
+                # second produce.
+                processor.mark_in_flight(decision.event.event_id)
                 producer.produce(
                     out_topic,
                     key=decision.out_key,
