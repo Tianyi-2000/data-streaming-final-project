@@ -529,3 +529,334 @@ def test_the_track_key_does_not_catch_topology_a(run_a: PipelineRun):
         "the track-keyed rule flagged a track the Topology A listener played: "
         f"{sorted(flagged & topology_a_tracks)}"
     )
+
+
+# =========================================================================
+# PROF-01 at full scale, from the artifacts already on disk
+# =========================================================================
+STREAM_PATH = REPO_ROOT / "data" / "play_events.jsonl"
+MANIFEST_PATH = REPO_ROOT / "data" / "play_events_manifest.json"
+PRODUCTION_THRESHOLDS_PATH = REPO_ROOT / ORACLE["production_thresholds_path"]
+FULL_LISTENER_REVIEW = REPO_ROOT / "output" / "listener_review_queue.json"
+FULL_TRACK_REVIEW = REPO_ROOT / "output" / "track_review_queue.json"
+
+# Full-scale cohorts are declared by listener-id prefix in `src/generate_events.py`:
+# `L` normal, `A` Topology A, `B` Topology B. The prefixes are the derivation rule,
+# and the manifest's `counts_by_cohort` is what the derivation is checked against.
+COHORT_PREFIXES = {"topology_a": "A", "topology_b": "B"}
+
+REGENERATE_HINT = (
+    "the full-scale artifacts under output/ are absent or of unknown provenance. "
+    "output/ is gitignored, so this is the normal state of a fresh checkout and "
+    "not a failure of the project's claim. Regenerate them with:\n"
+    "    docker compose up -d\n"
+    "    python3 src/replay_to_kafka.py\n"
+    "    python3 src/consumer_stage1.py --thresholds config/thresholds.json\n"
+    "    python3 src/consumer_stage2.py --thresholds config/thresholds.json"
+)
+
+
+@lru_cache(maxsize=1)
+def _manifest() -> Dict[str, Any]:
+    """The generator's own account of the committed stream."""
+    return json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+
+
+@lru_cache(maxsize=1)
+def _full_scale_artifacts() -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    """Both full-scale review documents, or a SKIP naming how to regenerate them.
+
+    This SKIPS rather than fails, in three cases, and the distinction matters.
+    `output/` is gitignored, so a fresh checkout legitimately has neither file; a
+    hard failure here would report the absence of somebody's local run as a
+    failure of the project's central claim, which is the one thing these tests
+    exist to speak accurately about.
+
+    The other two cases are provenance. A document whose `thresholds_source_path`
+    is not `config/thresholds.json`, or whose `counts.records_seen` is not the
+    manifest's `total_events`, was produced by a different run against different
+    numbers. Such a file cannot prove the claim -- and it cannot disprove it
+    either, so it must not fail.
+    """
+    if not (FULL_LISTENER_REVIEW.is_file() and FULL_TRACK_REVIEW.is_file()):
+        pytest.skip(f"{REGENERATE_HINT}\n(reason: one or both files are absent)")
+
+    listener = json.loads(FULL_LISTENER_REVIEW.read_text(encoding="utf-8"))
+    track = json.loads(FULL_TRACK_REVIEW.read_text(encoding="utf-8"))
+    expected_config = PRODUCTION_THRESHOLDS_PATH.resolve()
+    total_events = _manifest()["total_events"]
+
+    for name, document in (("listener", listener), ("track", track)):
+        source = Path(document["thresholds_source_path"]).resolve()
+        if source != expected_config:
+            pytest.skip(
+                f"{REGENERATE_HINT}\n(reason: the {name} queue names {source} as "
+                f"its threshold config, not {expected_config})"
+            )
+        if document["counts"]["records_seen"] != total_events:
+            pytest.skip(
+                f"{REGENERATE_HINT}\n(reason: the {name} queue saw "
+                f"{document['counts']['records_seen']} records, not the "
+                f"manifest's {total_events})"
+            )
+
+    return listener, track
+
+
+@lru_cache(maxsize=1)
+def _full_scale_cohorts() -> Dict[str, FrozenSet[str]]:
+    """One scan of the committed stream, cross-checked against the manifest.
+
+    Returns the `A` and `B` listener sets and the distinct tracks each cohort
+    played. Every full-scale expected value downstream is derived from this: no
+    listener id, track id or count is typed into an assertion.
+
+    The manifest cross-check is the guard that matters. A regenerated stream with
+    different cohort sizes would otherwise quietly weaken every assertion below
+    -- the cross-conditions would still "pass", against a cohort that no longer
+    exists at the size the claim was made about.
+    """
+    if not STREAM_PATH.is_file():
+        pytest.skip(
+            f"{STREAM_PATH} is absent; regenerate it with "
+            f"`python3 src/generate_events.py --seed {_manifest()['seed']}`"
+        )
+
+    listeners: Dict[str, Set[str]] = {"topology_a": set(), "topology_b": set()}
+    tracks: Dict[str, Set[str]] = {"topology_a": set(), "topology_b": set()}
+    event_counts: Dict[str, int] = {"normal": 0, "topology_a": 0, "topology_b": 0}
+
+    with STREAM_PATH.open(encoding="utf-8") as handle:
+        for line in handle:
+            if not line.strip():
+                continue
+            record = json.loads(line)
+            listener_id = record["listener_id"]
+            for cohort, prefix in COHORT_PREFIXES.items():
+                if listener_id.startswith(prefix):
+                    listeners[cohort].add(listener_id)
+                    tracks[cohort].add(record["track_id"])
+                    event_counts[cohort] += 1
+                    break
+            else:
+                event_counts["normal"] += 1
+
+    manifest = _manifest()
+    assert event_counts == manifest["counts_by_cohort"], (
+        "the cohort event counts recomputed from data/play_events.jsonl do not "
+        f"match the manifest: scanned {event_counts}, manifest declares "
+        f"{manifest['counts_by_cohort']}"
+    )
+    assert sum(event_counts.values()) == manifest["total_events"]
+
+    return {
+        "topology_a_listeners": frozenset(listeners["topology_a"]),
+        "topology_b_listeners": frozenset(listeners["topology_b"]),
+        "topology_a_tracks": frozenset(tracks["topology_a"]),
+        "topology_b_tracks": frozenset(tracks["topology_b"]),
+    }
+
+
+def _topology_b_target() -> str:
+    """The single track the Topology B cohort attacks, derived not typed."""
+    targets = _full_scale_cohorts()["topology_b_tracks"]
+    assert len(targets) == 1, (
+        "the Topology B cohort no longer plays exactly one track; the full-scale "
+        f"proof below is written about a single target and found {len(targets)}"
+    )
+    return next(iter(targets))
+
+
+def test_the_full_scale_stream_has_the_shape_the_proof_rests_on():
+    """The two topologies are structurally opposite in the committed stream.
+
+    Topology B is many listeners on ONE track; Topology A is few listeners across
+    MANY tracks. Everything below is an intersection between those two sets, so
+    if the stream does not actually have that shape the intersections would be
+    empty for uninteresting reasons. Derived from the file, cross-checked against
+    the manifest inside `_full_scale_cohorts()`.
+    """
+    cohorts = _full_scale_cohorts()
+    target = _topology_b_target()
+
+    assert cohorts["topology_b_listeners"], "no Topology B cohort in the stream"
+    assert cohorts["topology_a_listeners"], "no Topology A cohort in the stream"
+    assert len(cohorts["topology_a_tracks"]) > 1, (
+        "the Topology A cohort's plays do not spread across the catalogue; the "
+        "separability argument depends on exactly that spread"
+    )
+    assert target in cohorts["topology_a_tracks"], (
+        "the Topology B target is not among the tracks the Topology A cohort "
+        "played -- which would make the cross-condition below trivially true"
+    )
+
+
+def test_the_listener_key_does_not_catch_topology_b_at_full_scale():
+    """Rule A flags every Topology A listener and NO Topology B one (PROF-01).
+
+    45,473 real events. Every one of the 900 Topology B listeners has a single
+    play, so the listener-keyed rule has nothing to accumulate for any of them.
+    The flagged set is asserted to equal the derived `A` cohort EXACTLY, which is
+    both the positive result and the non-vacuity guard: the queue is not empty,
+    and it contains nothing but Topology A.
+    """
+    listener_review, _ = _full_scale_artifacts()
+    cohorts = _full_scale_cohorts()
+
+    flagged = {
+        entry["listener_id"] for entry in listener_review["flagged_listeners"]
+    }
+    assert flagged == set(cohorts["topology_a_listeners"]), (
+        "the listener queue is not exactly the Topology A cohort: "
+        f"missing {sorted(set(cohorts['topology_a_listeners']) - flagged)}, "
+        f"unexpected {sorted(flagged - set(cohorts['topology_a_listeners']))}"
+    )
+    assert not (flagged & cohorts["topology_b_listeners"]), (
+        "the listener-keyed rule flagged a Topology B listener at full scale: "
+        f"{sorted(flagged & cohorts['topology_b_listeners'])}"
+    )
+
+
+def test_the_track_key_does_not_catch_topology_a_at_full_scale():
+    """Rule B flags the Topology B target and NO Topology A track (PROF-01).
+
+    The Topology A cohort's plays reach hundreds of distinct tracks, and no one
+    track-hour bucket among them accumulates enough unique listeners in the stop
+    band. The comparison set is `topology_a_tracks - {topology_b_target}` --
+    the target itself is in the Topology A track set, because the Topology A
+    cohort plays across the whole catalogue -- and that difference is asserted
+    non-empty first, so the emptiness of the intersection cannot pass vacuously.
+    """
+    _, track_review = _full_scale_artifacts()
+    cohorts = _full_scale_cohorts()
+    target = _topology_b_target()
+
+    flagged = {entry["track_id"] for entry in track_review["flagged_tracks"]}
+    assert flagged == {target}, (
+        f"the track queue is not exactly the Topology B target {target!r}: "
+        f"{sorted(flagged)}"
+    )
+
+    topology_a_only = set(cohorts["topology_a_tracks"]) - {target}
+    assert topology_a_only, (
+        "the Topology A cohort played no track other than the Topology B "
+        "target; the cross-condition below would then be vacuous"
+    )
+    assert not (flagged & topology_a_only), (
+        "the track-keyed rule flagged a Topology-A-only track at full scale: "
+        f"{sorted(flagged & topology_a_only)}"
+    )
+
+
+# =========================================================================
+# PROF-02 -- two real end-to-end replays of the same input
+# =========================================================================
+@pytest.fixture(scope="module")
+def run_b(tmp_path_factory):
+    """The second end-to-end replay, independent of the first in every respect.
+
+    Its own topics, its own consumer groups, its own state directory. The state
+    directory is the one that is easy to get wrong: Consumer 1's journal dedups
+    on `event_id` across runs, so a second replay sharing run A's `--state-dir`
+    would forward nothing at all and PROF-02 would compare a real run against an
+    empty one -- and pass.
+    """
+    yield _run_pipeline(tmp_path_factory.mktemp("run-b"), "b")
+
+
+def _detection_content(document: Dict[str, Any]) -> Dict[str, Any]:
+    """A review document with its `counts` block removed. THIS IS DELIBERATE.
+
+    PROF-02 claims that replaying the same input reproduces the same DETECTION.
+    `counts` does not describe detection: `polled`, `records_seen`,
+    `duplicate_event_id` and `late_dropped` describe the state of the topic and
+    of the journal the run happened to meet. Comparing them would silently couple
+    this proof to conditions the requirement never claimed -- a clean topic and an
+    empty journal -- and the first run against a shared broker would fail
+    intermittently. That failure would be read as nondeterminism in the
+    detection, which is precisely the wrong conclusion and precisely the reason
+    this projection exists.
+
+    DO NOT "FIX" THIS INTO A WHOLE-FILE DIFF. What remains after `counts` is
+    removed is everything PROF-02 is about: the flagged entries with all their
+    measured values, the thresholds, the window bounds, the notes, and the config
+    path behind them.
+
+    Exact equality on the float fields (`band_share`, `plays_per_listener`) is
+    also deliberate rather than an oversight. Both runs perform identical
+    arithmetic over identical integer inputs and `write_review_queue()`
+    serializes with `sort_keys=True`, so equality is exact or something drifted.
+    An approximate comparison here would hide exactly the drift being looked for.
+    """
+    return {key: value for key, value in document.items() if key != "counts"}
+
+
+def test_the_two_replays_were_genuinely_independent(
+    run_a: PipelineRun, run_b: PipelineRun
+):
+    """The precondition every PROF-02 comparison below depends on.
+
+    A run compared against itself is equal unconditionally. This asserts the two
+    runs shared no topic, no output topic and no state directory, so what the
+    three comparisons demonstrate is reproducibility rather than identity.
+    """
+    assert run_a.in_topic != run_b.in_topic
+    assert run_a.out_topic != run_b.out_topic
+    assert run_a.state_dir != run_b.state_dir
+    assert run_a.track_review["flagged_tracks"], "run A flagged no track"
+    assert run_b.track_review["flagged_tracks"], "run B flagged no track"
+    assert run_a.listener_review["flagged_listeners"], "run A flagged no listener"
+    assert run_b.listener_review["flagged_listeners"], "run B flagged no listener"
+
+
+def test_two_replays_produce_the_same_flagged_tracks_and_evidence(
+    run_a: PipelineRun, run_b: PipelineRun
+):
+    """Consumer 2's detection content is identical across two replays (PROF-02).
+
+    Every flagged track with all three measured conditions, their thresholds and
+    comparisons, the window bounds, the stop band and the note.
+
+    Phase 4's order-independence test does NOT discharge this. It proves the
+    aggregation is order-independent over one fixed input set; it never runs the
+    pipeline twice. PROF-02 is two real replays through a live broker, and only
+    a second real replay can satisfy it.
+    """
+    assert _detection_content(run_a.track_review) == _detection_content(
+        run_b.track_review
+    )
+
+
+def test_two_replays_produce_the_same_flagged_listeners_and_evidence(
+    run_a: PipelineRun, run_b: PipelineRun
+):
+    """Consumer 1's detection content is identical across two replays (PROF-02).
+
+    Every flagged listener with its peak play count, the threshold it was
+    compared against, the window and the first/last event times.
+
+    As above: Phase 4's order-independence test does not discharge this, because
+    it never runs the pipeline twice.
+    """
+    assert _detection_content(run_a.listener_review) == _detection_content(
+        run_b.listener_review
+    )
+
+
+def test_two_replays_put_the_same_event_ids_on_track_activity(
+    run_a: PipelineRun, run_b: PipelineRun
+):
+    """The same input yields the same event IDs downstream (PROF-02, check 6).
+
+    This is the contract's own §9 check 6 wording -- "the same event IDs and the
+    same logical results" -- with the logical results covered by the two document
+    comparisons above and the event IDs covered here. Both sets are compared
+    against the fixture's own IDs as well, so an agreement between two equally
+    truncated runs cannot pass.
+
+    Phase 4's order-independence test does not discharge this either: it never
+    runs the pipeline twice.
+    """
+    fixture_event_ids = {record["event_id"] for record in _fixture_records()}
+    assert run_a.track_activity_event_ids == run_b.track_activity_event_ids
+    assert set(run_a.track_activity_event_ids) == fixture_event_ids
