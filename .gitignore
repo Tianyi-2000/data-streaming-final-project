@@ -4,3 +4,7 @@ __pycache__/
 .venv/
 venv/
 .DS_Store
+
+# GSD planning artifacts (local only)
+.planning/
+.gsd-ingest-manifest.yaml
