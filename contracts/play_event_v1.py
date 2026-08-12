@@ -104,3 +104,30 @@ def parse_event_time(event_time: str) -> datetime:
 def format_event_time(dt: datetime) -> str:
     """Render an aware UTC datetime back to the contract's 'Z' string form."""
     return dt.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+# --- The Topology B stop-time band, inclusive at both ends --------------------
+# These are contract constants, not tunable configuration.
+#
+# The *share* of plays inside the band is a threshold Consumer 2 tunes, and that
+# lives in config. The *definition* of the band is a semantic the producer and
+# both consumers must agree on identically, or the metric silently diverges --
+# so it lives here, next to the schema, where one edit reaches every side.
+STOP_BAND_LOW_SECONDS = 30
+STOP_BAND_HIGH_SECONDS = 35
+
+
+def in_stop_band(played_seconds: int) -> bool:
+    """True when played_seconds falls in the 30-35s band, inclusive at both ends.
+
+    Inclusive is deliberate and load-bearing. The generator spreads Topology B
+    stop times evenly across 30, 31, 32, 33, 34 and 35 -- it emits
+    `rng.randint(30, min(35, dur))`, which includes 35 -- so an exclusive upper
+    edge drops one sixth of the signal. Measured on the real stream, the band
+    share on the fraud window is 0.762 exclusive versus 0.923 inclusive. Both
+    clear the 0.60 threshold today, so flipping this raises no error anywhere;
+    the cost of getting it wrong shows up as a quietly wrong number.
+
+    This helper matches shipped producer behaviour rather than changing it.
+    """
+    return STOP_BAND_LOW_SECONDS <= played_seconds <= STOP_BAND_HIGH_SECONDS
