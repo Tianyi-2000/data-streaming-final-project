@@ -1,433 +1,93 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fraud Monitor — Artificial Streaming Detection</title>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Streaming Fraud Monitor</title>
 <style>
-  :root{
-    --bg:#0B0E14; --panel:#141A24; --panel-2:#0F141C;
-    --line:rgba(255,255,255,.08); --ink:#EAF0F7; --muted:#8A97A8; --dim:#5A6678;
-    --green:#00E5A0; --cyan:#34D3FF; --fraud:#FF5C7A;
-    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
-    --sans:"Inter",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:
-      radial-gradient(1200px 600px at 15% -10%, rgba(0,229,160,.06), transparent 60%),
-      radial-gradient(1000px 500px at 100% 0%, rgba(52,211,255,.05), transparent 55%),
-      var(--bg);
-    color:var(--ink);font-family:var(--sans);
-    -webkit-font-smoothing:antialiased;letter-spacing:.01em}
-  .wrap{max-width:1180px;margin:0 auto;padding:22px 26px 60px}
-
-  /* header */
-  header{display:flex;align-items:center;justify-content:space-between;
-    padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:26px}
-  .brand{display:flex;align-items:center;gap:12px}
-  .logo{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
-    background:linear-gradient(145deg,rgba(0,229,160,.22),rgba(52,211,255,.10));
-    border:1px solid rgba(0,229,160,.35);box-shadow:0 0 22px rgba(0,229,160,.25)}
-  .logo span{font-size:18px}
-  .brand h1{font-size:15px;margin:0;letter-spacing:.16em;text-transform:uppercase;font-weight:700}
-  .brand p{margin:2px 0 0;font-size:12px;color:var(--muted);letter-spacing:.02em}
-  .live{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12px;
-    color:var(--green);background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.3);
-    padding:7px 13px;border-radius:999px}
-  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);
-    box-shadow:0 0 0 0 rgba(0,229,160,.6);animation:pulse 2s infinite}
-  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,229,160,.5)}70%{box-shadow:0 0 0 8px rgba(0,229,160,0)}100%{box-shadow:0 0 0 0 rgba(0,229,160,0)}}
-
-  /* hero */
-  .hero{margin-bottom:30px}
-  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.28em;color:var(--fraud);
-    text-transform:uppercase;margin-bottom:14px}
-  .hero h2{font-size:clamp(28px,4.6vw,54px);line-height:1.06;margin:0;font-weight:800;letter-spacing:-.02em}
-  .hero h2 b{color:var(--green);text-shadow:0 0 30px rgba(0,229,160,.45)}
-  .hero h2 i{font-style:normal;color:var(--fraud);text-shadow:0 0 30px rgba(255,92,122,.4)}
-  .hero .sub{color:var(--muted);font-size:16px;margin-top:14px;max-width:640px}
-
-  /* stat tiles */
-  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:30px}
-  .tile{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--line);
-    border-radius:14px;padding:18px 18px 16px;position:relative;overflow:hidden}
-  .tile::after{content:"";position:absolute;inset:0;border-radius:14px;pointer-events:none;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
-  .tile .lab{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:600}
-  .tile .val{font-family:var(--mono);font-size:34px;font-weight:600;margin-top:8px;line-height:1}
-  .tile .foot{font-size:11px;color:var(--muted);margin-top:8px}
-  .t-green .val{color:var(--ink)}
-  .t-cyan .val{color:var(--cyan);text-shadow:0 0 22px rgba(52,211,255,.35)}
-  .t-fraud .val{color:var(--fraud);text-shadow:0 0 22px rgba(255,92,122,.35)}
-  .t-fraud{border-color:rgba(255,92,122,.28)}
-  .t-cyan{border-color:rgba(52,211,255,.22)}
-
-  /* panels */
-  .panel{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--line);
-    border-radius:16px;padding:24px 26px;margin-bottom:22px}
-  .phead{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:6px}
-  .phead h3{margin:0;font-size:19px;font-weight:700;letter-spacing:-.01em}
-  .tag{font-family:var(--mono);font-size:11px;padding:5px 10px;border-radius:7px;letter-spacing:.04em}
-  .tag.a{color:var(--fraud);background:rgba(255,92,122,.1);border:1px solid rgba(255,92,122,.28)}
-  .tag.b{color:var(--cyan);background:rgba(52,211,255,.1);border:1px solid rgba(52,211,255,.28)}
-  .rule{font-size:13px;color:var(--muted);margin:0 0 18px}
-  .rule b{color:var(--ink);font-weight:600}
-  .cap{font-size:12.5px;color:var(--muted);margin-top:14px;line-height:1.5}
-  .cap b{color:var(--ink)}
-
-  /* condition chips (topo B) */
-  .track-name{font-family:var(--mono);font-size:13px;color:var(--ink);margin:2px 0 16px}
-  .track-name .fr{color:var(--fraud)}
-  .conds{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
-  .cond{background:var(--panel-2);border:1px solid rgba(255,92,122,.2);border-radius:12px;padding:15px 16px}
-  .cond .n{font-family:var(--mono);font-size:26px;color:var(--fraud);font-weight:600}
-  .cond .l{font-size:11.5px;color:var(--muted);margin-top:6px}
-  .cond .ok{font-family:var(--mono);font-size:11px;color:var(--green);margin-top:8px;display:flex;gap:6px;align-items:center}
-
-  .legend{display:flex;gap:20px;font-size:12px;color:var(--muted);margin:2px 0 10px}
-  .legend span{display:inline-flex;align-items:center;gap:7px}
-  .sw{width:11px;height:11px;border-radius:3px;display:inline-block}
-
-  svg{display:block;width:100%;height:auto}
-  .note{margin-top:18px;padding:14px 16px;border-left:2px solid var(--dim);background:rgba(255,255,255,.02);
-    border-radius:0 8px 8px 0;font-size:12.5px;color:var(--muted);line-height:1.55}
-  .note b{color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.1em;font-size:10.5px;display:block;margin-bottom:6px;color:var(--dim)}
-  footer{margin-top:26px;padding-top:18px;border-top:1px solid var(--line);
-    font-size:12px;color:var(--dim);font-family:var(--mono);line-height:1.7}
-  footer .pipe{color:var(--muted)}
-  @media(max-width:760px){.tiles{grid-template-columns:repeat(2,1fr)}.conds{grid-template-columns:1fr}}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <header>
-    <div class="brand">
-      <div class="logo"><span>🎧</span></div>
-      <div><h1>Fraud Monitor</h1><p>Artificial Streaming Detection · Kafka pipeline</p></div>
-    </div>
-    <div class="live"><span class="dot"></span>LIVE · 45,473 events replayed</div>
-  </header>
-
-  <section class="hero">
-    <div class="kicker">Real-time verdict</div>
-    <h2><b>8</b> bot accounts + <i>1</i> coordinated ring<br>caught in 45,473 plays</h2>
-    <p class="sub">A two-stage Kafka pipeline over a MusicBrainz-grounded event stream. Every number below is read from the detectors' output review queues — the decisions, not the raw rules.</p>
-  </section>
+  * { box-sizing: border-box; }
+  body { margin:0; background:#0B0E14; color:#E6EDF3;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background-image:radial-gradient(900px 500px at 80% -10%, rgba(0,229,160,.10), transparent),
+      radial-gradient(700px 500px at 0% 0%, rgba(52,211,255,.07), transparent); }
+  .wrap { max-width:1080px; margin:0 auto; padding:40px 28px 60px; }
+  .mono { font-family:ui-monospace,"SF Mono",Menlo,monospace; }
+  .eyebrow { color:#00E5A0; letter-spacing:.18em; font-size:12px; text-transform:uppercase;
+    font-family:ui-monospace,Menlo,monospace; }
+  h1 { font-size:34px; line-height:1.15; margin:10px 0 6px; font-weight:750; }
+  h1 .hi { color:#00E5A0; } h1 .hi2 { color:#34D3FF; }
+  .sub { color:#8B97A8; font-size:15px; max-width:760px; }
+  .tiles { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:28px 0; }
+  .tile { background:#141A24; border:1px solid #222A38; border-radius:14px; padding:18px 18px 16px;
+    position:relative; overflow:hidden; }
+  .tile::before { content:""; position:absolute; left:0; top:0; height:3px; width:100%;
+    background:linear-gradient(90deg,#00E5A0,#34D3FF); opacity:.9; }
+  .tile .k { color:#8B97A8; font-size:12.5px; }
+  .tile .v { font-size:34px; font-weight:750; margin-top:6px;
+    font-family:ui-monospace,Menlo,monospace; text-shadow:0 0 22px rgba(0,229,160,.25); }
+  .tile.alert .v { color:#FF5C7A; text-shadow:0 0 22px rgba(255,92,122,.30); }
+  section { background:#141A24; border:1px solid #222A38; border-radius:16px; padding:22px 24px;
+    margin-top:20px; }
+  .stag { display:flex; align-items:center; gap:10px; }
+  .stag .dot { width:10px; height:10px; border-radius:50%; box-shadow:0 0 12px currentColor; }
+  h2 { font-size:19px; margin:0; font-weight:700; }
+  .rule { color:#8B97A8; font-size:13.5px; margin:6px 0 18px; }
+  .rule b { color:#E6EDF3; }
+  .grid2 { display:grid; grid-template-columns:1.5fr 1fr; gap:26px; align-items:start; }
+  .grid2b { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th { text-align:left; color:#8B97A8; font-weight:600; padding:6px 8px; border-bottom:1px solid #222A38; }
+  td { padding:6px 8px; border-bottom:1px solid rgba(34,42,56,.5); }
+  td.num, th.num { text-align:right; font-family:ui-monospace,Menlo,monospace; }
+  .cap { color:#8B97A8; font-size:12.5px; margin-top:10px; }
+  .cond { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:18px; }
+  .cond .c { background:#0B0E14; border:1px solid #222A38; border-radius:12px; padding:14px; }
+  .cond .cv { font-size:26px; font-weight:750; font-family:ui-monospace,Menlo,monospace; color:#00E5A0; }
+  .cond .ck { color:#8B97A8; font-size:12px; } .cond .ct { color:#FF5C7A; font-size:11px; margin-top:4px; }
+  .note { background:#0B0E14; border-left:3px solid #34D3FF; border-radius:8px; padding:14px 16px;
+    color:#8B97A8; font-size:13px; line-height:1.55; margin-top:16px; }
+  footer { color:#8B97A8; font-size:12px; margin-top:26px; text-align:center; line-height:1.6; }
+  @media (max-width:760px) { .tiles{grid-template-columns:repeat(2,1fr);} .grid2,.grid2b{grid-template-columns:1fr;} }
+</style></head>
+<body><div class="wrap">
+  <div class="eyebrow">Real-time Kafka pipeline &middot; MusicBrainz-grounded stream</div>
+  <h1>Caught <span class="hi">8 bot accounts</span> + <span class="hi2">1 coordinated ring</span><br>across 45,473 plays.</h1>
+  <div class="sub">Two event-time detectors watch the stream on different keys and write a review
+    queue for a human analyst. This view reads their output &mdash; the decisions, not the raw rules.</div>
 
   <div class="tiles">
-    <div class="tile t-green"><div class="lab">Events processed</div><div class="val" id="v-events">—</div><div class="foot">3 days of play events</div></div>
-    <div class="tile t-green"><div class="lab">Listeners monitored</div><div class="val" id="v-list">—</div><div class="foot">across the full stream</div></div>
-    <div class="tile t-fraud"><div class="lab">Bot accounts flagged</div><div class="val" id="v-bots">—</div><div class="foot">Topology A · volume</div></div>
-    <div class="tile t-fraud"><div class="lab">Coordinated rings</div><div class="val" id="v-rings">—</div><div class="foot">Topology B · viral</div></div>
+    <div class="tile"><div class="k">Events processed</div><div class="v">45,473</div></div>
+    <div class="tile"><div class="k">Listeners seen</div><div class="v">1,308</div></div>
+    <div class="tile alert"><div class="k">Flagged bots &middot; Topology A</div><div class="v">8</div></div>
+    <div class="tile alert"><div class="k">Viral rings &middot; Topology B</div><div class="v">1</div></div>
   </div>
 
-  <div class="panel">
-    <div class="phead"><h3>Topology A — high-volume bots</h3><div class="tag a">RULE · &gt;300 plays / rolling 24h</div></div>
-    <p class="rule">Bots stream <b>24/7 with no sleep gap</b>. Real listeners never come close — so peak daily volume separates them cleanly.</p>
-    <div id="chartA"></div>
-    <p class="cap">Dashed line = the <b>300-play / 24h</b> flag threshold. Normal listeners peak at <b>60</b> plays/day; all <b>8</b> flagged accounts sit ~10× over the line.</p>
-  </div>
-
-  <div class="panel">
-    <div class="phead"><h3>Topology B — coordinated viral ring</h3><div class="tag b">RULE · 1-hour window</div></div>
-    <p class="rule">One track, hit by an army of one-play accounts that all bail right after the 30-second royalty mark.</p>
-    <div class="track-name">▶ Flagged track: <span class="fr" id="tb-track">—</span> — <span id="tb-artist">—</span> · window <span id="tb-win">—</span></div>
-    <div class="conds">
-      <div class="cond"><div class="n" id="c-uniq">—</div><div class="l">Unique listeners in 1h</div><div class="ok">✓ threshold ≥ 200</div></div>
-      <div class="cond"><div class="n" id="c-ppl">—</div><div class="l">Plays per listener</div><div class="ok">✓ threshold ≤ 1.1</div></div>
-      <div class="cond"><div class="n" id="c-band">—</div><div class="l">Stops in 30–35s band</div><div class="ok">✓ threshold ≥ 60%</div></div>
+  <section>
+    <div class="stag"><span class="dot" style="color:#FF5C7A"></span><h2>Topology A &mdash; high-volume bots</h2></div>
+    <div class="rule">Rule: more than <b>300 plays in any rolling 24&#8202;h</b> window. Bots run 24/7 with no sleep gap; real listeners never come close.</div>
+    <div class="grid2">
+      <div><svg viewBox="0 0 680 282" width="100%" role="img"><line x1="289.3" y1="6" x2="289.3" y2="248" stroke="#FF5C7A" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.8"/><text x="289.3" y="262" fill="#FF5C7A" font-size="11" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">300 threshold</text><line x1="102.7" y1="6" x2="102.7" y2="248" stroke="#00E5A0" stroke-width="1.5" opacity="0.55"/><text x="102.7" y="276" fill="#00E5A0" font-size="11" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">normal max 60</text><text x="0" y="27" fill="#8B97A8" font-size="12" font-family="ui-monospace,Menlo,monospace">A000</text><rect x="56" y="12" width="493.9" height="20" rx="4" fill="#FF5C7A"/><text x="557.9" y="27" fill="#E6EDF3" font-size="12" font-weight="600" font-family="ui-monospace,Menlo,monospace">635</text><text x="0" y="57" fill="#8B97A8" font-size="12" font-family="ui-monospace,Menlo,monospace">A001</text><rect x="56" y="42" width="486.9" height="20" rx="4" fill="#FF5C7A"/><text x="550.9" y="57" fill="#E6EDF3" font-size="12" font-weight="600" font-family="ui-monospace,Menlo,monospace">626</text><text x="0" y="87" fill="#8B97A8" font-size="12" font-family="ui-monospace,Menlo,monospace">A002</text><rect x="56" y="72" width="482.2" height="20" rx="4" fill="#FF5C7A"/><text x="546.2" y="87" fill="#E6EDF3" font-size="12" font-weight="600" font-family="ui-monospace,Menlo,monospace">620</text><text x="0" y="117" fill="#8B97A8" font-size="12" font-family="ui-monospace,Menlo,monospace">A003</text><rect x="56" y="102" width="492.3" height="20" rx="4" fill="#FF5C7A"/><text x="556.3" y="117" fill="#E6EDF3" font-size="12" font-weight="600" font-family="ui-monospace,Menlo,monospace">633</text><text x="0" y="147" fill="#8B97A8" font-size="12" font-family="ui-monospace,Menlo,monospace">A004</text><rect x="56" y="132" width="484.6" height="20" rx="4" fill="#FF5C7A"/><text x="548.6" y="147" fill="#E6EDF3" font-size="12" font-weight="600" font-family="ui-monospace,Menlo,monospace">623</text><text x="0" y="177" fill="#8B97A8" font-size="12" font-family="ui-monospace,Menlo,monospace">A005</text><rect x="56" y="162" width="484.6" height="20" rx="4" fill="#FF5C7A"/><text x="548.6" y="177" fill="#E6EDF3" font-size="12" font-weight="600" font-family="ui-monospace,Menlo,monospace">623</text><text x="0" y="207" fill="#8B97A8" font-size="12" font-family="ui-monospace,Menlo,monospace">A006</text><rect x="56" y="192" width="483.0" height="20" rx="4" fill="#FF5C7A"/><text x="547.0" y="207" fill="#E6EDF3" font-size="12" font-weight="600" font-family="ui-monospace,Menlo,monospace">621</text><text x="0" y="237" fill="#8B97A8" font-size="12" font-family="ui-monospace,Menlo,monospace">A007</text><rect x="56" y="222" width="496.2" height="20" rx="4" fill="#FF5C7A"/><text x="560.2" y="237" fill="#E6EDF3" font-size="12" font-weight="600" font-family="ui-monospace,Menlo,monospace">638</text></svg></div>
+      <div>
+        <table><thead><tr><th>Listener</th><th class="num">Peak/24h</th><th class="num">Total</th></tr></thead>
+        <tbody><tr><td>A000</td><td class='num'>635</td><td class='num'>1,800</td></tr><tr><td>A001</td><td class='num'>626</td><td class='num'>1,800</td></tr><tr><td>A002</td><td class='num'>620</td><td class='num'>1,800</td></tr><tr><td>A003</td><td class='num'>633</td><td class='num'>1,800</td></tr><tr><td>A004</td><td class='num'>623</td><td class='num'>1,800</td></tr><tr><td>A005</td><td class='num'>623</td><td class='num'>1,800</td></tr><tr><td>A006</td><td class='num'>621</td><td class='num'>1,800</td></tr><tr><td>A007</td><td class='num'>638</td><td class='num'>1,800</td></tr></tbody></table>
+      </div>
     </div>
-    <div class="legend">
-      <span><i class="sw" style="background:var(--fraud)"></i>Flagged track — <span id="lg-f"></span></span>
-      <span><i class="sw" style="background:var(--cyan)"></i>Typical track — <span id="lg-t"></span></span>
+    <div class="cap">Every flagged bot sustains ~10&times; the busiest normal listener (60 plays/day). The gap isn't subtle.</div>
+  </section>
+
+  <section>
+    <div class="stag"><span class="dot" style="color:#34D3FF"></span><h2>Topology B &mdash; coordinated viral fraud</h2></div>
+    <div class="rule">Rule: within <b>1&#8202;h</b>, one track with <b>&ge;200 unique listeners</b>, <b>&le;1.1 plays/listener</b>, and <b>&ge;60% of stops in the 30&ndash;35&#8202;s band</b>.</div>
+    <div class="cond">
+      <div class="c"><div class="cv">901</div><div class="ck">unique listeners</div><div class="ct">&ge; 200 required</div></div>
+      <div class="c"><div class="cv">1.00</div><div class="ck">plays per listener</div><div class="ct">&le; 1.1 required</div></div>
+      <div class="c"><div class="cv">92%</div><div class="ck">stops in 30&ndash;35s band</div><div class="ct">&ge; 60% required</div></div>
     </div>
-    <div id="chartB"></div>
-    <p class="cap">Share of plays by stop-time. The flagged track <b>spikes hard in the 30–35s band</b> (artificial early stops just past the royalty threshold); a normal track's stops spread out, mostly playing to full length.</p>
-    <div class="note" id="tb-note"><b>Analyst review note · auto-generated, states no conclusion</b></div>
-  </div>
+    <div class="grid2b"><svg viewBox="0 0 380 200" width="100%" role="img"><text x="34" y="14" fill="#E6EDF3" font-size="12.5" font-weight="600">Flagged track</text><line x1="34" y1="174" x2="372" y2="174" stroke="#222A38" stroke-width="1"/><rect x="34.0" y="173.4" width="4.8" height="0.6" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="39.6" y="173.6" width="4.8" height="0.4" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="45.3" y="173.6" width="4.8" height="0.4" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="50.9" y="173.8" width="4.8" height="0.2" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="56.5" y="174.0" width="4.8" height="0.0" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="62.2" y="174.0" width="4.8" height="0.0" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="67.8" y="26.0" width="4.8" height="148.0" fill="#FF5C7A" opacity="1" rx="0.5"/><rect x="73.4" y="142.5" width="4.8" height="31.5" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="79.1" y="173.4" width="4.8" height="0.6" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="84.7" y="173.4" width="4.8" height="0.6" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="90.3" y="173.4" width="4.8" height="0.6" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="96.0" y="172.7" width="4.8" height="1.3" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="101.6" y="172.9" width="4.8" height="1.1" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="107.2" y="172.9" width="4.8" height="1.1" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="112.9" y="173.1" width="4.8" height="0.9" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="118.5" y="173.4" width="4.8" height="0.6" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="124.1" y="173.8" width="4.8" height="0.2" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="129.8" y="173.1" width="4.8" height="0.9" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="135.4" y="173.6" width="4.8" height="0.4" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="141.0" y="172.5" width="4.8" height="1.5" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="146.7" y="173.6" width="4.8" height="0.4" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="152.3" y="173.8" width="4.8" height="0.2" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="157.9" y="172.9" width="4.8" height="1.1" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="163.6" y="172.7" width="4.8" height="1.3" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="169.2" y="173.6" width="4.8" height="0.4" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="174.8" y="172.7" width="4.8" height="1.3" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="180.5" y="172.7" width="4.8" height="1.3" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="186.1" y="173.4" width="4.8" height="0.6" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="191.7" y="173.4" width="4.8" height="0.6" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="197.4" y="173.1" width="4.8" height="0.9" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="203.0" y="173.4" width="4.8" height="0.6" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="208.6" y="172.9" width="4.8" height="1.1" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="214.3" y="173.8" width="4.8" height="0.2" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="219.9" y="172.9" width="4.8" height="1.1" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="225.5" y="173.8" width="4.8" height="0.2" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="231.2" y="173.1" width="4.8" height="0.9" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="236.8" y="173.4" width="4.8" height="0.6" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="242.4" y="173.8" width="4.8" height="0.2" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="248.1" y="173.1" width="4.8" height="0.9" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="253.7" y="173.8" width="4.8" height="0.2" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="259.3" y="173.6" width="4.8" height="0.4" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="265.0" y="173.1" width="4.8" height="0.9" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="270.6" y="173.8" width="4.8" height="0.2" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="276.2" y="172.9" width="4.8" height="1.1" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="281.9" y="173.1" width="4.8" height="0.9" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="287.5" y="173.8" width="4.8" height="0.2" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="293.1" y="173.6" width="4.8" height="0.4" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="298.8" y="173.4" width="4.8" height="0.6" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="304.4" y="173.1" width="4.8" height="0.9" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="310.0" y="173.4" width="4.8" height="0.6" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="315.7" y="173.8" width="4.8" height="0.2" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="321.3" y="173.4" width="4.8" height="0.6" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="326.9" y="172.9" width="4.8" height="1.1" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="332.6" y="173.6" width="4.8" height="0.4" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="338.2" y="172.5" width="4.8" height="1.5" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="343.8" y="173.8" width="4.8" height="0.2" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="349.5" y="173.4" width="4.8" height="0.6" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="355.1" y="173.6" width="4.8" height="0.4" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="360.7" y="174.0" width="4.8" height="0.0" fill="#FF5C7A" opacity="0.85" rx="0.5"/><rect x="366.4" y="174.0" width="4.8" height="0.0" fill="#FF5C7A" opacity="0.85" rx="0.5"/><text x="34.0" y="192" fill="#8B97A8" font-size="10" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">0</text><text x="67.8" y="192" fill="#8B97A8" font-size="10" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">30</text><text x="101.6" y="192" fill="#8B97A8" font-size="10" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">60</text><text x="169.2" y="192" fill="#8B97A8" font-size="10" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">120</text><text x="236.8" y="192" fill="#8B97A8" font-size="10" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">180</text><text x="304.4" y="192" fill="#8B97A8" font-size="10" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">240</text><text x="372.0" y="192" fill="#8B97A8" font-size="10" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">300</text><text x="67.8" y="22" fill="#FF5C7A" font-size="10" font-family="ui-monospace,Menlo,monospace">30–35s band</text></svg><svg viewBox="0 0 380 200" width="100%" role="img"><text x="34" y="14" fill="#E6EDF3" font-size="12.5" font-weight="600">Typical track</text><line x1="34" y1="174" x2="372" y2="174" stroke="#222A38" stroke-width="1"/><rect x="34.0" y="137.0" width="4.8" height="37.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="39.6" y="161.7" width="4.8" height="12.3" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="45.3" y="161.7" width="4.8" height="12.3" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="50.9" y="100.0" width="4.8" height="74.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="56.5" y="75.3" width="4.8" height="98.7" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="62.2" y="161.7" width="4.8" height="12.3" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="67.8" y="75.3" width="4.8" height="98.7" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="73.4" y="63.0" width="4.8" height="111.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="79.1" y="112.3" width="4.8" height="61.7" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="84.7" y="100.0" width="4.8" height="74.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="90.3" y="75.3" width="4.8" height="98.7" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="96.0" y="112.3" width="4.8" height="61.7" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="101.6" y="149.3" width="4.8" height="24.7" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="107.2" y="161.7" width="4.8" height="12.3" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="112.9" y="63.0" width="4.8" height="111.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="118.5" y="87.7" width="4.8" height="86.3" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="124.1" y="50.7" width="4.8" height="123.3" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="129.8" y="26.0" width="4.8" height="148.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="135.4" y="87.7" width="4.8" height="86.3" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="141.0" y="100.0" width="4.8" height="74.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="146.7" y="100.0" width="4.8" height="74.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="152.3" y="137.0" width="4.8" height="37.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="157.9" y="75.3" width="4.8" height="98.7" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="163.6" y="112.3" width="4.8" height="61.7" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="169.2" y="87.7" width="4.8" height="86.3" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="174.8" y="87.7" width="4.8" height="86.3" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="180.5" y="63.0" width="4.8" height="111.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="186.1" y="100.0" width="4.8" height="74.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="191.7" y="149.3" width="4.8" height="24.7" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="197.4" y="26.0" width="4.8" height="148.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="203.0" y="149.3" width="4.8" height="24.7" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="208.6" y="124.7" width="4.8" height="49.3" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="214.3" y="137.0" width="4.8" height="37.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="219.9" y="63.0" width="4.8" height="111.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="225.5" y="112.3" width="4.8" height="61.7" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="231.2" y="75.3" width="4.8" height="98.7" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="236.8" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="242.4" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="248.1" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="253.7" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="259.3" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="265.0" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="270.6" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="276.2" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="281.9" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="287.5" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="293.1" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="298.8" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="304.4" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="310.0" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="315.7" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="321.3" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="326.9" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="332.6" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="338.2" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="343.8" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="349.5" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="355.1" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="360.7" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><rect x="366.4" y="174.0" width="4.8" height="0.0" fill="#34D3FF" opacity="0.85" rx="0.5"/><text x="34.0" y="192" fill="#8B97A8" font-size="10" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">0</text><text x="67.8" y="192" fill="#8B97A8" font-size="10" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">30</text><text x="101.6" y="192" fill="#8B97A8" font-size="10" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">60</text><text x="169.2" y="192" fill="#8B97A8" font-size="10" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">120</text><text x="236.8" y="192" fill="#8B97A8" font-size="10" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">180</text><text x="304.4" y="192" fill="#8B97A8" font-size="10" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">240</text><text x="372.0" y="192" fill="#8B97A8" font-size="10" text-anchor="middle" font-family="ui-monospace,Menlo,monospace">300</text></svg></div>
+    <div class="cap">The flagged track spikes in the 30&ndash;35&#8202;s band (artificial early stops just past the royalty line); a typical track's stops spread from 35&#8202;s to full length.</div>
+    <div class="note">Track 6fe6c7a3-2f67-4fa5-9ee3-724f5c57e836 in the 1-hour window beginning 2026-08-09T20:00:00Z: 901 unique listeners (at least 200), 901 plays at 1.00 per listener (at most 1.10), and a 0.92 share of plays stopping inside the 30-35 second band (at least 0.60). These are the measured numbers against the configured thresholds; this entry is a review candidate for a human and states no conclusion.</div>
+  </section>
 
-  <footer>
-    <div class="pipe">MusicBrainz catalog → producer → Kafka <b>play-events</b> → Consumer 1 (Topology A) → <b>track-activity</b> → Consumer 2 (Topology B) → review queues</div>
-    <div style="margin-top:8px">Stack: Redpanda (Kafka) · confluent-kafka · Pydantic contract · event-time windowing · 271 tests passing</div>
-  </footer>
-</div>
-
-<script>
-const DATA = {
-  "totals": {
-    "events": 45473,
-    "listeners": 1308,
-    "bots": 8,
-    "rings": 1
-  },
-  "bots": [
-    {
-      "id": "A000",
-      "peak": 635,
-      "total": 1800
-    },
-    {
-      "id": "A001",
-      "peak": 626,
-      "total": 1800
-    },
-    {
-      "id": "A002",
-      "peak": 620,
-      "total": 1800
-    },
-    {
-      "id": "A003",
-      "peak": 633,
-      "total": 1800
-    },
-    {
-      "id": "A004",
-      "peak": 623,
-      "total": 1800
-    },
-    {
-      "id": "A005",
-      "peak": 623,
-      "total": 1800
-    },
-    {
-      "id": "A006",
-      "peak": 621,
-      "total": 1800
-    },
-    {
-      "id": "A007",
-      "peak": 638,
-      "total": 1800
-    }
-  ],
-  "normal_max": 60,
-  "normal_hist": [
-    {
-      "bin": "0-10",
-      "count": 900
-    },
-    {
-      "bin": "10-20",
-      "count": 6
-    },
-    {
-      "bin": "20-30",
-      "count": 99
-    },
-    {
-      "bin": "30-40",
-      "count": 193
-    },
-    {
-      "bin": "40-50",
-      "count": 75
-    },
-    {
-      "bin": "50-60",
-      "count": 26
-    },
-    {
-      "bin": "60-70",
-      "count": 1
-    }
-  ],
-  "topoB": {
-    "track": "6fe6c7a3-2f67-4fa5-9ee3-724f5c57e836",
-    "track_name": "7 Rings (Kore-G Bootleg)",
-    "artist": "Ariana Grande",
-    "unique": 901,
-    "ppl": 1.0,
-    "band": 0.9234184239733629,
-    "window_start": "2026-08-09T20:00:00Z",
-    "note": "Track 6fe6c7a3-2f67-4fa5-9ee3-724f5c57e836 in the 1-hour window beginning 2026-08-09T20:00:00Z: 901 unique listeners (at least 200), 901 plays at 1.00 per listener (at most 1.10), and a 0.92 share of plays stopping inside the 30-35 second band (at least 0.60). These are the measured numbers against the configured thresholds; this entry is a review candidate for a human and states no conclusion.",
-    "flagged_hist": [
-      {
-        "s": 0,
-        "count": 3
-      },
-      {
-        "s": 5,
-        "count": 2
-      },
-      {
-        "s": 10,
-        "count": 2
-      },
-      {
-        "s": 15,
-        "count": 1
-      },
-      {
-        "s": 20,
-        "count": 0
-      },
-      {
-        "s": 25,
-        "count": 0
-      },
-      {
-        "s": 30,
-        "count": 687
-      },
-      {
-        "s": 35,
-        "count": 146
-      },
-      {
-        "s": 40,
-        "count": 3
-      },
-      {
-        "s": 45,
-        "count": 3
-      },
-      {
-        "s": 50,
-        "count": 3
-      },
-      {
-        "s": 55,
-        "count": 6
-      },
-      {
-        "s": 60,
-        "count": 150
-      }
-    ],
-    "typ_name": "03 Bonnie & Clyde",
-    "typ_artist": "JA\u0178-Z",
-    "typ_hist": [
-      {
-        "s": 0,
-        "count": 3
-      },
-      {
-        "s": 5,
-        "count": 1
-      },
-      {
-        "s": 10,
-        "count": 1
-      },
-      {
-        "s": 15,
-        "count": 6
-      },
-      {
-        "s": 20,
-        "count": 8
-      },
-      {
-        "s": 25,
-        "count": 1
-      },
-      {
-        "s": 30,
-        "count": 8
-      },
-      {
-        "s": 35,
-        "count": 9
-      },
-      {
-        "s": 40,
-        "count": 5
-      },
-      {
-        "s": 45,
-        "count": 6
-      },
-      {
-        "s": 50,
-        "count": 8
-      },
-      {
-        "s": 55,
-        "count": 5
-      },
-      {
-        "s": 60,
-        "count": 150
-      }
-    ]
-  }
-};
-
-const fmt = n => n.toLocaleString('en-US');
-document.getElementById('v-events').textContent = fmt(DATA.totals.events);
-document.getElementById('v-list').textContent = fmt(DATA.totals.listeners);
-document.getElementById('v-bots').textContent = DATA.totals.bots;
-document.getElementById('v-rings').textContent = DATA.totals.rings;
-
-const tb = DATA.topoB;
-document.getElementById('tb-track').textContent = tb.track_name;
-document.getElementById('tb-artist').textContent = tb.artist;
-document.getElementById('tb-win').textContent = tb.window_start.replace('T',' ').replace('Z',' UTC');
-document.getElementById('c-uniq').textContent = fmt(tb.unique);
-document.getElementById('c-ppl').textContent = tb.ppl.toFixed(2);
-document.getElementById('c-band').textContent = Math.round(tb.band*100)+'%';
-document.getElementById('lg-f').textContent = tb.track_name;
-document.getElementById('lg-t').textContent = tb.typ_name;
-document.getElementById('tb-note').insertAdjacentText('beforeend', tb.note);
-
-const NS='http://www.w3.org/2000/svg';
-const el=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;};
-
-// ---- Chart A: horizontal bars, 8 bots + normal reference, threshold line ----
-(function(){
-  const W=900,H=360,L=118,R=40,T=16,B=34;
-  const rows=[...DATA.bots.map(b=>({label:b.id,val:b.peak,fraud:true})),
-              {label:'Normal (max)',val:DATA.normal_max,fraud:false}];
-  const max=700, plot=W-L-R, x=v=>L+v/max*plot;
-  const bh=Math.min(22,(H-T-B)/rows.length-8), step=(H-T-B)/rows.length;
-  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img'});
-  // x gridlines
-  [0,100,200,300,400,500,600,700].forEach(g=>{
-    svg.appendChild(el('line',{x1:x(g),y1:T,x2:x(g),y2:H-B,stroke:'rgba(255,255,255,.05)','stroke-width':1}));
-    const tx=el('text',{x:x(g),y:H-14,fill:'#5A6678','font-size':11,'text-anchor':'middle','font-family':'var(--mono)'});tx.textContent=g;svg.appendChild(tx);
-  });
-  rows.forEach((r,i)=>{
-    const y=T+i*step+(step-bh)/2, col=r.fraud?'#FF5C7A':'#34D3FF';
-    const lbl=el('text',{x:L-12,y:y+bh/2+4,fill:'#8A97A8','font-size':12,'text-anchor':'end','font-family':'var(--mono)'});lbl.textContent=r.label;svg.appendChild(lbl);
-    svg.appendChild(el('rect',{x:L,y,width:Math.max(2,x(r.val)-L),height:bh,rx:4,fill:col,opacity:r.fraud?.92:.85,filter:'',style:r.fraud?'filter:drop-shadow(0 0 6px rgba(255,92,122,.5))':''}));
-    const vt=el('text',{x:x(r.val)+8,y:y+bh/2+4,fill:'#EAF0F7','font-size':12,'font-family':'var(--mono)','font-weight':600});vt.textContent=r.val;svg.appendChild(vt);
-  });
-  // threshold
-  svg.appendChild(el('line',{x1:x(300),y1:T-2,x2:x(300),y2:H-B,stroke:'#FF5C7A','stroke-width':2,'stroke-dasharray':'6 4',opacity:.9}));
-  const thl=el('text',{x:x(300),y:T+2,fill:'#FF5C7A','font-size':11,'text-anchor':'middle','font-family':'var(--mono)'});thl.textContent='flag 300';
-  svg.appendChild(thl);
-  document.getElementById('chartA').appendChild(svg);
-})();
-
-// ---- Chart B: grouped bars, stop-time share, flagged vs typical ----
-(function(){
-  const W=900,H=340,L=52,R=20,T=18,B=44;
-  const sum=a=>a.reduce((s,d)=>s+d.count,0);
-  const fT=sum(tb.flagged_hist), tT=sum(tb.typ_hist);
-  const bins=tb.flagged_hist.map((d,i)=>({s:d.s,f:d.count/fT,t:tb.typ_hist[i].count/tT}));
-  const max=0.72, plot=H-T-B, y=v=>H-B-v/max*plot;
-  const gw=(W-L-R)/bins.length, bw=gw*0.38;
-  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img'});
-  // y gridlines (%)
-  [0,.2,.4,.6].forEach(g=>{
-    svg.appendChild(el('line',{x1:L,y1:y(g),x2:W-R,y2:y(g),stroke:'rgba(255,255,255,.05)','stroke-width':1}));
-    const t=el('text',{x:L-8,y:y(g)+4,fill:'#5A6678','font-size':11,'text-anchor':'end','font-family':'var(--mono)'});t.textContent=Math.round(g*100)+'%';svg.appendChild(t);
-  });
-  // highlight 30-35 band
-  const b30=L+6*gw, b40=L+8*gw;
-  svg.appendChild(el('rect',{x:b30,y:T,width:b40-b30,height:plot,fill:'rgba(255,92,122,.07)'}));
-  const bl=el('text',{x:(b30+b40)/2,y:T+14,fill:'#FF5C7A','font-size':10.5,'text-anchor':'middle','font-family':'var(--mono)'});bl.textContent='30–35s band';svg.appendChild(bl);
-  bins.forEach((d,i)=>{
-    const cx=L+i*gw+gw/2;
-    svg.appendChild(el('rect',{x:cx-bw-1,y:y(d.t),width:bw,height:Math.max(0,H-B-y(d.t)),rx:3,fill:'#34D3FF',opacity:.85}));
-    svg.appendChild(el('rect',{x:cx+1,y:y(d.f),width:bw,height:Math.max(0,H-B-y(d.f)),rx:3,fill:'#FF5C7A',opacity:.95,style:'filter:drop-shadow(0 0 5px rgba(255,92,122,.45))'}));
-    if(i%1===0){const t=el('text',{x:cx,y:H-B+16,fill:'#5A6678','font-size':10,'text-anchor':'middle','font-family':'var(--mono)'});t.textContent=d.s;svg.appendChild(t);}
-  });
-  const xl=el('text',{x:(W+L-R)/2,y:H-6,fill:'#8A97A8','font-size':11,'text-anchor':'middle'});xl.textContent='seconds played before stopping';svg.appendChild(xl);
-  document.getElementById('chartB').appendChild(svg);
-})();
-</script>
-</body>
-</html>
+  <footer>Data: MusicBrainz catalog + synthetic play events &middot;
+    producer &rarr; Kafka <span class="mono">play-events</span> &rarr; Consumer&#8201;1 (Topology&#8201;A) &rarr;
+    <span class="mono">track-activity</span> &rarr; Consumer&#8201;2 (Topology&#8201;B) &rarr; review queues<br>
+    Static export of <span class="mono">output/*.json</span> &middot; rebuild with <span class="mono">python src/build_dashboard_html.py</span></footer>
+</div></body></html>
