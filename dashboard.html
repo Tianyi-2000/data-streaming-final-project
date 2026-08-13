@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fraud Monitor — Artificial Streaming Detection</title>
+<style>
+  :root{
+    --bg:#0B0E14; --panel:#141A24; --panel-2:#0F141C;
+    --line:rgba(255,255,255,.08); --ink:#EAF0F7; --muted:#8A97A8; --dim:#5A6678;
+    --green:#00E5A0; --cyan:#34D3FF; --fraud:#FF5C7A;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:"Inter",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(0,229,160,.06), transparent 60%),
+      radial-gradient(1000px 500px at 100% 0%, rgba(52,211,255,.05), transparent 55%),
+      var(--bg);
+    color:var(--ink);font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;letter-spacing:.01em}
+  .wrap{max-width:1180px;margin:0 auto;padding:22px 26px 60px}
+
+  /* header */
+  header{display:flex;align-items:center;justify-content:space-between;
+    padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:26px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
+    background:linear-gradient(145deg,rgba(0,229,160,.22),rgba(52,211,255,.10));
+    border:1px solid rgba(0,229,160,.35);box-shadow:0 0 22px rgba(0,229,160,.25)}
+  .logo span{font-size:18px}
+  .brand h1{font-size:15px;margin:0;letter-spacing:.16em;text-transform:uppercase;font-weight:700}
+  .brand p{margin:2px 0 0;font-size:12px;color:var(--muted);letter-spacing:.02em}
+  .live{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12px;
+    color:var(--green);background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.3);
+    padding:7px 13px;border-radius:999px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 0 0 rgba(0,229,160,.6);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,229,160,.5)}70%{box-shadow:0 0 0 8px rgba(0,229,160,0)}100%{box-shadow:0 0 0 0 rgba(0,229,160,0)}}
+
+  /* hero */
+  .hero{margin-bottom:30px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.28em;color:var(--fraud);
+    text-transform:uppercase;margin-bottom:14px}
+  .hero h2{font-size:clamp(28px,4.6vw,54px);line-height:1.06;margin:0;font-weight:800;letter-spacing:-.02em}
+  .hero h2 b{color:var(--green);text-shadow:0 0 30px rgba(0,229,160,.45)}
+  .hero h2 i{font-style:normal;color:var(--fraud);text-shadow:0 0 30px rgba(255,92,122,.4)}
+  .hero .sub{color:var(--muted);font-size:16px;margin-top:14px;max-width:640px}
+
+  /* stat tiles */
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:30px}
+  .tile{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--line);
+    border-radius:14px;padding:18px 18px 16px;position:relative;overflow:hidden}
+  .tile::after{content:"";position:absolute;inset:0;border-radius:14px;pointer-events:none;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+  .tile .lab{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:600}
+  .tile .val{font-family:var(--mono);font-size:34px;font-weight:600;margin-top:8px;line-height:1}
+  .tile .foot{font-size:11px;color:var(--muted);margin-top:8px}
+  .t-green .val{color:var(--ink)}
+  .t-cyan .val{color:var(--cyan);text-shadow:0 0 22px rgba(52,211,255,.35)}
+  .t-fraud .val{color:var(--fraud);text-shadow:0 0 22px rgba(255,92,122,.35)}
+  .t-fraud{border-color:rgba(255,92,122,.28)}
+  .t-cyan{border-color:rgba(52,211,255,.22)}
+
+  /* panels */
+  .panel{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--line);
+    border-radius:16px;padding:24px 26px;margin-bottom:22px}
+  .phead{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+  .phead h3{margin:0;font-size:19px;font-weight:700;letter-spacing:-.01em}
+  .tag{font-family:var(--mono);font-size:11px;padding:5px 10px;border-radius:7px;letter-spacing:.04em}
+  .tag.a{color:var(--fraud);background:rgba(255,92,122,.1);border:1px solid rgba(255,92,122,.28)}
+  .tag.b{color:var(--cyan);background:rgba(52,211,255,.1);border:1px solid rgba(52,211,255,.28)}
+  .rule{font-size:13px;color:var(--muted);margin:0 0 18px}
+  .rule b{color:var(--ink);font-weight:600}
+  .cap{font-size:12.5px;color:var(--muted);margin-top:14px;line-height:1.5}
+  .cap b{color:var(--ink)}
+
+  /* condition chips (topo B) */
+  .track-name{font-family:var(--mono);font-size:13px;color:var(--ink);margin:2px 0 16px}
+  .track-name .fr{color:var(--fraud)}
+  .conds{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+  .cond{background:var(--panel-2);border:1px solid rgba(255,92,122,.2);border-radius:12px;padding:15px 16px}
+  .cond .n{font-family:var(--mono);font-size:26px;color:var(--fraud);font-weight:600}
+  .cond .l{font-size:11.5px;color:var(--muted);margin-top:6px}
+  .cond .ok{font-family:var(--mono);font-size:11px;color:var(--green);margin-top:8px;display:flex;gap:6px;align-items:center}
+
+  .legend{display:flex;gap:20px;font-size:12px;color:var(--muted);margin:2px 0 10px}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .sw{width:11px;height:11px;border-radius:3px;display:inline-block}
+
+  svg{display:block;width:100%;height:auto}
+  .note{margin-top:18px;padding:14px 16px;border-left:2px solid var(--dim);background:rgba(255,255,255,.02);
+    border-radius:0 8px 8px 0;font-size:12.5px;color:var(--muted);line-height:1.55}
+  .note b{color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.1em;font-size:10.5px;display:block;margin-bottom:6px;color:var(--dim)}
+  footer{margin-top:26px;padding-top:18px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--dim);font-family:var(--mono);line-height:1.7}
+  footer .pipe{color:var(--muted)}
+  @media(max-width:760px){.tiles{grid-template-columns:repeat(2,1fr)}.conds{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo"><span>🎧</span></div>
+      <div><h1>Fraud Monitor</h1><p>Artificial Streaming Detection · Kafka pipeline</p></div>
+    </div>
+    <div class="live"><span class="dot"></span>LIVE · 45,473 events replayed</div>
+  </header>
+
+  <section class="hero">
+    <div class="kicker">Real-time verdict</div>
+    <h2><b>8</b> bot accounts + <i>1</i> coordinated ring<br>caught in 45,473 plays</h2>
+    <p class="sub">A two-stage Kafka pipeline over a MusicBrainz-grounded event stream. Every number below is read from the detectors' output review queues — the decisions, not the raw rules.</p>
+  </section>
+
+  <div class="tiles">
+    <div class="tile t-green"><div class="lab">Events processed</div><div class="val" id="v-events">—</div><div class="foot">3 days of play events</div></div>
+    <div class="tile t-green"><div class="lab">Listeners monitored</div><div class="val" id="v-list">—</div><div class="foot">across the full stream</div></div>
+    <div class="tile t-fraud"><div class="lab">Bot accounts flagged</div><div class="val" id="v-bots">—</div><div class="foot">Topology A · volume</div></div>
+    <div class="tile t-fraud"><div class="lab">Coordinated rings</div><div class="val" id="v-rings">—</div><div class="foot">Topology B · viral</div></div>
+  </div>
+
+  <div class="panel">
+    <div class="phead"><h3>Topology A — high-volume bots</h3><div class="tag a">RULE · &gt;300 plays / rolling 24h</div></div>
+    <p class="rule">Bots stream <b>24/7 with no sleep gap</b>. Real listeners never come close — so peak daily volume separates them cleanly.</p>
+    <div id="chartA"></div>
+    <p class="cap">Dashed line = the <b>300-play / 24h</b> flag threshold. Normal listeners peak at <b>60</b> plays/day; all <b>8</b> flagged accounts sit ~10× over the line.</p>
+  </div>
+
+  <div class="panel">
+    <div class="phead"><h3>Topology B — coordinated viral ring</h3><div class="tag b">RULE · 1-hour window</div></div>
+    <p class="rule">One track, hit by an army of one-play accounts that all bail right after the 30-second royalty mark.</p>
+    <div class="track-name">▶ Flagged track: <span class="fr" id="tb-track">—</span> — <span id="tb-artist">—</span> · window <span id="tb-win">—</span></div>
+    <div class="conds">
+      <div class="cond"><div class="n" id="c-uniq">—</div><div class="l">Unique listeners in 1h</div><div class="ok">✓ threshold ≥ 200</div></div>
+      <div class="cond"><div class="n" id="c-ppl">—</div><div class="l">Plays per listener</div><div class="ok">✓ threshold ≤ 1.1</div></div>
+      <div class="cond"><div class="n" id="c-band">—</div><div class="l">Stops in 30–35s band</div><div class="ok">✓ threshold ≥ 60%</div></div>
+    </div>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--fraud)"></i>Flagged track — <span id="lg-f"></span></span>
+      <span><i class="sw" style="background:var(--cyan)"></i>Typical track — <span id="lg-t"></span></span>
+    </div>
+    <div id="chartB"></div>
+    <p class="cap">Share of plays by stop-time. The flagged track <b>spikes hard in the 30–35s band</b> (artificial early stops just past the royalty threshold); a normal track's stops spread out, mostly playing to full length.</p>
+    <div class="note" id="tb-note"><b>Analyst review note · auto-generated, states no conclusion</b></div>
+  </div>
+
+  <footer>
+    <div class="pipe">MusicBrainz catalog → producer → Kafka <b>play-events</b> → Consumer 1 (Topology A) → <b>track-activity</b> → Consumer 2 (Topology B) → review queues</div>
+    <div style="margin-top:8px">Stack: Redpanda (Kafka) · confluent-kafka · Pydantic contract · event-time windowing · 271 tests passing</div>
+  </footer>
+</div>
+
+<script>
+const DATA = {
+  "totals": {
+    "events": 45473,
+    "listeners": 1308,
+    "bots": 8,
+    "rings": 1
+  },
+  "bots": [
+    {
+      "id": "A000",
+      "peak": 635,
+      "total": 1800
+    },
+    {
+      "id": "A001",
+      "peak": 626,
+      "total": 1800
+    },
+    {
+      "id": "A002",
+      "peak": 620,
+      "total": 1800
+    },
+    {
+      "id": "A003",
+      "peak": 633,
+      "total": 1800
+    },
+    {
+      "id": "A004",
+      "peak": 623,
+      "total": 1800
+    },
+    {
+      "id": "A005",
+      "peak": 623,
+      "total": 1800
+    },
+    {
+      "id": "A006",
+      "peak": 621,
+      "total": 1800
+    },
+    {
+      "id": "A007",
+      "peak": 638,
+      "total": 1800
+    }
+  ],
+  "normal_max": 60,
+  "normal_hist": [
+    {
+      "bin": "0-10",
+      "count": 900
+    },
+    {
+      "bin": "10-20",
+      "count": 6
+    },
+    {
+      "bin": "20-30",
+      "count": 99
+    },
+    {
+      "bin": "30-40",
+      "count": 193
+    },
+    {
+      "bin": "40-50",
+      "count": 75
+    },
+    {
+      "bin": "50-60",
+      "count": 26
+    },
+    {
+      "bin": "60-70",
+      "count": 1
+    }
+  ],
+  "topoB": {
+    "track": "6fe6c7a3-2f67-4fa5-9ee3-724f5c57e836",
+    "track_name": "7 Rings (Kore-G Bootleg)",
+    "artist": "Ariana Grande",
+    "unique": 901,
+    "ppl": 1.0,
+    "band": 0.9234184239733629,
+    "window_start": "2026-08-09T20:00:00Z",
+    "note": "Track 6fe6c7a3-2f67-4fa5-9ee3-724f5c57e836 in the 1-hour window beginning 2026-08-09T20:00:00Z: 901 unique listeners (at least 200), 901 plays at 1.00 per listener (at most 1.10), and a 0.92 share of plays stopping inside the 30-35 second band (at least 0.60). These are the measured numbers against the configured thresholds; this entry is a review candidate for a human and states no conclusion.",
+    "flagged_hist": [
+      {
+        "s": 0,
+        "count": 3
+      },
+      {
+        "s": 5,
+        "count": 2
+      },
+      {
+        "s": 10,
+        "count": 2
+      },
+      {
+        "s": 15,
+        "count": 1
+      },
+      {
+        "s": 20,
+        "count": 0
+      },
+      {
+        "s": 25,
+        "count": 0
+      },
+      {
+        "s": 30,
+        "count": 687
+      },
+      {
+        "s": 35,
+        "count": 146
+      },
+      {
+        "s": 40,
+        "count": 3
+      },
+      {
+        "s": 45,
+        "count": 3
+      },
+      {
+        "s": 50,
+        "count": 3
+      },
+      {
+        "s": 55,
+        "count": 6
+      },
+      {
+        "s": 60,
+        "count": 150
+      }
+    ],
+    "typ_name": "03 Bonnie & Clyde",
+    "typ_artist": "JA\u0178-Z",
+    "typ_hist": [
+      {
+        "s": 0,
+        "count": 3
+      },
+      {
+        "s": 5,
+        "count": 1
+      },
+      {
+        "s": 10,
+        "count": 1
+      },
+      {
+        "s": 15,
+        "count": 6
+      },
+      {
+        "s": 20,
+        "count": 8
+      },
+      {
+        "s": 25,
+        "count": 1
+      },
+      {
+        "s": 30,
+        "count": 8
+      },
+      {
+        "s": 35,
+        "count": 9
+      },
+      {
+        "s": 40,
+        "count": 5
+      },
+      {
+        "s": 45,
+        "count": 6
+      },
+      {
+        "s": 50,
+        "count": 8
+      },
+      {
+        "s": 55,
+        "count": 5
+      },
+      {
+        "s": 60,
+        "count": 150
+      }
+    ]
+  }
+};
+
+const fmt = n => n.toLocaleString('en-US');
+document.getElementById('v-events').textContent = fmt(DATA.totals.events);
+document.getElementById('v-list').textContent = fmt(DATA.totals.listeners);
+document.getElementById('v-bots').textContent = DATA.totals.bots;
+document.getElementById('v-rings').textContent = DATA.totals.rings;
+
+const tb = DATA.topoB;
+document.getElementById('tb-track').textContent = tb.track_name;
+document.getElementById('tb-artist').textContent = tb.artist;
+document.getElementById('tb-win').textContent = tb.window_start.replace('T',' ').replace('Z',' UTC');
+document.getElementById('c-uniq').textContent = fmt(tb.unique);
+document.getElementById('c-ppl').textContent = tb.ppl.toFixed(2);
+document.getElementById('c-band').textContent = Math.round(tb.band*100)+'%';
+document.getElementById('lg-f').textContent = tb.track_name;
+document.getElementById('lg-t').textContent = tb.typ_name;
+document.getElementById('tb-note').insertAdjacentText('beforeend', tb.note);
+
+const NS='http://www.w3.org/2000/svg';
+const el=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;};
+
+// ---- Chart A: horizontal bars, 8 bots + normal reference, threshold line ----
+(function(){
+  const W=900,H=360,L=118,R=40,T=16,B=34;
+  const rows=[...DATA.bots.map(b=>({label:b.id,val:b.peak,fraud:true})),
+              {label:'Normal (max)',val:DATA.normal_max,fraud:false}];
+  const max=700, plot=W-L-R, x=v=>L+v/max*plot;
+  const bh=Math.min(22,(H-T-B)/rows.length-8), step=(H-T-B)/rows.length;
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img'});
+  // x gridlines
+  [0,100,200,300,400,500,600,700].forEach(g=>{
+    svg.appendChild(el('line',{x1:x(g),y1:T,x2:x(g),y2:H-B,stroke:'rgba(255,255,255,.05)','stroke-width':1}));
+    const tx=el('text',{x:x(g),y:H-14,fill:'#5A6678','font-size':11,'text-anchor':'middle','font-family':'var(--mono)'});tx.textContent=g;svg.appendChild(tx);
+  });
+  rows.forEach((r,i)=>{
+    const y=T+i*step+(step-bh)/2, col=r.fraud?'#FF5C7A':'#34D3FF';
+    const lbl=el('text',{x:L-12,y:y+bh/2+4,fill:'#8A97A8','font-size':12,'text-anchor':'end','font-family':'var(--mono)'});lbl.textContent=r.label;svg.appendChild(lbl);
+    svg.appendChild(el('rect',{x:L,y,width:Math.max(2,x(r.val)-L),height:bh,rx:4,fill:col,opacity:r.fraud?.92:.85,filter:'',style:r.fraud?'filter:drop-shadow(0 0 6px rgba(255,92,122,.5))':''}));
+    const vt=el('text',{x:x(r.val)+8,y:y+bh/2+4,fill:'#EAF0F7','font-size':12,'font-family':'var(--mono)','font-weight':600});vt.textContent=r.val;svg.appendChild(vt);
+  });
+  // threshold
+  svg.appendChild(el('line',{x1:x(300),y1:T-2,x2:x(300),y2:H-B,stroke:'#FF5C7A','stroke-width':2,'stroke-dasharray':'6 4',opacity:.9}));
+  const thl=el('text',{x:x(300),y:T+2,fill:'#FF5C7A','font-size':11,'text-anchor':'middle','font-family':'var(--mono)'});thl.textContent='flag 300';
+  svg.appendChild(thl);
+  document.getElementById('chartA').appendChild(svg);
+})();
+
+// ---- Chart B: grouped bars, stop-time share, flagged vs typical ----
+(function(){
+  const W=900,H=340,L=52,R=20,T=18,B=44;
+  const sum=a=>a.reduce((s,d)=>s+d.count,0);
+  const fT=sum(tb.flagged_hist), tT=sum(tb.typ_hist);
+  const bins=tb.flagged_hist.map((d,i)=>({s:d.s,f:d.count/fT,t:tb.typ_hist[i].count/tT}));
+  const max=0.72, plot=H-T-B, y=v=>H-B-v/max*plot;
+  const gw=(W-L-R)/bins.length, bw=gw*0.38;
+  const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img'});
+  // y gridlines (%)
+  [0,.2,.4,.6].forEach(g=>{
+    svg.appendChild(el('line',{x1:L,y1:y(g),x2:W-R,y2:y(g),stroke:'rgba(255,255,255,.05)','stroke-width':1}));
+    const t=el('text',{x:L-8,y:y(g)+4,fill:'#5A6678','font-size':11,'text-anchor':'end','font-family':'var(--mono)'});t.textContent=Math.round(g*100)+'%';svg.appendChild(t);
+  });
+  // highlight 30-35 band
+  const b30=L+6*gw, b40=L+8*gw;
+  svg.appendChild(el('rect',{x:b30,y:T,width:b40-b30,height:plot,fill:'rgba(255,92,122,.07)'}));
+  const bl=el('text',{x:(b30+b40)/2,y:T+14,fill:'#FF5C7A','font-size':10.5,'text-anchor':'middle','font-family':'var(--mono)'});bl.textContent='30–35s band';svg.appendChild(bl);
+  bins.forEach((d,i)=>{
+    const cx=L+i*gw+gw/2;
+    svg.appendChild(el('rect',{x:cx-bw-1,y:y(d.t),width:bw,height:Math.max(0,H-B-y(d.t)),rx:3,fill:'#34D3FF',opacity:.85}));
+    svg.appendChild(el('rect',{x:cx+1,y:y(d.f),width:bw,height:Math.max(0,H-B-y(d.f)),rx:3,fill:'#FF5C7A',opacity:.95,style:'filter:drop-shadow(0 0 5px rgba(255,92,122,.45))'}));
+    if(i%1===0){const t=el('text',{x:cx,y:H-B+16,fill:'#5A6678','font-size':10,'text-anchor':'middle','font-family':'var(--mono)'});t.textContent=d.s;svg.appendChild(t);}
+  });
+  const xl=el('text',{x:(W+L-R)/2,y:H-6,fill:'#8A97A8','font-size':11,'text-anchor':'middle'});xl.textContent='seconds played before stopping';svg.appendChild(xl);
+  document.getElementById('chartB').appendChild(svg);
+})();
+</script>
+</body>
+</html>
